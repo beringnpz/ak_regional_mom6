@@ -63,27 +63,26 @@ geoshow(S.Strata, 'facecolor', 'none', 'edgecolor', 'g', 'linestyle', ':');
 %
 % ncks -v areacello,deptho,geolat,geolon,wet 19930101.ocean_static.nc ocean_static_alaska.nc
 
+% Commands relative to ak_regional_mom6 repo
+
 basepath = fullfile(mounteddir('klone'), 'GR011846_reem/kearney/peec2025');
 staticfile = fullfile(basepath, '19930101.ocean_static.nc');
+simname = 'mom6nep_hc202411';
+lev1 = fullfile(basepath, simname, 'Level1-2');
 
 Full = buildmasks(staticfile, [], S);
 
 % Start-count-stride to get just Alaska (minus Arctic)
-% (Note: I slightly updated the masking to use R akgfmaps package
-% boundaries rather than my own collection, which ever so slightly altered
-% the sub-region hyperslab.  Setting manually to stay consistent with
-% previously-extracted MOM6-NEP hindcast data.
-%
-% -d xh,1,265 -d yh,442,743 
+% Scs = struct('xh', [1 265 1], 'yh', [442 302 1]);
 
-Scs = struct('xh', [1 265 1], 'yh', [442 302 1]);
+regmask = ~isnan(Full.mask_esrreg);
 
-% regmask = Full.mask_esrreg <= 3;
-% 
-% xh = any(regmask,2);
-% yh = any(regmask,1);
-% Scs = struct('xh', [find(xh,1) sum(xh) 1], ...
-%              'yh', [find(yh,1) sum(yh) 1]);
+xh = any(regmask,2);
+yh = any(regmask,1);
+Scs = struct('xh', [find(xh,1) sum(xh) 1], ...
+             'yh', [find(yh,1) sum(yh) 1]);
+Scs.xq = Scs.xh + [0 1 0];
+Scs.yq = Scs.yh + [0 1 0];
 
 % Repeat with cropped region
 
@@ -95,15 +94,15 @@ hyperslab = structfun(@(x) sprintf("%d,%d", x(1), x(1)+x(2)-1), Scs, 'uni', 0);
 hyperslab =  [fieldnames(hyperslab) struct2cell(hyperslab)]';
 hyperslab = sprintf("-d %s,%s ", hyperslab{:});
 
-akstaticfile = fullfile(basepath, "ocean_static_ak.nc");
+akstaticfile = fullfile(lev1, "ocean_static_ak.nc");
 
-vstatic = ["areacello", "deptho", "geolat", "geolon", "wet"];
+vstatic = ["areacello", "deptho", "geolat", "geolon", "wet", "geolon_c", "geolat_c"];
 cmd = join(["ncks -F", ...
             "-v " + join(vstatic,","), ...
             hyperslab, ...
             staticfile, ...
             akstaticfile], " ");
-system(cmd);
+% system(cmd);
 
 %% ... Add mask variables to file
 

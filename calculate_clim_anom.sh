@@ -1,13 +1,23 @@
 #!/bin/bash
 #
-# Syntax: ./calculate_clim_anom.sh targetyear
+# Syntax: ./calculate_clim_anom.sh fcyear
 #
-# Where target year is he last partially-completed year that will be used for the persistence forecast
+# Where fcyear is he last partially-completed year that will be used for the persistence forecast
 
 if [ "$#" -ne 1 ]; then
-    echo "Script expects one input (target year), exiting"
+    echo "Script expects one input (forecast year), exiting"
     exit 9
 fi
+
+#-----------------
+# Setup
+#-----------------
+
+fcyear=$1 # Renaming for ease of reading
+simname=mom6nep_hc202411
+yr1=1993
+
+simfol=../${simname}
 
 #-----------------
 # Functions
@@ -21,57 +31,66 @@ regionavg () {
   for reg in {1..5}; do
 
     echo "  Region ${reg}"
-   
-    # Put ice on xh,yh grid for ease of calculations
-
-    ncks -O -v    siconc,xT,yT $1 tmpi.nc # ice grid vars
-    ncks -O -x -v siconc,xT,yT $1 tmpo.nc # ocean grid vars
-  
-    ncrename -d xT,xh -d yT,yh tmpi.nc
-    ncks -A tmpi.nc tmpo.nc
   
     # Add mask variable to file
   
+    cp $1 tmpo.nc
     ncks -A -v areacello,mask_survey $3 tmpo.nc
   
+    # Add cold pool variables
+
+    cdo -expr,'cpool2p0=tob<2.0; cpool1p0=tob<1.0; cpool0p0=tob<0.0' $1 tmpcp.nc
+    ncks -A tmpcp.nc tmpo.nc
+
     # Calculate weighted average
   
     ncwa -w areacello -B "mask_survey = ${reg}" -a xh,yh tmpo.nc tmpreg${reg}.nc
   
     # Clean up 
   
-    rm tmpi.nc tmpo.nc
+    rm tmpo.nc tmpcp.nc
   done
   
   # Concatenate regions along new dimension
   
   ncecat -u surveyregion tmpreg*.nc $2
-  
   rm tmpreg*.nc
 
 }
 
 #-----------------
-# Setup
+# Calculations
 #-----------------
 
-climfile=./pp/nep202411_daily_clim_1993-2022.nc
+# # Add omega variable
+
+# for (( yr=$yr1; yr<=$fcyear; yr++ )); do
+
+#   nepdailyfile=${simfol}/Level1-2/${simname}_selected_daily_${yr}.nc
+
+#   if (cdo -showname $nepdailyfile | grep -q btm_omega_arag); then
+
+#     cdo -expr,'btm_omega_arag=btm_co3_ion/btm_co3_sol_arag' ${simfol}/Level1-2/${simname}_selected_daily_${yr}.nc tmp.nc
+
+#   fi
+# done
+
 
 # Calculate daily climatology for 30-year period (1993-2022) 
 
+climfile=${simfol}/Level3/${simname}_daily_clim_1993-2022.nc
+
 if ! test -f $climfile; then
   echo "Building 1993-2022 climatology"
-  cdo -ydaymean -selyear,1993/2022 -cat 'mom6nep_selected/*.nc' $climfile
+  cdo -ydaymean -selyear,1993/2022 -cat "'""${simfol}/Level1-2/${simname}_selected_daily_*.nc""'" $climfile
 fi
 
 # Calculate daily anomaly relative to climatology
 
-yr1=1993
-
-for (( yr=$yr1; yr<=$1; yr++ )); do
+for (( yr=$yr1; yr<=$fcyear; yr++ )); do
   
-  nepdailyfile=./mom6nep_selected/nep202411_selected_daily_${yr}.nc
-  anomfile=./pp/nep202411_daily_anomaly_${yr}.nc
+  nepdailyfile=${simfol}/Level1-2/${simname}_selected_daily_${yr}.nc
+  anomfile=${simfol}/Level3/${simname}_daily_anomaly_${yr}.nc
 
   if ! test -f $anomfile; then
     echo "Calculating anomalies: ${yr}"
@@ -82,17 +101,16 @@ done
 
 # Calculate daily forecast using persistence anomaly from last time step
 
-anomfiletarget=./pp/nep202411_daily_anomaly_${1}.nc
-fcfile=./pp/nep202411_forecast_${1}.nc
+anomfilefc=${simfol}/Level3/${simname}_daily_anomaly_${fcyear}.nc
+fcfile=${simfol}/Level3/${simname}_forecast_${fcyear}.nc
 
+if ! test -f $anomfilefc; then
+  echo "Calculating persistence forecast for ${fcyear}"
 
-if ! test -f $anomfiletarget; then
-  echo "Calculating persistence forecast for ${1}"
-
-  ntime1=$(cdo -ntime ${anomfiletarget})
+  ntime1=$(cdo -ntime ${anomfilefc})
   ntime2=$(cdo -ntime ${climfile})  
 
-  cdo -select,timestep=${ntime1} $anomfiletarget tmp1.nc
+  cdo -select,timestep=${ntime1} $anomfilefc tmp1.nc
   cdo -select,timestep=${ntime1}/${ntime2} $climfile tmp2.nc
 
   cdo -add tmp1.nc tmp2.nc $fcfile
@@ -102,74 +120,34 @@ fi
 
 # Regionally-averaged timeseries based on AK survey regions
 
-for (( yr=$yr1; yr<=$1; yr++ )); do
+for (( yr=$yr1; yr<=$fcyear; yr++ )); do
   
-  nepdailyfile=./mom6nep_selected/nep202411_selected_daily_${yr}.nc
-  svyavgfile=./pp/nep202411_surveyregionavg_${yr}.nc
-  maskfile=./ocean_static_ak.nc
+  nepdailyfile=${simfol}/Level1-2/${simname}_selected_daily_${yr}.nc
+  svyavgfile=${simfol}/Level3/${simname}_surveyregionavg_${yr}.nc
+  maskfile=${simfol}/Level1-2/ocean_static_ak.nc
   
   if ! test -f $svyavgfile; then
   
     echo "Calculating regional averages: ${yr}" 
    
+    # Regional averages for all variables in file
+
     regionavg $nepdailyfile $svyavgfile $maskfile
-    
-    # for reg in {1..5}; do
-    #
-    #   echo "  Region ${reg}"
-    #
-    #   # Put ice on xh,yh grid for ease of calculations
-    #
-    #   ncks -v    siconc,xT,yT ./mom6nep_selected/nep202411_selected_daily_${yr}.nc tmpi.nc # ice grid vars
-    #   ncks -x -v siconc,xT,yT ./mom6nep_selected/nep202411_selected_daily_${yr}.nc tmpo.nc # ocean grid vars
-    #
-    #   ncrename -d xT,xh -d yT,yh tmpi.nc
-    #   ncks -A tmpi.nc tmpo.nc
-    #
-    #   # Add mask variable to file
-    #
-    #   ncks -A -v areacello,mask_survey ocean_static_ak.nc tmpo.nc
-    #
-    #   # Calculate weighted average
-    #
-    #   ncwa -w areacello -B "mask_survey = ${reg}" -a xh,yh tmpo.nc tmp${yr}reg${reg}.nc
-    #
-    #   # Clean up
-    #
-    #   rm tmpi.nc tmpo.nc
-    # done
-    #
-    # # Concatenate regions along new dimension
-    #
-    # ncecat -u surveyregion tmp${yr}reg*.nc pp/nep202411_surveyregionavg_${yr}.nc
-    #
-    # rm tmp${yr}reg*.nc
-    
+
   fi
 done
 
+# Regional averages for forecast file
 
+svyavgfilefc=${simfol}/Level3/${simname}_surveyregionavg_forecast_${fcyear}.nc
 
+if ! test -f $svyavgfilefc; then
+  echo "Calculating regional averages for forecast: ${fcyear}" 
+   
+  # Regional averages for all variables in file
 
-
-#     # Regional average per file
-#     cp ./mom6nep_selected/nep202411_selected_daily_${yr}.nc tmp.nc
-#     # Put ice on xh,yh grid for ease of calcs
-#     ncks -v siconc,xT,yT tmp.nc tmpi.nc
-#     ncks -O -x -v siconc,xT,yT tmp.nc tmp.nc
-#     ncrename -d xT,xh -d yT,yh tmpi.nc
-#     ncks -A tmpi.nc tmp.nc
-#     # Add mask variable to file
-#     ncks -A -v areacello,mask_survey ocean_static_ak.nc tmp.nc
-#     ncwa -w areacello -B "mask_survey = ${reg}" -a xh,yh tmp.nc tmp${yr}reg${reg}.nc
-#     rm tmp.nc tmpi.nc
-#   done
-#   ncrcat tmp*reg${reg}.nc reg${reg}.nc
-#   rm tmp*reg${reg}.nc
-# done
-# # Concatenate regions
-# ncecat -u surveyregion reg*.nc pp/nep202411_surveyregionavg.nc
-# rm reg*.nc
-  
+  regionavg $fcfile $svyavgfilefc $maskfile
+    
+fi
 
 
