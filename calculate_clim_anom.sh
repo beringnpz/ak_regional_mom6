@@ -80,10 +80,14 @@ regionavg () {
 
 climfile=${simfol}/Level3/${simname}_daily_clim_1993-2022.nc
 
+outfileglob="'""${simfol}/Level1-2/${simname}_selected_daily_*.nc""'"
+
 if ! test -f $climfile; then
   echo "Building 1993-2022 climatology"
-  cdo -ydaymean -selyear,1993/2022 -cat "'""${simfol}/Level1-2/${simname}_selected_daily_*.nc""'" $climfile
+  cdo -ydaymean -selyear,1993/2022 -cat ${outfileglob} $climfile
 fi
+
+exit 9
 
 # Calculate daily anomaly relative to climatology
 
