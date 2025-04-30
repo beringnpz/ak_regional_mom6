@@ -8,27 +8,14 @@
 %  into R to streamline use of the akgfmaps package and eliminate the
 %  intermediate files, but this will suffice in the meantime.  
 
-%% ... Regions of interest
+%% ... Regions of interest (shapefiles exported from akgfmaps R package)
 
-% ESR major regions polygons (with decreased crazy-high resolution around
-% coastlines)
+shapefol = "./akgfmaps_shapefiles";
 
-esrshape = '/Volumes/LaCie2023/AlaskaShapefiles/ESR/AKMarineEcosystem';
-[S.Esr, p] = shapereadprj(esrshape);
-S.Esr = S.Esr([1 62:64]); % cut little inland sea bits from GoA
+% ESR regions
 
-for ii = length(S.Esr):-1:1
-    [ps, ix] = dpsimplify([S.Esr(ii).X; S.Esr(ii).Y]', 500);
-    
-    S.Esr(ii).X = [ps(:,1)' NaN];
-    S.Esr(ii).Y = [ps(:,2)' NaN];
-
-    tmp = polyshape(ps); % let polyshape fix the no-longer-island islands
-    S.Esr(ii).X = [tmp.Vertices(:,1)' NaN];
-    S.Esr(ii).Y = [tmp.Vertices(:,2)' NaN];
-
-    [S.Esr(ii).Lat, S.Esr(ii).Lon] = projinv(p, S.Esr(ii).X, S.Esr(ii).Y);
-end
+esrshape = fullfile(shapefol, 'esr_subareas');
+[S.Esr, pcrs] = shapereadprj(esrshape);
 S.Esr = wraplon(S.Esr);
 for ii = 1:length(S.Esr)
     S.Esr(ii).esrnum = ii;
@@ -36,16 +23,14 @@ end
 
 % Bering Sea survey strata
 
-S.Strata = shapereadprj('/Volumes/LaCie2023/AlaskaShapefiles/gis_updated/EBS_NBS_2019');
-S.Strata = wraplon(S.Strata);
+stratashape = fullfile(shapefol, 'surveystrata_ebs');
+S.Strata = shapereadprj(stratashape);
 
 % Major survey areas
 
-akgfbase = '~/Documents/Conferences/202505_SpringPEEC/mom6nep_ak_masks/';
 surveyname = ["ai", "sebs", "nebs", "goa", "ecs"];
 
-S.Survey = arrayfun(@(x) shaperead(x, 'usegeocoords', true), ...
-                    fullfile(akgfbase, "surveyarea_"+surveyname), 'uni', 0);
+S.Survey = arrayfun(@shapereadprj, fullfile(shapefol, "surveyarea_"+surveyname), 'uni', 0);
 for ii = 1:length(S.Survey)
     S.Survey{ii}.regionnum = ii;
 end
@@ -53,14 +38,17 @@ end
 S.Survey = catstruct(1, S.Survey{:});
 S.Survey = wraplon(S.Survey);
 
-%% ... quick plot
+% Bounds
 
 latlim = minmax([S.Esr.Lat]);
 lonlim = minmax(wrapTo360([S.Esr.Lon]));
 
-worldmap(latlim, lonlim);
+%% ... quick plot
+
+worldmap(latlim, lonlim)
+
 geoshow(S.Esr, 'facecolor', 'none', 'edgecolor', 'b');
-geoshow(S.Survey, 'facecolor', 'none', 'edgecolor', 'r');
+geoshow(S.Survey(1:end-1), 'facecolor', 'none', 'edgecolor', 'r');
 geoshow(S.Strata, 'facecolor', 'none', 'edgecolor', 'g', 'linestyle', ':');
 
 %% ... Create Alaska-only cropped version of ocean_static
