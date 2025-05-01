@@ -10,33 +10,7 @@
 
 %% ... Regions of interest (shapefiles exported from akgfmaps R package)
 
-shapefol = "./akgfmaps_shapefiles";
-
-% ESR regions
-
-esrshape = fullfile(shapefol, 'esr_subareas');
-[S.Esr, pcrs] = shapereadprj(esrshape);
-S.Esr = wraplon(S.Esr);
-for ii = 1:length(S.Esr)
-    S.Esr(ii).esrnum = ii;
-end
-
-% Bering Sea survey strata
-
-stratashape = fullfile(shapefol, 'surveystrata_ebs');
-S.Strata = shapereadprj(stratashape);
-
-% Major survey areas
-
-surveyname = ["ai", "sebs", "nebs", "goa", "ecs"];
-
-S.Survey = arrayfun(@shapereadprj, fullfile(shapefol, "surveyarea_"+surveyname), 'uni', 0);
-for ii = 1:length(S.Survey)
-    S.Survey{ii}.regionnum = ii;
-end
-
-S.Survey = catstruct(1, S.Survey{:});
-S.Survey = wraplon(S.Survey);
+[S, pcrs] = akshapes;
 
 % Bounds
 
@@ -109,8 +83,8 @@ cmd = join(["ncks -F", ...
 ncbuild(akstaticfile, Crop.mask_esrreg, ...
     'name', 'mask_esrreg', ...
     'varatts', {'long_name', 'Alaska Ecosystem Status Report (ESR) region', ...
-                'flag_values', '1,2,3,4', ...
-                'flag_meanings', 'Aleutian Islands, Gulf of Alaska, Bering Sea, Arctic'});
+                'flag_values', join(compose("%d", 1:length(S.Esr)),","), ...
+                'flag_meanings', join(string({S.Esr.AREA_NAME}),", ")});
 
 ncbuild(akstaticfile, Crop.mask_survey, ...
     'name', 'mask_survey', ...
@@ -124,22 +98,6 @@ ncbuild(akstaticfile, Crop.mask_strata, ...
 
 
 %% Subs
-
-function [X, p] = shapereadprj(filebase)
-    if isstring(filebase); filebase = filebase{1}; end
-    p = projcrs(fileread([filebase '.prj']));
-    X = shaperead([filebase '.shp']);
-
-    for ii = length(X):-1:1
-        [X(ii).Lat, X(ii).Lon] = projinv(p, X(ii).X, X(ii).Y);
-    end
-end
-
-function S = wraplon(S)
-    for ii = 1:length(S)
-        S(ii).Lon = wrapTo360(S(ii).Lon);
-    end
-end
 
 function X = buildmasks(staticfile, Scs, S)
 
