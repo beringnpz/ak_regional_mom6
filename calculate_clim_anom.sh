@@ -77,17 +77,15 @@ regionavg () {
 
 
 # Calculate daily climatology for 30-year period (1993-2022) 
+# (Need to figure out how to dynamically build that glob in a way cdo accepts)
 
 climfile=${simfol}/Level3/${simname}_daily_clim_1993-2022.nc
 
-outfileglob="'""${simfol}/Level1-2/${simname}_selected_daily_*.nc""'"
-
 if ! test -f $climfile; then
   echo "Building 1993-2022 climatology"
-  cdo -ydaymean -selyear,1993/2022 -cat ${outfileglob} $climfile
+  cdo -ydaymean -selyear,1993/2022 -cat '../mom6nep_hc202411/Level1-2/mom6nep_hc202411_selected_daily*.nc' $climfile
+  # cdo -ydaymean -selyear,1993/2022 -cat "${simfol}/Level1-2/$simname_selected_daily*.nc" $climfile
 fi
-
-exit 9
 
 # Calculate daily anomaly relative to climatology
 
@@ -108,7 +106,7 @@ done
 anomfilefc=${simfol}/Level3/${simname}_daily_anomaly_${fcyear}.nc
 fcfile=${simfol}/Level3/${simname}_forecast_${fcyear}.nc
 
-if ! test -f $anomfilefc; then
+if ! test -f $fcfile; then
   echo "Calculating persistence forecast for ${fcyear}"
 
   ntime1=$(cdo -ntime ${anomfilefc})
