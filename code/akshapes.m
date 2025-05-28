@@ -8,19 +8,22 @@ function [S, pcrs] = akshapes(varargin)
 %
 % Output variables:
 %
-%   S:  structure, fields are each geographic data structures corresponding
-%       to various akgfmaps features:
+%   S:      structure, fields are each geographic data structures 
+%           corresponding to various akgfmaps features:
 %
-%       Esr:    Ecosystem Status Report (ESR) regions
+%           Esr:    Ecosystem Status Report (ESR) regions
 %
-%       Strata: Bering Sea groundfish survey strata
+%           Strata: Bering Sea groundfish survey strata
 %
-%       Survey: groundfish survey regions
+%           Survey: groundfish survey regions
+%
+%   pcrs:   projected CRS object holding projection info from the 
+%           shapefiles 
 
 % Copyright 2025 Kelly Kearney
 
 pth = fileparts(mfilename('fullpath'));
-shapefol = fullfile(pth, "akgfmaps_shapefiles");
+shapefol = fullfile(fileparts(pth), "supporting_data", "akgfmaps_shapefiles");
 
 % ESR regions
 

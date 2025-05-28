@@ -1,12 +1,48 @@
-% ak_mom6nep_masks
-
-% MOM6-NEP Spring PEEC 2025
-
-%% MOM6-NEP mask variables
-%  Build masking variables for MOM6-NEP Alaska-region grid combined with
-%  common AFSC polygons.  Eventually, I'd like to move this analysis 
-%  into R to streamline use of the akgfmaps package and eliminate the
-%  intermediate files, but this will suffice in the meantime.  
+% build_ocean_static_ak.m
+%
+% This script extracts the Alaska subregion of the MOM6-NEP domain from a
+% simulation's static file.  It also adds a few custom variables related to
+% Alaska management regions:
+%
+%   mask_esrreg
+%          Size:       254x297
+%          Dimensions: xh,yh
+%          Datatype:   double
+%          Attributes:
+%                      long_name     = 'Alaska Ecosystem Status Report (ESR) region'
+%                      flag_values   = '1,2,3,4,5,6,7'
+%                      flag_meanings = 'Central Aleutians, 
+%                                       Western Aleutians, 
+%                                       Northern Bering Sea, 
+%                                       Southeastern Bering Sea, 
+%                                       Eastern Gulf of Alaska, 
+%                                       Western Gulf of Alaska, 
+%                                       Eastern Aleutians'
+%   mask_survey
+%          Size:       254x297
+%          Dimensions: xh,yh
+%          Datatype:   double
+%          Attributes:
+%                      long_name     = 'Alaska groundfish bottom trawl survey region'
+%                      flag_values   = '1,2,3,4,5'
+%                      flag_meanings = 'Aleutian Islands (AI), 
+%                                       Southeast Bering Sea (SEBS), 
+%                                       Northern Bering Sea (NBS), 
+%                                       Gulf of Alaska (GOA), 
+%                                       Eastern Chukchi Sea (ECS)'
+%   mask_strata
+%          Size:       254x297
+%          Dimensions: xh,yh
+%          Datatype:   double
+%          Attributes:
+%                      long_name = 'Bering Sea groundfish survey strata'
+%
+% Note: I had originally hoped to complete this workflow in R to streamline
+% the use of the AFSC GAP program's akgfmaps package (which standardizes
+% distribution of these management regions), eliminate intermediate files, 
+% and allow for easy updates if the boundaries change or we want to add a
+% new one.  The tight timeline (and my minimal R knowledge) prevented this
+% for now.
 
 %% ... Regions of interest (shapefiles exported from akgfmaps R package)
 
@@ -19,11 +55,11 @@ lonlim = minmax(wrapTo360([S.Esr.Lon]));
 
 %% ... quick plot
 
-worldmap(latlim, lonlim)
-
-geoshow(S.Esr, 'facecolor', 'none', 'edgecolor', 'b');
-geoshow(S.Survey(1:end-1), 'facecolor', 'none', 'edgecolor', 'r');
-geoshow(S.Strata, 'facecolor', 'none', 'edgecolor', 'g', 'linestyle', ':');
+% worldmap(latlim, lonlim)
+% 
+% geoshow(S.Esr, 'facecolor', 'none', 'edgecolor', 'b');
+% geoshow(S.Survey(1:end-1), 'facecolor', 'none', 'edgecolor', 'r');
+% geoshow(S.Strata, 'facecolor', 'none', 'edgecolor', 'g', 'linestyle', ':');
 
 %% ... Create Alaska-only cropped version of ocean_static
 %
@@ -116,19 +152,6 @@ function X = buildmasks(staticfile, Scs, S)
     X.mask_strata = interpshapefile(S.Strata, X.Static.geolat, X.Static.geolon, 'STRATUM');
     X.mask_survey = interpshapefile(S.Survey, X.Static.geolat, X.Static.geolon, 'regionnum');
 
-    % X.regesr = nan(size(X.Static.geolon));
-    % for ii = 1:length(pEsrProj)
-    %     tmp = inpolygon(X.Static.geolon, X.Static.geolat, pEsrProj(ii).Vertices(:,2), pEsrProj(ii).Vertices(:,1));
-    %     X.regesr(tmp & X.Static.wet==1) = ii;
-    % end
-    % 
-    % % Strata number masks
-    % 
-    % X.regstrata = nan(size(X.Static.geolon));
-    % for ii = 1:length(pStrataProj)
-    %     tmp = inpolygon(X.Static.geolon, X.Static.geolat, pStrataProj(ii).Vertices(:,2), pStrataProj(ii).Vertices(:,1));
-    %     X.regstrata(tmp & X.Static.wet==1) = stratanum(ii);
-    % end
 end
 
 function pshape = shape2poly(S,p)
