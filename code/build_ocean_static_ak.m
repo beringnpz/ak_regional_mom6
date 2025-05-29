@@ -1,4 +1,7 @@
-% build_ocean_static_ak.m
+function Scs = build_ocean_static_ak(flag)
+% BUILD_OCEAN_STATIC_AK Create Alaska-specific version of MOM6 static file
+%
+% Scs = build_ocean_static_ak(flag);
 %
 % This script extracts the Alaska subregion of the MOM6-NEP domain from a
 % simulation's static file.  It also adds a few custom variables related to
@@ -43,8 +46,18 @@
 % and allow for easy updates if the boundaries change or we want to add a
 % new one.  The tight timeline (and my minimal R knowledge) prevented this
 % for now.
+%
+% Input variables:
+%
+%   flag:   true to create new file, false to return the subsetting info
+%           without creating the file.  Default is false
 
-%% ... Regions of interest (shapefiles exported from akgfmaps R package)
+if nargin < 1
+    flag = false;
+end
+validateattributes(flag, {'logical'}, {'scalar'});
+
+% Regions of interest (shapefiles exported from akgfmaps R package)
 
 [S, pcrs] = akshapes;
 
@@ -53,32 +66,19 @@
 latlim = minmax([S.Esr.Lat]);
 lonlim = minmax(wrapTo360([S.Esr.Lon]));
 
-%% ... quick plot
+% Data location
 
-% worldmap(latlim, lonlim)
-% 
-% geoshow(S.Esr, 'facecolor', 'none', 'edgecolor', 'b');
-% geoshow(S.Survey(1:end-1), 'facecolor', 'none', 'edgecolor', 'r');
-% geoshow(S.Strata, 'facecolor', 'none', 'edgecolor', 'g', 'linestyle', ':');
+datafolfile = fullfile(fileparts(fileparts(mfilename('fullpath'))), 'simulation_data', 'data_folder.txt');
+if ~exist(datafolfile, 'file')
+    error('No data_folder.txt file found');
+end
+datafol = fileread(datafolfile);
 
-%% ... Create Alaska-only cropped version of ocean_static
-%
-% Building a masking file so I can run some of the basic regional-averaging
-% via NCO tools on the gfdl computers.
-%
-% Static file extracted from Liz's hindcast:
-% public5:/home/kak/2025SpringPEEC> tar -xvf /archive/e1n/fre/cefi/NEP/2024_11/NEP_nudge_spinup/gfdl.ncrc6-intel23-repro/history/19930101.nc.tar ./19930101.ocean_daily.nc
-%
-% then scp'd to klone.  I then extracted the key variables 
-%
-% ncks -v areacello,deptho,geolat,geolon,wet 19930101.ocean_static.nc ocean_static_alaska.nc
-
-% Commands relative to ak_regional_mom6 repo
-
-basepath = fullfile(mounteddir('klone'), 'GR011846_reem/kearney/peec2025');
-staticfile = fullfile(basepath, '19930101.ocean_static.nc');
 simname = 'mom6nep_hc202411';
-lev1 = fullfile(basepath, simname, 'Level1-2');
+staticfile = fullfile(datafol, simname, 'Level0', '19930101.ocean_static.nc');
+lev1 = fullfile(datafol, simname, 'Level1-2');
+
+% Create masks
 
 Full = buildmasks(staticfile, [], S);
 
@@ -112,25 +112,33 @@ cmd = join(["ncks -F", ...
             hyperslab, ...
             staticfile, ...
             akstaticfile], " ");
-% system(cmd);
+if flag
+    system(cmd);
+end
 
-%% ... Add mask variables to file
+% Add mask variables to file
 
-ncbuild(akstaticfile, Crop.mask_esrreg, ...
-    'name', 'mask_esrreg', ...
-    'varatts', {'long_name', 'Alaska Ecosystem Status Report (ESR) region', ...
-                'flag_values', join(compose("%d", 1:length(S.Esr)),","), ...
-                'flag_meanings', join(string({S.Esr.AREA_NAME}),", ")});
+if flag
 
-ncbuild(akstaticfile, Crop.mask_survey, ...
-    'name', 'mask_survey', ...
-    'varatts', {'long_name', 'Alaska groundfish bottom trawl survey region', ...
-                'flag_values', '1,2,3,4,5', ...
-                'flag_meanings', 'Aleutian Islands (AI), Southeast Bering Sea (SEBS), Northern Bering Sea (NBS), Gulf of Alaska (GOA), Eastern Chukchi Sea (ECS)'});
+    ncbuild(akstaticfile, Crop.mask_esrreg, ...
+        'name', 'mask_esrreg', ...
+        'varatts', {'long_name', 'Alaska Ecosystem Status Report (ESR) region', ...
+                    'flag_values', join(compose("%d", 1:length(S.Esr)),","), ...
+                    'flag_meanings', join(string({S.Esr.AREA_NAME}),", ")});
+    
+    ncbuild(akstaticfile, Crop.mask_survey, ...
+        'name', 'mask_survey', ...
+        'varatts', {'long_name', 'Alaska groundfish bottom trawl survey region', ...
+                    'flag_values', '1,2,3,4,5', ...
+                    'flag_meanings', 'Aleutian Islands (AI), Southeast Bering Sea (SEBS), Northern Bering Sea (NBS), Gulf of Alaska (GOA), Eastern Chukchi Sea (ECS)'});
+    
+    ncbuild(akstaticfile, Crop.mask_strata, ...
+        'name', 'mask_strata', ...
+        'varatts', {'long_name', 'Bering Sea groundfish survey strata'});
 
-ncbuild(akstaticfile, Crop.mask_strata, ...
-    'name', 'mask_strata', ...
-    'varatts', {'long_name', 'Bering Sea groundfish survey strata'});
+end
+
+end
 
 
 %% Subs
