@@ -39,3 +39,4 @@ Thumbs.db
 # Specific to this repo
 #######################
 *.nc
+simulation_data/data_folder.txt
