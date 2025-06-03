@@ -221,7 +221,7 @@ vlong = ["Bottom temp. (\circC)", "SST (\circC)", "Bottom pH", "Bottom O_2 (mmol
 fcfile = fullfile(lev3fol, 'mom6nep_hc202411_forecast_2025.nc');
 anomfile = fullfile(lev3fol, 'mom6nep_hc202411_daily_anomaly_2025.nc');
 tfc = ncdateread(fcfile, 'time');
-[~,ifc] = min(abs(datetime(2025,7,1)-tfc));
+[~,ifc] = min(abs(datetime(2022,7,1)-tfc)); % Note: 2022 year should 2025 in file, update if I fix this
 
 nt = ncinfo(anomfile, 'time');
 nt = nt.Size;
@@ -278,10 +278,10 @@ regnames = {'Aleutian Islands (AI)', 'Southeast Bering Sea (SEBS)', 'Northern Be
 % color limits for forecast map, colormap, and y-limits for timeseries plot
 
 V = {...
-    "tob"            [-3 3]             [-2 10]         cmocean('thermal')      [-2 8]
+    "tob"            [-3 3]             [-2 15]         cmocean('thermal')      [-2 8]
     "cpool2p0"       [-3 3]             [-2 3]          cmocean('-dense', 5)    [0 1]
     "cpool0p0"       [-3 3]             [-2 3]          cmocean('-dense', 5)    [0 1]
-    "tos"            [-3 3]             [-2 10]         cmocean('thermal')      [-2 15]
+    "tos"            [-3 3]             [-2 15]         cmocean('thermal')      [-2 15]
     "pH"             [-0.3 0.3]         [7.5 8.1]       cmocean('-curl')        [7.8 8.2]
     "btm_o2"         [-180 180]         [0 300]         cmocean('oxy')          [140 350]
     "omega"          [-1 1]             [0.5 1.5]       cmocean('delta')        [0.8 1.5]
@@ -516,7 +516,7 @@ labelaxes(h.ax, regnames, 'northoutside');
 nreg = max(Grd.mask_esrreg(:));
 regnames = strtrim(split(ncreadatt(grdfileak, 'mask_esrreg', 'flag_meanings'), ","));
 
-regorder = [0 2 1 7 6 5 4 3];
+regorder = [0 2 1 7 6 5 4 3 -1 -2 -3];
 
 cutoff = 0.28;
 
@@ -524,6 +524,15 @@ for ir = 1:length(regorder)
     if regorder(ir) == 0
         mask = Grd.wet==1;
         lbl = 'Alaska ESR bounding box';
+    elseif regorder(ir) == -1
+        mask = Grd.wet==1 & ismember(Grd.mask_esrreg, [3 4]);
+        lbl = 'Bering Sea (NBS+EBS)';
+    elseif regorder(ir) == -2
+        mask = Grd.wet==1 & ismember(Grd.mask_esrreg, [1 2 7]);
+        lbl = 'Aleutian Islands';
+    elseif regorder(ir) == -3
+        mask = Grd.wet==1 & ismember(Grd.mask_esrreg, [5 6]);
+        lbl = 'Gulf of Alaska';
     else
         mask = Grd.wet==1 & Grd.mask_esrreg == regorder(ir);
         lbl = regnames{regorder(ir)};
@@ -596,6 +605,7 @@ for ir = 1:length(regorder)
     end
     
     labelaxes(h.ax(loc(end),1), "*", 'northwestoutside');
+    labelaxes(h.ax(1,:), ["Bottom", "Surface"], 'northoutside', 'fontsize', 6);
     
     arrayfun(@(x) setm(x, 'frame', 'off', 'meridianlabel', 'off', 'parallellabel', 'off', 'grid', 'off'), h.ax(1:nyr,:));
     set(h.ax, 'clim', [-3 3], 'colormap', cmocean('balance'));
@@ -604,8 +614,14 @@ for ir = 1:length(regorder)
     labelaxes(h.axd, string(lbl), 'northeast', 'vbuffer', 0);
     uistack(h.axm, 'top');
 
+    h.cb = colorbar(h.ax(1), 'north');
+    h.cb.Position = [h.axm.Position(1) h.axm.Position(2)+h.axm.Position(4) h.axm.Position(3) 0.01];
+    xlabel(h.cb, 'Temperature Anomaly ({\circ}C)');
+    h.cb.AxisLocation = 'in';
+
+
     if savefigs
-        export_fig(h.fig, fullfile('slides', sprintf('cluster%d', ir)), '-png', '-r150', '-nocrop');
+        export_fig(h.fig, fullfile(outfol, sprintf('cluster_esrreg%d', regorder(ir))), '-png', '-r150', '-nocrop');
     end
 
 end
