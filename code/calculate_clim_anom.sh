@@ -3,6 +3,8 @@
 # Syntax: ./calculate_clim_anom.sh fcyear
 #
 # Where fcyear is he last partially-completed year that will be used for the persistence forecast
+# TODO: read simfol from ../simulation_data/data_folder.txt
+
 
 if [ "$#" -ne 1 ]; then
     echo "Script expects one input (forecast year), exiting"
@@ -77,7 +79,7 @@ regionavg () {
 
 
 # Calculate daily climatology for 30-year period (1993-2022) 
-# (Need to figure out how to dynamically build that glob in a way cdo accepts)
+# (TODO: Need to figure out how to dynamically build that glob in a way cdo accepts)
 
 climfile=${simfol}/Level3/${simname}_daily_clim_1993-2022.nc
 
@@ -115,7 +117,7 @@ if ! test -f $fcfile; then
   cdo -select,timestep=${ntime1} $anomfilefc tmp1.nc
   cdo -select,timestep=${ntime1}/${ntime2} $climfile tmp2.nc
 
-  cdo -add tmp1.nc tmp2.nc $fcfile
+  cdo -add tmp2.nc tmp1.nc $fcfile # order important, inherits year from first 
   
   rm tmp1.nc tmp2.nc
 fi
