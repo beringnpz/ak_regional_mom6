@@ -46,6 +46,7 @@ savefigs = false; % Flag to export to file
 warning('off', 'map:projections:notStandardProjection');
 warning('off', 'MATLAB:polyshape:repairedBySimplify');
 
+return
 %% Slide 1: MOM6 full-grid map
 % (Note: slides have 10" x 4.5" usable space, 2.2:1 aspect)
 % 
@@ -625,6 +626,161 @@ for ir = 1:length(regorder)
     end
 
 end
+
+%% Bottom temp map/index animation
+
+%% ... Data, same as above but read anomaly from 2024 onward
+
+% Read current anomaly and Jul 1 forecast value for all target variables, plus 
+% full timeseries for regional indices
+
+% Target variables
+
+vars = "tob";
+vlong = "Bottom temp. (\circC)";
+
+% Forecast and 2025 anomaly data
+
+fcfile = fullfile(lev3fol, 'mom6nep_hc202411_forecast_2025.nc');
+anomfile = fullfile(lev3fol, {'mom6nep_hc202411_daily_anomaly_2024.nc', 'mom6nep_hc202411_daily_anomaly_2025.nc'});
+tfc = ncdateread(fcfile, 'time');
+[~,ifc] = min(abs(datetime(2022,7,1)-tfc)); % Note: 2022 year should 2025 in file, update if I fix this
+
+% nt = ncinfo(anomfile, 'time');
+% nt = nt.Size;
+
+Fc = ncstruct(fcfile, struct('time', [ifc 1 1]));
+An = ncstruct(anomfile);
+An.t = ncdateread(anomfile{1}, 'time', An.time);
+An.t.Format = 'MMM dd, uuuu';
+isin = An.t > datetime(2024,7,1);
+An.t = An.t(isin);
+An.time = An.time(isin);
+An.tob = An.tob(:,:,isin);
+
+
+
+% Regional index data
+
+idxfile = fullfile(lev3fol, "mom6nep_hc202411_surveyregionavg_" + string(1993:2025)'+".nc");
+I = ncinfo(idxfile{1});
+idxfcfile = fullfile(lev3fol, 'mom6nep_hc202411_surveyregionavg_forecast_2025.nc');
+
+Tmp = arrayfun(@(x) ncstruct(x, vars{:}, 'time'), idxfile);
+for iv = 1:length(vars)
+    Idx.(vars{iv}) = cat(1, Tmp.(vars{iv}));
+end
+Idx.time = cat(1, Tmp.time);
+Idx.t = ncdateread(idxfile{1}, 'time', Idx.time);
+IdxFc = ncstruct(idxfcfile);
+IdxFc.t = ncdateread(idxfcfile, 'time', IdxFc.time);
+dv = datevec(IdxFc.t);
+dv(:,1) = 2025;
+IdxFc.t = datetime(dv);
+
+%% ... Plot 
+
+regnames = {'Aleutian Islands (AI)', 'Southeast Bering Sea (SEBS)', 'Northern Bering Sea (NBS)', 'Gulf of Alaska (GOA)'};
+
+% Plotting info: variable, color limits for anomaly map,
+% color limits for forecast map, colormap, and y-limits for timeseries plot
+
+V = {...
+    "tob"            [-3 3]             [-2 15]         cmocean('thermal')      [-2 8]
+    % "cpool2p0"       [-3 3]             [-2 3]          cmocean('-dense', 5)    [0 1]
+    % "cpool0p0"       [-3 3]             [-2 3]          cmocean('-dense', 5)    [0 1]
+    % "tos"            [-3 3]             [-2 15]         cmocean('thermal')      [-2 15]
+    % "pH"             [-0.3 0.3]         [7.5 8.1]       cmocean('-curl')        [7.8 8.2]
+    % "btm_o2"         [-180 180]         [0 300]         cmocean('oxy')          [140 350]
+    % "omega"          [-1 1]             [0.5 1.5]       cmocean('delta')        [0.8 1.5]
+};
+V = cell2table(V, 'variablenames', {'vplt', 'vlima', 'vlim', 'vmap', 'ylim'});
+
+% One plot per variable 
+
+for iv = 1:height(V)
+
+    % Info from table
+
+    vplt = V.vplt{iv};
+    vlima = V.vlima(iv,:);
+    vlim = V.vlim(iv,:);
+    vmap = V.vmap{iv};
+
+    disp(vplt);
+
+    % Figure setup
+
+    h = plotgrid('size', [4 1], 'mar', 0.05, 'mr', 0.4, 'sp', 0.1);
+    h2 = plotgrid('size', [2 1], 'figure', h.fig, 'mar', 0.05, 'ml', 0.63);
+    h.fig.Position(3:4) = [1300 600];
+    h.fig.Color = 'w';
+    
+    % Plot anomaly map
+
+    axes(h2.ax(1));
+    worldmap(latlim, lonlim);
+    h.anom = plotmap(Grd, An.(vplt)(:,:,1));
+    set(h2.ax(1), 'clim', vlima, 'colormap', cmocean('balance'));
+    h.cb(1) = colorbar('north');
+    
+    h.anomxlbl = xlabel(h.cb(1), "Anomaly: " + string(An.t(1)), 'fontsize', 16);
+    
+    % Plot forecast map
+
+    axes(h2.ax(2));
+    worldmap(latlim, lonlim);
+    plotmap(Grd, Fc.(vplt));
+    set(h2.ax(2), 'clim', vlim, 'colormap', vmap);
+    h.cb(2) = colorbar('north');
+    xlabel(h.cb(2), 'Prediction: July 1, 2025', 'fontsize', 16);
+    
+    set(h.cb, 'axisloc', 'out', 'tickdir', 'out', 'fontsize', 14);
+    arrayfun(@(x) setm(x, 'grid', 'off', 'frame', 'off', 'meridianlabel', 'off', 'parallellabel', 'off'), h2.ax);
+    
+    % Plot indices
+
+    for ir = 1:4
+        h.idx(ir) = plotindex(h.ax(ir), Idx.t, Idx.(vplt)(:,ir), IdxFc.t, IdxFc.(vplt)(:,ir));
+        if ir == 1
+            h.leg = legendflex(h.idx(ir).lndoy(end-3:end), cellstr(string(h.idx(ir).yrplt(end-3:end))), ...
+                'ref', h.idx(ir).ax(2), 'anchor', {'ne','se'}, 'buffer', [0 0], 'nrow', 2, 'box', 'off', 'fontsize', 12);
+
+            h.leg2 = legendflex([h.idx(ir).lndaily h.idx(ir).lnsummer, h.idx(ir).lnfc], ...
+                {'Hindcast (daily)', 'Hindcast (July 1)', 'Forecast'}, ...
+                'ref', h.idx(ir).ax(1), 'anchor', {'ne','se'}, 'buffer', [0 0], 'nrow', 1, 'box', 'off', 'fontsize', 12, 'xscale', 0.5);
+
+
+        end
+
+        h.timebar(ir,1) = line([An.t(1) An.t(1)], V.ylim(iv,:), 'parent', h.idx(ir).ax(1), 'color', rgb('gold'));
+        h.timebar(ir,2) = line(doy([An.t(1) An.t(1)]), V.ylim(iv,:), 'parent', h.idx(ir).ax(2), 'color', rgb('gold'));
+    end
+    labelaxes(arrayfun(@(x) x.ax(1), h.idx), regnames, 'northwestoutsideabove', 'fontsize', 16);
+    set([h.idx.ax], 'ylim', V.ylim(iv,:));
+
+    if savefigs
+        gif(fullfile(outfol, sprintf('animated_map_index_%s.gif',vplt)), 'frame', h.fig); %, 'resolution', 150);
+    end
+
+    for it = 2:length(An.t)
+        h.anom.CData(1:end-1,1:end-1) = An.(vplt)(:,:,it);
+        for ir = 1:4
+            h.timebar(ir,1).XData = [An.t(it) An.t(it)];
+            h.timebar(ir,2).XData = doy([An.t(it) An.t(it)]);
+        end
+        h.anomxlbl.String = "Anomaly: " + string(An.t(it));
+        if savefigs
+            gif;
+        else
+            drawnow;
+        end
+    end
+
+
+end
+
+
 
 %% Subfunctions
 
