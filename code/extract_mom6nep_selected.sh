@@ -22,7 +22,8 @@ yrend=$6
 
 # Where is the MOM6-NEP output?
 
-arch_dir=/archive/e1n/fre/cefi/NEP/2024_11/NEP_nudge_spinup/gfdl.ncrc6-intel23-repro/history
+# arch_dir=/archive/e1n/fre/cefi/NEP/2024_11/NEP_nudge_spinup/gfdl.ncrc6-intel23-repro/history
+arch_dir=$7
 
 # Where will the final files be staged?
 # Note: Keeping structure similar to old ROMS processing:
@@ -31,7 +32,8 @@ arch_dir=/archive/e1n/fre/cefi/NEP/2024_11/NEP_nudge_spinup/gfdl.ncrc6-intel23-r
 #   Level 3 = more highly processed, ususually involving spatially-condensed 
 #             indices (e.g. regional average, survey rep)
 
-simname=mom6nep_hc202411
+simname=$8
+# simname=mom6nep_hc202411
 transferfol=/collab1/data_untrusted/Kelly.Kearney/${simname}/Level1-2/ 
 
 # Variables from ocean, cobalt, and ice files
