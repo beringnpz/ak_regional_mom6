@@ -56,22 +56,22 @@ for (( yr=$yrstr; yr<=$yrend; yr++ )); do
     # Ocean daily
 
     tar -xf $arch_dir/${yr}0101.nc.tar ./${yr}0101.ocean_daily.nc
-    ncks -F -O -d xh,${x1},${x2} -d yh,${y1},${y2} -v ${varo} ${yr}0101.ocean_daily.nc ${simname}_selected_daily_${yr}.nc
+    ncks -F -O -d ih,${x1},${x2} -d jh,${y1},${y2} -v ${varo} ${yr}0101.ocean_daily.nc ${simname}_selected_daily_${yr}.nc
     rm ${yr}0101.ocean_daily.nc
 
     # COBALT daily
 
     echo "   extracting COBALT variables..."
     tar -xf $arch_dir/${yr}0101.nc.tar ./${yr}0101.ocean_cobalt_daily_2d.nc
-    ncks -F -A -d xh,${x1},${x2} -d yh,${y1},${y2} -v ${varc} ${yr}0101.ocean_cobalt_daily_2d.nc ${simname}_selected_daily_${yr}.nc
+    ncks -F -A -d ih,${x1},${x2} -d jh,${y1},${y2} -v ${varc} ${yr}0101.ocean_cobalt_daily_2d.nc ${simname}_selected_daily_${yr}.nc
     rm ${yr}0101.ocean_cobalt_daily_2d.nc
 
     # Ice daily
 
     echo "   extracting ice variables..."
     tar -xf $arch_dir/${yr}0101.nc.tar ./${yr}0101.ice_daily.nc
-    ncrename -d xT,xh -d yT,yh ./${yr}0101.ice_daily.nc # renaming ice dimensions for easier processing later
-    ncks -F -A -d xh,${x1},${x2} -d yh,${y1},${y2} -v ${vari} ${yr}0101.ice_daily.nc ${simname}_selected_daily_${yr}.nc
+    ncrename -d xT,ih -d yT,jh ./${yr}0101.ice_daily.nc # renaming ice dimensions for easier processing later
+    ncks -F -A -d ih,${x1},${x2} -d jh,${y1},${y2} -v ${vari} ${yr}0101.ice_daily.nc ${simname}_selected_daily_${yr}.nc
     rm ${yr}0101.ice_daily.nc
 
     # Move to globus untrusted endopoint staging area
