@@ -39,7 +39,7 @@ transferfol=/collab1/data_untrusted/Kelly.Kearney/${simname}/Level1-2/
 # Variables from ocean, cobalt, and ice files
 
 varo="tos,tob" 
-varc="btm_o2,btm_co3_sol_arag,btm_htotal,btm_co3_ion"
+varc="btm_o2,btm_co3_sol_arag,btm_htotal,btm_co3_ion,pco2surf"
 vari="siconc"
 
 #--------------------
