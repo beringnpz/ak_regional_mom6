@@ -23,4 +23,4 @@ Data for this workflow are currently stored on the UW HPC klone machine.  Discus
 
 To use this code, clone or download a copy to a local machine.  To run scripts that access the simulation ouptut, follow instructions in the `simulation_data/data_folder_readme.md` file to create an appropriate pointer to where data can be accessed on a local machine as needed. (This is a temporary workaround for our current lack of a centralized data management option... hopefully will be improved upon soon!
 
-Note: this code is primarily provided to provide a centralized location for codevelopment of tools within the Alaska CEFI Descision Support Team.  It is definitely a work in progress and is not expected to function in a fully robust manner yet.
+Note: this code is primarily provided to provide an open and centralized location for codevelopment of tools within the Alaska CEFI Descision Support Team.  It is definitely a work in progress and is not expected to function in a fully robust manner yet.

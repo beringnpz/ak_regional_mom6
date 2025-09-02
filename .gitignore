@@ -40,3 +40,4 @@ Thumbs.db
 #######################
 *.nc
 simulation_data/data_folder.txt
+.vscode/
