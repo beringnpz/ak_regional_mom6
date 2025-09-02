@@ -42,7 +42,7 @@ function Scs = build_ocean_static_ak(opt)
 %          Dimensions: ih,jh
 %          Datatype:   single
 %          Attributes:
-%                      long_name = 'ADFG Stat Area'
+%                      long_name     = 'ADFG Stat Area'
 %   mask_bsierp_region     
 %          Size:       342x297
 %          Dimensions: ih,jh
@@ -136,12 +136,29 @@ function Scs = build_ocean_static_ak(opt)
 %                                       7) Eastern Aleutians, 
 %                                       8) Western Gulf of Alaska (inside), 
 %                                       9) Eastern Gulf of Alaska (inside)'
+%   mask_inpfc_strata      
+%          Size:       342x297
+%          Dimensions: ih,jh
+%          Datatype:   single
+%          Attributes:
+%                      long_name     = 'INPFC Area'
+%                      flag_values   = '929,939,919,959,949,6499,5699,799,299'
+%                      flag_meanings = '929) Chirikof, 
+%                                       939) Kodiak, 
+%                                       919) Shumagin, 
+%                                       959) Southeastern, 
+%                                       949) Yakutat, 
+%                                       6499) Central Aleutians, 
+%                                       5699) Eastern Aleutians, 
+%                                       799) Southern Bering Sea, 
+%                                       299) Western Aleutians'
+%   
 %   mask_nmfs_area         
 %          Size:       342x297
 %          Dimensions: ih,jh
 %          Datatype:   single
 %          Attributes:
-%                      long_name     = 'NMFS Reporting Area (Electronic Code of Federal Regulations, Part 679, Appendix A)'
+%                      long_name     = 'NMFS Refixporting Area (Electronic Code of Federal Regulations, Part 679, Appendix A)'
 %                      flag_values   = '400,508,509,512,513,514,516,517,518,519,521,523,524,530,541,542,543,550,610,620,630,640,649,650,659'
 %                      flag_meanings = '400) Chukchi Sea, 
 %                                       518) Bogoslof District,
@@ -174,7 +191,7 @@ function Scs = build_ocean_static_ak(opt)
 %          Dimensions: ih,jh
 %          Datatype:   single
 %          Attributes:
-%                      long_name = 'Bottom trawl survey strata ID'
+%                      long_name     = 'Bottom trawl survey strata ID'
 
 % Copyright 2025 Kelly Kearney
 
@@ -196,11 +213,7 @@ validateattributes(flag, {'logical'}, {'scalar'});
 
 % Data location
 
-datafolfile = fullfile(fileparts(fileparts(mfilename('fullpath'))), 'simulation_data', 'data_folder.txt');
-if ~exist(datafolfile, 'file')
-    error('No data_folder.txt file found');
-end
-datafol = fileread(datafolfile);
+datafol = cefidatafolpath;
 
 origfile = fullfile(datafol, opt.simname, "Level1-2", opt.simname+"_"+opt.origname);
 newfile  = fullfile(datafol, opt.simname, "Level1-2", opt.simname+"_"+opt.newname);
@@ -278,14 +291,12 @@ isin = ismember(S.base_layers_survey_strata{:,{'SURVEY_DEF','DESIGN_YEA'}}, S.ba
 Mask.survey_strata.val = val2mask(interpgeotable(S.base_layers_survey_strata(isin,:), staticm, "AREA_ID", 100), sz, usept, true);
 Mask.survey_strata.long_name = "Bottom trawl survey strata ID";
 
-% % INPFC strata 
-% 
-% % TODO!! Aleutian polygons are offset... wrong projection? 
-% 
-% Mask.inpfc_strata.val = val2mask(interpgeotable(S.base_layers_inpfc_strata, staticm, 'AREA_ID'), sz, usept, true);
-% Mask.inpfc_strata.long_name = "INPFC Area";
-% Mask.inpfc_strata.flag_values = S.base_layers_inpfc_strata.AREA_ID;
-% Mask.inpfc_strata.flag_meanings = S.base_layers_inpfc_strata.AREA_NAME;
+% INPFC strata 
+
+Mask.inpfc_strata.val = val2mask(interpgeotable(S.base_layers_inpfc_strata, staticm, 'AREA_ID'), sz, usept, true);
+Mask.inpfc_strata.long_name = "INPFC Area";
+Mask.inpfc_strata.flag_values = S.base_layers_inpfc_strata.AREA_ID;
+Mask.inpfc_strata.flag_meanings = S.base_layers_inpfc_strata.AREA_NAME;
 
 % BSIERP regions
 

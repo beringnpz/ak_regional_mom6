@@ -12,4 +12,4 @@ for ff in fbase:
 
     for lay in layers.name:
         tmp = gpd.read_file(fname, layer=lay)
-        tmp.to_file(f"../supporting_data/{ff}_{lay}.shp", driver="ESRI Shapefile")
+        tmp.to_file(f"../supporting_data/akgfmaps_shapefiles/{ff}_{lay}.shp", driver="ESRI Shapefile")

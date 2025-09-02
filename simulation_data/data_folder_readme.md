@@ -1,1 +1,3 @@
-To use code that relies on output data from the experiments, you need to create a file in this folder (`supporting_data/`) called `data_folder.txt`.  The file should include a single line of text pointing to the local copy or access point for simulation data to be placed.  This file is used to accomodate the work across different computers without needing to add extra data version control to the mix.
+To use code that relies on output data from the experiments, you need to create a file in this folder (`simulation_data/`) called `data_folder.txt`.  The file should include a single line of text pointing to the local copy or access point for simulation data to be placed.  This file is used to accomodate the work across different computers without needing to add extra data version control to the mix.
+
+The cefidatafolpath.m function (under `code/`) can also be used to set this path.
