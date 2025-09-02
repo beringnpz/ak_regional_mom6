@@ -109,11 +109,18 @@ for ii = 1:length(yrplt)
 
     % Read and plot bottom temps for each year
 
-    file = fullfile(opt.datafol, simname, "Level1-2", simname+"_selected_daily_" + yrplt(ii) + ".nc");
-    if exist(file, 'file')
-        t = ncdateread(file, 'time');
-        [~,imin] = min(abs(datetime(yrplt(ii),7,1) - t));
-        Tmp = ncstruct(file, 'tob', struct('time', [imin 1 1]));
+    fglob = fullfile(opt.datafol, simname, "Level1-2", simname+"_selected_daily_" + yrplt(ii) + "*.nc");
+    fname = dir(fglob);
+    nfile = length(fname);
+    fname = fullfile({fname.folder}, {fname.name});
+ 
+    if nfile > 0
+        t = ncdateread(fname, 'time');
+        [dt,imin] = min(abs(datetime(yrplt(ii),7,1) - t));
+        if dt > days(5)
+            warning('Possible gap: %s is closest time found', t(imin));
+        end
+        Tmp = ncstruct(fname, 'tob', struct('time', [imin 1 1]));
         h.p(ii) = pcolorpad(xc, yc, padend(Tmp.tob));
         shading flat;
         uistack(h.p(ii), 'bottom');

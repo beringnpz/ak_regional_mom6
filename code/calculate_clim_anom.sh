@@ -1,13 +1,13 @@
 #!/bin/bash
 #
-# Syntax: ./calculate_clim_anom.sh fcyear
+# Syntax: ./calculate_clim_anom.sh simname datafol
 #
 # Where fcyear is he last partially-completed year that will be used for the persistence forecast
 # TODO: read simfol from ../simulation_data/data_folder.txt
 
 
-if [ "$#" -ne 1 ]; then
-    echo "Script expects one input (forecast year), exiting"
+if [ "$#" -ne 3 ]; then
+    echo "Script expects 3 inputs (simname, datafol, yrcurrent), exiting"
     exit 9
 fi
 
@@ -15,11 +15,12 @@ fi
 # Setup
 #-----------------
 
-fcyear=$1 # Renaming for ease of reading
-simname=mom6nep_hc202411
+simname=$1
+datafol=$2
+
 yr1=1993
 
-simfol=../${simname}
+simfol=${datafol}/${simname}
 
 #-----------------
 # Functions
@@ -30,14 +31,16 @@ regionavg () {
   # $2 = output file
   # $3 = masking file
   
-  for reg in {1..5}; do
+  regnum=(6 47 62 78 98 143)
+
+  for reg in "${regnum[@]}"; do
 
     echo "  Region ${reg}"
   
     # Add mask variable to file
   
     cp $1 tmpo.nc
-    ncks -A -v areacello,mask_survey $3 tmpo.nc
+    ncks -A -v areacello,mask_survey_area $3 tmpo.nc
   
     # Add cold pool variables
 
@@ -46,7 +49,7 @@ regionavg () {
 
     # Calculate weighted average
   
-    ncwa -w areacello -B "mask_survey = ${reg}" -a xh,yh tmpo.nc tmpreg${reg}.nc
+    ncwa -w areacello -B "mask_survey_area = ${reg}" -a xh,yh tmpo.nc tmpreg${reg}.nc
   
     # Clean up 
   
@@ -83,56 +86,42 @@ regionavg () {
 
 climfile=${simfol}/Level3/${simname}_daily_clim_1993-2022.nc
 
+globstr="\'${simfol}/Level1-2/${simname}_selected_daily*.nc\'"
+
 if ! test -f $climfile; then
   echo "Building 1993-2022 climatology"
-  cdo -ydaymean -selyear,1993/2022 -cat '../mom6nep_hc202411/Level1-2/mom6nep_hc202411_selected_daily*.nc' $climfile
-  # cdo -ydaymean -selyear,1993/2022 -cat "${simfol}/Level1-2/$simname_selected_daily*.nc" $climfile
+  # cdo -ydaymean -selyear,1993/2022 -cat '../mom6nep_hc202411/Level1-2/mom6nep_hc202411_selected_daily*.nc' $climfile
+  cdo -ydaymean -selyear,1993/2022 -cat $globstr $climfile
 fi
 
 # Calculate daily anomaly relative to climatology
 
-for (( yr=$yr1; yr<=$fcyear; yr++ )); do
+dailyfiles=( ${simfol}/Level1-2/${simname}_selected_daily_*.nc )
+
+for nepdailyfile in "${dailyfiles[@]}"; do
   
-  nepdailyfile=${simfol}/Level1-2/${simname}_selected_daily_${yr}.nc
-  anomfile=${simfol}/Level3/${simname}_daily_anomaly_${yr}.nc
+  anomfile=${nepdailyfile/Level1-2/Level3}
+  anomfile=${anomfile/selected_daily/daily_anomaly}
 
   if ! test -f $anomfile; then
-    echo "Calculating anomalies: ${yr}"
+    echo "Calculating anomalies: ${anomfile}"
     cdo ydaysub $nepdailyfile $climfile $anomfile
   fi
 
 done
 
-# Calculate daily forecast using persistence anomaly from last time step
-
-anomfilefc=${simfol}/Level3/${simname}_daily_anomaly_${fcyear}.nc
-fcfile=${simfol}/Level3/${simname}_forecast_${fcyear}.nc
-
-if ! test -f $fcfile; then
-  echo "Calculating persistence forecast for ${fcyear}"
-
-  ntime1=$(cdo -ntime ${anomfilefc})
-  ntime2=$(cdo -ntime ${climfile})  
-
-  cdo -select,timestep=${ntime1} $anomfilefc tmp1.nc
-  cdo -select,timestep=${ntime1}/${ntime2} $climfile tmp2.nc
-
-  cdo -add tmp2.nc tmp1.nc $fcfile # order important, inherits year from first 
-  
-  rm tmp1.nc tmp2.nc
-fi
-
 # Regionally-averaged timeseries based on AK survey regions
 
-for (( yr=$yr1; yr<=$fcyear; yr++ )); do
+maskfile=${simfol}/Level1-2$/${simname}_ocean_static_ak.nc
+
+for nepdailyfile in "${dailyfiles[@]}"; do
   
-  nepdailyfile=${simfol}/Level1-2/${simname}_selected_daily_${yr}.nc
-  svyavgfile=${simfol}/Level3/${simname}_surveyregionavg_${yr}.nc
-  maskfile=${simfol}/Level1-2/ocean_static_ak.nc
+  svyavgfile=${nepdailyfile/Level1-2/Level3}
+  svyavgfile=${svyavgfile/selected_daily/surveyregionavg}
   
   if ! test -f $svyavgfile; then
   
-    echo "Calculating regional averages: ${yr}" 
+    echo "Calculating regional averages: ${svyavgfile}" 
    
     # Regional averages for all variables in file
 
@@ -140,18 +129,4 @@ for (( yr=$yr1; yr<=$fcyear; yr++ )); do
 
   fi
 done
-
-# Regional averages for forecast file
-
-svyavgfilefc=${simfol}/Level3/${simname}_surveyregionavg_forecast_${fcyear}.nc
-
-if ! test -f $svyavgfilefc; then
-  echo "Calculating regional averages for forecast: ${fcyear}" 
-   
-  # Regional averages for all variables in file
-
-  regionavg $fcfile $svyavgfilefc $maskfile
-    
-fi
-
 

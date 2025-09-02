@@ -29,6 +29,9 @@ function Scs = build_ocean_static_ak(opt)
 %               appended to <datafol>/<simname>/Level1-2/<simname>_
 %               ["ocean_static_ak.nc"]
 %
+%   datafol:    CEFI data folder path.  Default is the path returned by the
+%               cefidatafol.m function
+%
 % Output variables:
 %
 %   Scs:        ncstruct subsetting structure, holding [start count stride]
@@ -200,6 +203,7 @@ arguments
     opt.simname  {mustBeTextScalar} ="mom6nep_hc202507"
     opt.origname {mustBeTextScalar} ="ocean_static.nc"
     opt.newname  {mustBeTextScalar} ="ocean_static_ak.nc"
+    opt.datafol {mustBeTextScalar} =cefidatafolpath
 end
 
 if nargin < 1
@@ -213,10 +217,8 @@ validateattributes(flag, {'logical'}, {'scalar'});
 
 % Data location
 
-datafol = cefidatafolpath;
-
-origfile = fullfile(datafol, opt.simname, "Level1-2", opt.simname+"_"+opt.origname);
-newfile  = fullfile(datafol, opt.simname, "Level1-2", opt.simname+"_"+opt.newname);
+origfile = fullfile(opt.datafol, opt.simname, "Level1-2", opt.simname+"_"+opt.origname);
+newfile  = fullfile(opt.datafol, opt.simname, "Level1-2", opt.simname+"_"+opt.newname);
 
 %--------------------
 % Read data
