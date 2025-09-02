@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Usage: ./extract_mom6nep_selected.sh x1 x2 y1 y2 yrstr yrend
+# Usage: ./extract_mom6nep_selected.sh x1 x2 y1 y2 yrstr yrend archdir simname ddmm
 #
 # This script extracts 
 
@@ -25,6 +25,7 @@ yrend=$6
 # arch_dir=/archive/e1n/fre/cefi/NEP/2024_11/NEP_nudge_spinup/gfdl.ncrc6-intel23-repro/history
 arch_dir=$7
 
+
 # Where will the final files be staged?
 # Note: Keeping structure similar to old ROMS processing:
 #   Level 1 = direct output from model, just rearranged for easier access
@@ -42,12 +43,18 @@ varo="tos,tob"
 varc="btm_o2,btm_co3_sol_arag,btm_htotal,btm_co3_ion,pco2surf"
 vari="siconc"
 
+if [ "$#" -lt 9 ]; then
+    ddmm="0101"
+else
+    ddmm=$9
+fi
+
 #--------------------
 # Extract
 #--------------------
 
 for (( yr=$yrstr; yr<=$yrend; yr++ )); do
-# for yr in {1993..2025}; do
+
     echo $yr
 
     # Extract specific netcdf files from the tar, extract selected variables and region, delete original
@@ -55,29 +62,29 @@ for (( yr=$yrstr; yr<=$yrend; yr++ )); do
     echo "   extracting ocean variables..."
     # Ocean daily
 
-    tar -xf $arch_dir/${yr}0101.nc.tar ./${yr}0101.ocean_daily.nc
-    ncks -F -O -d ih,${x1},${x2} -d jh,${y1},${y2} -v ${varo} ${yr}0101.ocean_daily.nc ${simname}_selected_daily_${yr}.nc
-    rm ${yr}0101.ocean_daily.nc
+    tar -xf $arch_dir/${yr}${ddmm}.nc.tar ./${yr}${ddmm}.ocean_daily.nc
+    ncks -F -O -d ih,${x1},${x2} -d jh,${y1},${y2} -v ${varo} ${yr}${ddmm}.ocean_daily.nc ${simname}_selected_daily_${yr}.nc
+    rm ${yr}${ddmm}.ocean_daily.nc
 
     # COBALT daily
 
     echo "   extracting COBALT variables..."
-    tar -xf $arch_dir/${yr}0101.nc.tar ./${yr}0101.ocean_cobalt_daily_2d.nc
-    ncks -F -A -d ih,${x1},${x2} -d jh,${y1},${y2} -v ${varc} ${yr}0101.ocean_cobalt_daily_2d.nc ${simname}_selected_daily_${yr}.nc
-    rm ${yr}0101.ocean_cobalt_daily_2d.nc
+    tar -xf $arch_dir/${yr}${ddmm}.nc.tar ./${yr}${ddmm}.ocean_cobalt_daily_2d.nc
+    ncks -F -A -d ih,${x1},${x2} -d jh,${y1},${y2} -v ${varc} ${yr}${ddmm}.ocean_cobalt_daily_2d.nc ${simname}_selected_daily_${yr}.nc
+    rm ${yr}${ddmm}.ocean_cobalt_daily_2d.nc
 
     # Ice daily
 
     echo "   extracting ice variables..."
-    tar -xf $arch_dir/${yr}0101.nc.tar ./${yr}0101.ice_daily.nc
-    ncrename -d xT,ih -d yT,jh ./${yr}0101.ice_daily.nc # renaming ice dimensions for easier processing later
-    ncks -F -A -d ih,${x1},${x2} -d jh,${y1},${y2} -v ${vari} ${yr}0101.ice_daily.nc ${simname}_selected_daily_${yr}.nc
-    rm ${yr}0101.ice_daily.nc
+    tar -xf $arch_dir/${yr}${ddmm}.nc.tar ./${yr}${ddmm}.ice_daily.nc
+    ncrename -d xT,ih -d yT,jh ./${yr}${ddmm}.ice_daily.nc # renaming ice dimensions for easier processing later
+    ncks -F -A -d ih,${x1},${x2} -d jh,${y1},${y2} -v ${vari} ${yr}${ddmm}.ice_daily.nc ${simname}_selected_daily_${yr}.nc
+    rm ${yr}${ddmm}.ice_daily.nc
 
     # Move to globus untrusted endopoint staging area
     
     echo "   moving to staging folder..."
 
-    mv ${simname}_selected_daily_${yr}.nc $transferfol
+    mv ${simname}_selected_daily_${yr}${ddmm}.nc $transferfol
 
 done
