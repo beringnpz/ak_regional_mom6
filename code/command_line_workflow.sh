@@ -28,5 +28,6 @@
 
 # Run on UW Hyak-klone:
 
-./calculate_clim_anom.sh mom6nep_hc202507 /gscratch/cicoes/GR011846_reem/CEFI_data
+# ./calculate_clim_anom.sh mom6nep_hc202507 /gscratch/cicoes/GR011846_reem/CEFI_data
+./calculate_persis_forecast.sh 20250101 101 mom6nep_hc202507 /gscratch/cicoes/GR011846_reem/CEFI_data
 

@@ -28,14 +28,15 @@ simfol=${datafol}/${simname}
 
 anomfilefc=${simfol}/Level3/${simname}_daily_anomaly_${filedatestr}.nc
 
-if (( $tindex -eq 0 )); then
+if (( $tindex == 0 )); then
     ntime1=$(cdo -ntime ${anomfilefc})
   else
-    ntime1=$fcdoy
+    ntime1=$tindex
 fi
 
 fcdatestr=$(cdo -showdate -select,timestep=${ntime1} $anomfilefc)
-fcdatestr=${fcdatestr//-/}
+fcdatestr=${fcdatestr//-/} # remove hyphens ...
+fcdatestr=${fcdatestr// /} # ... and spaces
 
 fcfile=${simfol}/Level3/${simname}_forecast_${fcdatestr}.nc
 
@@ -48,7 +49,6 @@ climfile=${simfol}/Level3/${simname}_daily_clim_1993-2022.nc
 # calendar year
 
 if ! test -f $fcfile; then
-  echo "Calculating persistence forecast for ${fcyear}"
 
   ntime2=$(cdo -ntime ${climfile})  
 
