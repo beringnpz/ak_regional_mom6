@@ -24,9 +24,9 @@
 # Run on GFDL PPAN analysis cluster:
 
 # ./extract_mom6nep_selected.sh 1 342 447 743 1993 2025 /archive/e1n/fre/cefi/NEP/2025_07/NEP10k_202507_physics_bgc/gfdl.ncrc6-intel23-repro/history mom6nep_hc202507
-./extract_mom6nep_selected.sh 1 342 447 743 2025 2025 /archive/e1n/fre/cefi/NEP/2025_07/NEP10k_202507_physics_bgc/gfdl.ncrc6-intel23-repro/history mom6nep_hc202507 0701
+# ./extract_mom6nep_selected.sh 1 342 447 743 2025 2025 /archive/e1n/fre/cefi/NEP/2025_07/NEP10k_202507_physics_bgc/gfdl.ncrc6-intel23-repro/history mom6nep_hc202507 0701
 
 # Run on UW Hyak-klone:
 
-# ./calculate_clim_anom.sh mom6nep_hc202507 /gscratch/cicoes/GR011846_reem/CEFI_data/ 2025
+./calculate_clim_anom.sh mom6nep_hc202507 /gscratch/cicoes/GR011846_reem/CEFI_data
 

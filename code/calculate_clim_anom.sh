@@ -6,8 +6,8 @@
 # TODO: read simfol from ../simulation_data/data_folder.txt
 
 
-if [ "$#" -ne 3 ]; then
-    echo "Script expects 3 inputs (simname, datafol, yrcurrent), exiting"
+if [ "$#" -ne 2 ]; then
+    echo "Script expects 2 inputs (simname, datafol), exiting"
     exit 9
 fi
 
@@ -31,28 +31,29 @@ regionavg () {
   # $2 = output file
   # $3 = masking file
   
-  regnum=(6 47 62 78 98 143)
+  regnum=(6 47 52 78 98 143)
 
   for reg in "${regnum[@]}"; do
 
     echo "  Region ${reg}"
   
     # Add mask variable to file
-  
+
     cp $1 tmpo.nc
     ncks -A -v areacello,mask_survey_area $3 tmpo.nc
   
     # Add cold pool variables
-
+ 
     cdo -expr,'cpool2p0=tob<2.0; cpool1p0=tob<1.0; cpool0p0=tob<0.0' $1 tmpcp.nc
-    ncks -A tmpcp.nc tmpo.nc
+    ncks -A -v areacello,mask_survey_area $3 tmpcp.nc
 
     # Calculate weighted average
-  
-    ncwa -w areacello -B "mask_survey_area = ${reg}" -a xh,yh tmpo.nc tmpreg${reg}.nc
+
+    ncwa    -w areacello -B "mask_survey_area = ${reg}" -a ih,jh tmpo.nc  tmpreg${reg}.nc
+    ncwa -A -w areacello -B "mask_survey_area = ${reg}" -a ih,jh tmpcp.nc tmpreg${reg}.nc
   
     # Clean up 
-  
+
     rm tmpo.nc tmpcp.nc
   done
   
@@ -86,12 +87,12 @@ regionavg () {
 
 climfile=${simfol}/Level3/${simname}_daily_clim_1993-2022.nc
 
-globstr="\'${simfol}/Level1-2/${simname}_selected_daily*.nc\'"
+#globstr="\'${simfol}/Level1-2/${simname}_selected_daily*.nc\'"
 
 if ! test -f $climfile; then
   echo "Building 1993-2022 climatology"
-  # cdo -ydaymean -selyear,1993/2022 -cat '../mom6nep_hc202411/Level1-2/mom6nep_hc202411_selected_daily*.nc' $climfile
-  cdo -ydaymean -selyear,1993/2022 -cat $globstr $climfile
+  cdo -ydaymean -selyear,1993/2022 -cat '/gscratch/cicoes/GR011846_reem/CEFI_data/mom6nep_hc202507/Level1-2/mom6nep_hc202507_selected_daily*.nc' $climfile
+  #cdo -ydaymean -selyear,1993/2022 -cat $globstr $climfile
 fi
 
 # Calculate daily anomaly relative to climatology
@@ -112,7 +113,7 @@ done
 
 # Regionally-averaged timeseries based on AK survey regions
 
-maskfile=${simfol}/Level1-2$/${simname}_ocean_static_ak.nc
+maskfile=${simfol}/Level1-2/${simname}_ocean_static_ak.nc
 
 for nepdailyfile in "${dailyfiles[@]}"; do
   
