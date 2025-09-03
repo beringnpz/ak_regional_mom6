@@ -22,5 +22,7 @@ if ~exist(datafolfile, 'file')
     fprintf(fid, '%s', datafol);
     fclose(fid);
 else
-    datafol = fileread(datafolfile);
+    fid = fopen(datafolfile, 'r');
+    datafol = fgetl(fid);
+    fclose(fid);
 end
