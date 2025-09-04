@@ -52,18 +52,31 @@ regionavg () {
 # Apply to files
 #-------------------
 
+simfol=${datafol}/${simname}
+
 # Static file with masking variables
 
 maskfile=${simfol}/Level1-2/${simname}_ocean_static_ak.nc
 
-# Apply to daily output files
+# Apply to daily output, forecast, anomaly, and climatology files
 
-dailyfiles=( ${simfol}/Level1-2/${simname}_selected_daily_*.nc )
+files = (${simfol}/Level1-2/${simname}_selected_daily_*.nc
+         ${simfol}/Level3/${simname}_forecast_*.nc
+         ${simfol}/Level3/${simname}_daily_anomaly*.nc
+         ${simfol}/Level3/${simname}_daily_clim*.nc
+        )
 
-for nepdailyfile in "${dailyfiles[@]}"; do
+# dailyfiles=( ${simfol}/Level1-2/${simname}_selected_daily_*.nc )
+
+if [ ! -d "${simfol}/Level3/surveyregionavg" ]; then
+    mkdir "${simfol}/Level3/surveyregionavg"
+fi
+
+for fname in "${files[@]}"; do
   
-  svyavgfile=${nepdailyfile/Level1-2/Level3}
-  svyavgfile=${svyavgfile/selected_daily/surveyregionavg}
+  svyavgfile=${fname/Level1-2/Level3}
+  svgavgfile=${svyavgfile/Level3/Level3\/surveyregionavg}
+  svyavgfile=${svyavgfile/.nc/.svyreg.nc}
   
   if ! test -f $svyavgfile; then
   
@@ -71,21 +84,25 @@ for nepdailyfile in "${dailyfiles[@]}"; do
    
     # Regional averages for all variables in file
 
-    regionavg $nepdailyfile $svyavgfile $maskfile
+    regionavg $fname $svyavgfile $maskfile
 
   fi
 done
 
-# Apply to forecast files
-# TODO: revisit after updates to calculate_persis_forecast
+# mv ${simfol}/Level3/*.svyreg.nc 
 
-svyavgfilefc=${simfol}/Level3/${simname}_surveyregionavg_forecast_${fcyear}.nc
+# # Apply to forecast files
+# # TODO: revisit after updates to calculate_persis_forecast
 
-if ! test -f $svyavgfilefc; then
-  echo "Calculating regional averages for forecast: ${fcyear}" 
+# fcfiles=( ${simfol}/Level3/${simname}_forecast_*.nc )
+
+# # svyavgfilefc=${simfol}/Level3/${simname}__*.nc)
+
+# if ! test -f $svyavgfilefc; then
+#   echo "Calculating regional averages for forecast: ${fcyear}" 
    
-  # Regional averages for all variables in file
+#   # Regional averages for all variables in file
 
-  regionavg $fcfile $svyavgfilefc $maskfile
+#   regionavg $fcfile $svyavgfilefc $maskfile
     
-fi
+# fi
