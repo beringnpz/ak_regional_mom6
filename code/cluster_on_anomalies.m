@@ -3,6 +3,7 @@ function [h, Cdata] = cluster_on_anomalies(simname, mmdd, opt)
 arguments
     simname {mustBeTextScalar}
     mmdd (1,2) {mustBeInteger}
+    opt.ndays =1
     opt.staticname {mustBeTextScalar} =simname+"_ocean_static_ak.nc"
     opt.datafol {mustBeTextScalar} =cefidatafolpath
     opt.yr {mustBeInteger, mustBeVector} =(1993:year(datetime('today')))
@@ -54,9 +55,13 @@ if isempty(opt.Cdata)
         % Find time index corresponding to clustering target date
     
         t = ncdateread(fanom, 'time');
+
         tidx = interp1(t, 1:length(t), datetime(opt.yr(iy), mmdd(1), mmdd(2)), 'nearest');
     
-        Cdata(iy) = ncstruct(fanom, struct('time', [tidx 1 1]), opt.vars{:});
+        Cdata(iy) = ncstruct(fanom, struct('time', [tidx opt.ndays 1]), opt.vars{:});
+        if opt.ndays>1
+            Cdata(iy) = structfun(@(x) nanmean(x,3), Cdata(iy), 'uni', 0);
+        end
     
     end
 else
