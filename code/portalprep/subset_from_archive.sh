@@ -89,6 +89,11 @@ while [[ $# -gt 0 ]]; do
       shift # past argument
       shift # past value
       ;;
+    --archdir)
+      arch_dir=$2
+      shift
+      shift
+      ;;
     --region)
       region=$2
       shift
@@ -131,14 +136,19 @@ done
 # 2 u-points, and 2 v-points.  For simplicity, I'm not allowing subsets that
 # don't include at least one h-point.
 
-if [-z ${iq1}] ; then
+di=$((iq2-iq1))
+dj=$((jq2-jq1))
+
+if !((${#iq1[@]})); then # iq1 not set
     subsetflag=0
     subdomainstr="full"
-elif [(((iq2-iq1)) < 1 ) || (((jq2-jq1)) < 1 )] ; then
-    echo "Subregion must span at least one h-point" >&2
+elif  (( di < 1 )) || (( dj < 1 )) ; then
+    echo "Subregion must span at least one h-point"
     exit 1
 else
     subdomainstr="iq${iq1}-${iq2}jq${jq1}-${jq2}"
+    ih2=$((iq2-1))
+    jh2=$((jq2-1))
     subsetflag=1
 fi
 
@@ -146,7 +156,7 @@ for (( yr=$yrstr; yr<=$yrend; yr++ )); do
 
     echo $yr
 
-    for ((i=0;i<${#ftype[@]};i++)); do
+    for (( i=0; i<${#ftype[@]}; i++ )); do
 
         echo "   extracting variables from ${ftype[$i]}..."
 
@@ -157,25 +167,26 @@ for (( yr=$yrstr; yr<=$yrend; yr++ )); do
         # Rename dimensions as needed (note: this does not change the values 
         # of any coordinate variables associated with the dimensions!)
 
-        ncrename -d xT,ih  -d yT,jh \
-                 -d xTe,iq -d yTe,jq \
-                 -d xh,ih  -d yh,jh \
-                 -d xq,iq  -d yq,jq ./${yr}${mmdd}.${ftype[$i]}.nc
+        ncrename -d .xT,ih  -d .yT,jh \
+                 -d .xTe,iq -d .yTe,jq \
+                 -d .xh,ih  -d .yh,jh \
+                 -d .xq,iq  -d .yq,jq ./${yr}${mmdd}.${ftype[$i]}.nc
 
         # Extract relevant variables using the specified regional subset
 
-        if [subsetflag -eq 1]; then
+        if [ "${subsetflag}" -eq 1 ]; then
+
             ncks -O -d iq,${iq1},${iq2} \
                     -d jq,${jq1},${jq2} \
-                    -d ih,${iq1},${((iq2-1))} \
-                    -d jh,${jq1},${((jq2-1))} \
+                    -d ih,${iq1},${ih2} \
+                    -d jh,${jq1},${jh2} \
                     -v ${varstr[$i]} \
                     ${yr}${mmdd}.${ftype[$i]}.nc \
-                    ${ppfol}/${ftype[$i]}.${region}.${subdomainstr}.hcast.${release}.${yr}${mmdd}.nc
+                    ${ppfol}/${region}.${subdomainstr}.hcast.${release}.${yr}${mmdd}.${ftype[$i]}.nc
         else
             ncks -O -v ${varstr[$i]} \
                     ${yr}${mmdd}.${ftype[$i]}.nc \
-                    ${ppfol}/${ftype[$i]}.${region}.${subdomainstr}.hcast.${release}.${yr}${mmdd}.nc
+                    ${ppfol}/${region}.${subdomainstr}.hcast.${release}.${yr}${mmdd}.${ftype[$i]}.nc
         fi
 
         # Delete untarred original (cleanup), move new file to 
@@ -203,4 +214,5 @@ for (( yr=$yrstr; yr<=$yrend; yr++ )); do
 
         # mv ${simname}_selected_daily_${yr}${mmdd}.nc $transferfol
 
+    done
 done
