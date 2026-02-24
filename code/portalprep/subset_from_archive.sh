@@ -174,20 +174,36 @@ for (( yr=$yrstr; yr<=$yrend; yr++ )); do
 
         # Extract relevant variables using the specified regional subset
 
+        dstr=""
         if [ "${subsetflag}" -eq 1 ]; then
 
-            ncks -O -d iq,${iq1},${iq2} \
-                    -d jq,${jq1},${jq2} \
-                    -d ih,${iq1},${ih2} \
-                    -d jh,${jq1},${jh2} \
-                    -v ${varstr[$i]} \
-                    ${yr}${mmdd}.${ftype[$i]}.nc \
-                    ${ppfol}/${region}.${subdomainstr}.hcast.${release}.${yr}${mmdd}.${ftype[$i]}.nc
-        else
-            ncks -O -v ${varstr[$i]} \
-                    ${yr}${mmdd}.${ftype[$i]}.nc \
-                    ${ppfol}/${region}.${subdomainstr}.hcast.${release}.${yr}${mmdd}.${ftype[$i]}.nc
+            # ncks annoyingly doesn't support the only-if-exists -d option of 
+            # ncrename, so we have to check for dimensions
+
+            if cdo -xsinfon ${yr}${mmdd}.${ftype[$i]}.nc | grep -q " iq : "; then
+              dstr="${dstr} -d iq,${iq1},${iq2}"
+            fi
+            if cdo -xsinfon ${yr}${mmdd}.${ftype[$i]}.nc | grep -q " jq : "; then
+              dstr="${dstr} -d jq,${jq1},${jq2}"
+            fi
+            if cdo -xsinfon ${yr}${mmdd}.${ftype[$i]}.nc | grep -q " ih : "; then
+              dstr="${dstr} -d ih,${iq1},${ih2}"
+            fi
+            if cdo -xsinfon ${yr}${mmdd}.${ftype[$i]}.nc | grep -q " jh : "; then
+              dstr="${dstr} -d jh,${iq1},${ih2}"
+            fi
+
         fi
+
+        ncks -O ${dstr} \
+                -v ${varstr[$i]} \
+                ${yr}${mmdd}.${ftype[$i]}.nc \
+                ${ppfol}/${region}.${subdomainstr}.hcast.${release}.${yr}${mmdd}.${ftype[$i]}.nc
+        # else
+        #     ncks -O -v ${varstr[$i]} \
+        #             ${yr}${mmdd}.${ftype[$i]}.nc \
+        #             ${ppfol}/${region}.${subdomainstr}.hcast.${release}.${yr}${mmdd}.${ftype[$i]}.nc
+        # fi
 
         # Delete untarred original (cleanup), move new file to 
 

@@ -53,6 +53,7 @@
                          --mmdd 0701 \
                          --archdir /archive/e1n/fre/cefi/NEP/2025_07/NEP10k_202507_physics_bgc/gfdl.ncrc6-intel23-repro/history \
                          --release e202507 \
+                         --ppdir test_files \
                          ocean_daily tos,tob \
                          ocean_cobalt_daily_2d btm_o2,btm_co3_sol_arag,btm_htotal,btm_co3_ion,pco2surf \
                          ice_daily siconc
