@@ -180,17 +180,17 @@ for (( yr=$yrstr; yr<=$yrend; yr++ )); do
             # ncks annoyingly doesn't support the only-if-exists -d option of 
             # ncrename, so we have to check for dimensions
 
-            if cdo -xsinfon ${yr}${mmdd}.${ftype[$i]}.nc | grep -q " iq : "; then
+            if ncdump -h ${yr}${mmdd}.${ftype[$i]}.nc | grep -q "iq = "; then
               dstr="${dstr} -d iq,${iq1},${iq2}"
             fi
-            if cdo -xsinfon ${yr}${mmdd}.${ftype[$i]}.nc | grep -q " jq : "; then
+            if ncdump -h ${yr}${mmdd}.${ftype[$i]}.nc | grep -q "jq = "; then
               dstr="${dstr} -d jq,${jq1},${jq2}"
             fi
-            if cdo -xsinfon ${yr}${mmdd}.${ftype[$i]}.nc | grep -q " ih : "; then
+            if ncdump -h ${yr}${mmdd}.${ftype[$i]}.nc | grep -q "ih = "; then
               dstr="${dstr} -d ih,${iq1},${ih2}"
             fi
-            if cdo -xsinfon ${yr}${mmdd}.${ftype[$i]}.nc | grep -q " jh : "; then
-              dstr="${dstr} -d jh,${iq1},${ih2}"
+            if ncdump -h ${yr}${mmdd}.${ftype[$i]}.nc | grep -q "jh = "; then
+              dstr="${dstr} -d jh,${jq1},${jh2}"
             fi
 
         fi
@@ -199,36 +199,10 @@ for (( yr=$yrstr; yr<=$yrend; yr++ )); do
                 -v ${varstr[$i]} \
                 ${yr}${mmdd}.${ftype[$i]}.nc \
                 ${ppfol}/${region}.${subdomainstr}.hcast.${release}.${yr}${mmdd}.${ftype[$i]}.nc
-        # else
-        #     ncks -O -v ${varstr[$i]} \
-        #             ${yr}${mmdd}.${ftype[$i]}.nc \
-        #             ${ppfol}/${region}.${subdomainstr}.hcast.${release}.${yr}${mmdd}.${ftype[$i]}.nc
-        # fi
 
         # Delete untarred original (cleanup), move new file to 
 
         rm ${yr}${mmdd}.${ftype[$i]}.nc
-
-        # # COBALT daily
-
-        # echo "   extracting COBALT variables..."
-        # tar -xf $arch_dir/${yr}${mmdd}.nc.tar ./${yr}${mmdd}.ocean_cobalt_daily_2d.nc
-        # ncks -F -A -d ih,${x1},${x2} -d jh,${y1},${y2} -v ${varc} ${yr}${mmdd}.ocean_cobalt_daily_2d.nc ${simname}_selected_daily_${yr}${mmdd}.nc
-        # rm ${yr}${mmdd}.ocean_cobalt_daily_2d.nc
-
-        # # Ice daily
-
-        # echo "   extracting ice variables..."
-        # tar -xf $arch_dir/${yr}${mmdd}.nc.tar ./${yr}${mmdd}.ice_daily.nc
-        # ncrename -d xT,ih -d yT,jh ./${yr}${mmdd}.ice_daily.nc # renaming ice dimensions for easier processing later
-        # ncks -F -A -d ih,${x1},${x2} -d jh,${y1},${y2} -v ${vari} ${yr}${mmdd}.ice_daily.nc ${simname}_selected_daily_${yr}${mmdd}.nc
-        # rm ${yr}${mmdd}.ice_daily.nc
-
-        # Move to globus untrusted endopoint staging area
-        
-        # echo "   moving to staging folder..."
-
-        # mv ${simname}_selected_daily_${yr}${mmdd}.nc $transferfol
 
     done
 done
