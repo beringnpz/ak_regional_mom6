@@ -1,20 +1,20 @@
-function h = animateromsrho(grdfile, bhis, this, varargin) %bsta, tsta, slat, slon)
+function h = animatemom6(grdfile, bhis, this, varargin) %bsta, tsta, slat, slon)
 %ANIMATEROMSRHO Plot interactive version of rho variables
 %
-% animateromsrho(grdfile, bhis, this)
-% animateromsrho(Grd,     bhis, this)
+% animatemom6(grdfile, bhis, this)
+% animatemom6(Grd,     bhis, this)
 % h = animateromsrho(Grd, bhis, this, p1, v1, ...)
 %
 % This function creates an interactive viewer that animates the spatial
-% distriubtion of any ROMS rho variable.
+% distriubtion of any MOM6 h-point variable
 %
 % Input variables:
 %
-%   grdfile:    path to roms grid file
+%   grdfile:    path to MOM6 static file
 %
-%   Grd:        ROMS grid file structure array (see ncstruct)
+%   Grd:        MOM6 static file structure array (see ncstruct)
 %
-%   bhis:       nxi x neta x nt array of values to be animated
+%   bhis:       nih x njh x nt array of values to be animated
 %
 %   this:       nt x 1 array of datetimes corresponding to values to be
 %               animated
@@ -34,7 +34,9 @@ function h = animateromsrho(grdfile, bhis, this, varargin) %bsta, tsta, slat, sl
 %   tsta:       btsta x 1 array, datestimes corresponding to bsta
 %               timeseries
 %
-%   
+% Output variables:
+%
+%   h:          1x1 structure of graphics handles   
 
 % Copyright 2016 Kelly Kearney
 

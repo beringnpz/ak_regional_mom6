@@ -1,4 +1,97 @@
 function [A, Grd] = akmapprep(simname, opt)
+%AKMAPPREP Calulate map-related parameters
+%
+% [A, Grd] = akmapprep(simname, opt)
+%
+% This function reads in grid information and does some preliminary
+% calculations to assist in plotting MOM6-based maps for the Alaska region.
+%
+% Input variables:
+%
+%   simname:    name of simulation, used to locate output data files.
+%
+% Optional input variables:
+%
+%   staticname: base name of static file, assumed to follow the naming
+%               scheme <datafol>/<simname>/Level1-2/<staticname>.
+%               ["<simname>_ocean_static_ak.nc"]
+%
+%   datafol:    CEFI data folder path.  Default is the path returned by the
+%               cefidatafol.m function
+%
+%   maskvar:    masking variable (in static collection) used to set map
+%               latitude and longitude limits.  The range will include all
+%               grid cell where maskvar == maskval.
+%
+%   maskval:    masking variable value used to set map latitude and
+%               longitude limits. The range will include all grid cell
+%               where maskvar == maskval. 
+%
+% Output variables:
+%
+%   A:          1x1 structure holding the following fields:
+%
+%               xc:     x-coordinates of grid corner points, projected
+%                       using the default worldmap option for the indicated
+%                       lat/lon limits
+%
+%               yc:     y-coordinates of grid corner points, projected
+%                       using the default worldmap option for the indicated
+%                       lat/lon limits
+%
+%               bx:     x-coordinate of projected coastline border polygon
+%
+%               by:     y-coordinate of projected coastline border polygon
+%
+%               b:      projected border polygon polyshape objected
+%
+%               sx:     x-coordinate of projected EBS survey region polygon
+%
+%               sy:     y-coordinate of projected EBS survey region polygon
+%
+%               latlim: 1x2 array, latitude limits of selected mask
+%
+%               lonlim: 1x2 array, longitude limits of selected mask
+%
+%               addboxmap: function handle to create a boxed-out worldmap
+%                       (see boxworldmap) encompassing the mask region
+%
+%   Grd:        1x1 structure with grid-related static variables
+%
+%               geolat:             latitude of middle h-points
+%
+%               geolat_c:           latitude of corner q-points
+%
+%               geolon:             longitude of middle h-points
+%
+%               geolon_c:           longitude of corner q-points
+%
+%               mask_esr_area:      ESR areas: 
+%                                   1) Aleutian Islands, 
+%                                   2) Arctic, 
+%                                   3) Eastern Bering Sea, 
+%                                   4) Gulf of Alaska'
+%
+%               mask_survey_area:   Survey areas:
+%                                   6)   Chukchi Sea Trawl Survey (2012), 
+%                                   47)  Gulf of Alaska Bottom Trawl Survey
+%                                        (2025) 
+%                                   52)  Aleutian Islands Bottom Trawl
+%                                        Survey (1991) 
+%                                   78)  Eastern Bering Sea Slope Bottom
+%                                        Trawl Survey (2023) 
+%                                   98)  Eastern Bering Crab/Groundfish
+%                                        Bottom Trawl Survey (2022) 
+%                                   143) Northern Bering Sea
+%                                        Crab/Groundfish Survey - Eastern
+%                                        Bering Sea Shelf Survey Extension
+%                                        (2022)'
+%
+%               mask_survey_strata: Bottom trawl survey strata ID
+%
+%               wet:                ocean mask (1=water, 0=land)
+
+% Copyright 2026 Kelly Kearney
 
 arguments
     simname {mustBeTextScalar}
@@ -39,7 +132,6 @@ issebs = Grd.mask_survey_area == 98 & Grd.mask_survey_strata <= 62;
 
 warnstate = warning('off', 'MATLAB:polyshape:repairedBySimplify');
 bp = polyshape(wrapTo360([blon{:}]), [blat{:}]);
-warning(warnstate);
 
 % Projection setup
 
@@ -52,6 +144,8 @@ close(hfig);
 [bx,by] = projfwd(m, bp.Vertices(:,2), bp.Vertices(:,1));
 b = polyshape(bx,by);
 [sx, sy] = projfwd(m, slat, slon);
+
+warning(warnstate);
 
 % Output
 

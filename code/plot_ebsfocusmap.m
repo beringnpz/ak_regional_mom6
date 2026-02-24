@@ -80,19 +80,7 @@ end
 % Setup
 %--------------------
 
-% Read relevant static file variables
-
-staticfile = fullfile(opt.datafol, simname, "Level1-2", opt.staticname);
-Grd = ncstruct(staticfile, 'geolat', 'geolon', 'geolat_c', 'geolon_c', ...
-    'mask_esr_area', 'mask_survey_strata', 'mask_survey_area', 'wet');
-
-gsz = size(Grd.geolat);
-
-% EBS region
-
-isebs = Grd.mask_esr_area == 3;
-latlim = minmax(Grd.geolat(isebs), 'expand');
-lonlim = minmax(Grd.geolon(isebs), 'expand');
+A = akmapprep(simname);
 
 % Years to plot
 
@@ -103,33 +91,6 @@ switch opt.yrfilter
         yrplt = yrcurrent - (19:-1:0);
 end
 nyr = length(yrplt);
-
-% Map decor data: borders, survey region
-
-issebs = Grd.mask_survey_area == 98 & Grd.mask_survey_strata <= 62;
-[slon,slat] = mask2poly(Grd.geolon_c, Grd.geolat_c, issebs);
-
-[blat, blon] = deal(cell(1,2));
-[blat{1}, blon{1}] = borders('alaska');
-[blat{2}, blon{2}] = borders('russia');
-
-warnstate = warning('off', 'MATLAB:polyshape:repairedBySimplify');
-bp = polyshape(wrapTo360([blon{:}]), [blat{:}]);
-warning(warnstate);
-
-% Projection setup
-
-w = warning('off', 'map:projections:notStandardProjection');
-
-hfig = figure('visible', 'off');
-hb = boxworldmap(latlim, lonlim, 'latgrid', 55:5:60, 'longrid', 180:10:200);
-m = getm(hb.ax);
-close(hfig);
-
-[xc,yc] = projfwd(m, Grd.geolat_c, Grd.geolon_c);
-[bx,by] = projfwd(m, bp.Vertices(:,2), bp.Vertices(:,1));
-b = polyshape(bx,by);
-[sx, sy] = projfwd(m, slat, slon);
 
 %--------------------
 % Plot
@@ -158,7 +119,7 @@ for ii = 1:nyr
     % Box-ed map axis
 
     axes(h.ax(ii));
-    h.b(ii) = boxworldmap(latlim, lonlim, 'latgrid', 55:5:60, 'longrid', 180:10:200);
+    h.b(ii) = boxworldmap(A.latlim, A.lonlim, 'latgrid', 55:5:60, 'longrid', 180:10:200);
 
     % Read and plot bottom temps for each year
 
@@ -179,15 +140,15 @@ for ii = 1:nyr
             warning('Possible gap: %s is closest time found', t(imin));
         end
         Tmp = ncstruct(fname, opt.var, struct('time', [imin 1 1]));
-        h.p(ii) = pcolorpad(xc, yc, padend(Tmp.(opt.var)));
+        h.p(ii) = pcolorpad(A.xc, A.yc, padend(Tmp.(opt.var)));
         shading flat;
         uistack(h.p(ii), 'bottom');
     end
 
     % Add land borders and survey region polygon
 
-    plot(h.ax(ii), bx, by, 'color', rgb('gray'));
-    plot(h.ax(ii), sx, sy, 'k');
+    plot(h.ax(ii), A.bx, A.by, 'color', rgb('gray'));
+    plot(h.ax(ii), A.sx, A.sy, 'k');
     set([h.b(ii).lblpar; h.b(ii).lblmer], 'visible', 'off');
 end
 
@@ -208,8 +169,6 @@ end
 h.cb = colorbar(h.ax(end,end), opt.cbloc);
 
 set(h.ax(length(yrplt)+1:end), 'visible', 'off');
-
-warning(w);
 
 end
 
