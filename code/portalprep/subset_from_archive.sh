@@ -235,39 +235,45 @@ for (( yr=$yrstr; yr<=$yrend; yr++ )); do
         uflag=0
         vflag=0
 
-        IFS=',' read -ra varnames <<< "${varstr}"
+        if [[ "${varstr}" == *","*  ]]; then
+	  IFS=',' read -ra varnames <<< "${varstr}"
+	else 
+          varnames=( "${varstr}" )
+	fi
         for vv in "${varnames[@]}"; do
+
           if ncdump -h ${newfile} | grep " ${vv}(" | grep -q "jh, ih)"; then # h-variable
-            ncatted -O coordinates,${vv},c,c,"geolat geolon" ${newfile}
+	    ncatted -O -a coordinates,${vv},c,c,"geolat geolon" ${newfile}
             hflag=1
           fi
           if ncdump -h ${newfile} | grep " ${vv}(" | grep -q "jq, iq)"; then # c-variable
-            ncatted -O coordinates,${vv},c,c,"geolat_c geolon_c" ${newfile}
+            ncatted -O -a coordinates,${vv},c,c,"geolat_c geolon_c" ${newfile}
             cflag=1
           fi
           if ncdump -h ${newfile} | grep " ${vv}(" | grep -q "jh, iq)"; then # u-variable
-            ncatted -O coordinates,${vv},c,c,"geolat_u geolon_u" ${newfile}
+            ncatted -O -a coordinates,${vv},c,c,"geolat_u geolon_u" ${newfile}
             uflag=1
           fi
           if ncdump -h ${newfile} | grep " ${vv}(" | grep -q "jq, ih)"; then # v-variable
-            ncatted -O coordinates,${vv},c,c,"geolat_v geolon_v" ${newfile}
+            ncatted -O -a coordinates,${vv},c,c,"geolat_v geolon_v" ${newfile}
             vflag=1
           fi
+
         done
 
         # Append the coordinate variables as needed
 
         if ((${#coordfile[@]})); then # if coordfile was passed
-          if hflag; then
+          if [ "${hflag}" -eq 1 ]; then
             ncks -A -v geolat,geolon ${coordfile} ${newfile}
           fi
-          if cflag; then
+          if [ "${cflag}" -eq 1 ]; then
             ncks -A -v geolat_c,geolon_c ${coordfile} ${newfile}
           fi
-          if uflag; then
+          if [ "${uflag}" -eq 1 ]; then
             ncks -A -v geolat_u,geolon_u ${coordfile} ${newfile}
           fi
-          if vflag; then
+          if [ "${vflag}" -eq 1 ]; then
             ncks -A -v geolat_v,geolon_v ${coordfile} ${newfile}
           fi
         fi
