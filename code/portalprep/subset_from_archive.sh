@@ -222,11 +222,13 @@ for (( yr=$yrstr; yr<=$yrend; yr++ )); do
                 ${yr}${mmdd}.${ftype[$i]}.nc \
                 ${newfile}
 
-        # Delete untarred original (cleanup), move new file to 
+        # (cleanup) delete untarred original
 
         rm ${yr}${mmdd}.${ftype[$i]}.nc
 
         # Determine which grid each variable is on and set coordinate attribute
+        # (using create mode, so if coordinate attribute already exists, no
+        # modifications are made)
 
         hflag=0
         cflag=0
