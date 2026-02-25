@@ -36,6 +36,8 @@
 #--------------------
 
 # Run on GFDL PPAN analysis cluster:
+# 1993-2025: 0101
+# 2025: 0701
 
 # ./subset_from_archive.sh --region nep \
 #                          --subdomain 0 342 446 743 \
@@ -47,14 +49,20 @@
 #                          ocean_cobalt_daily_2d btm_o2,btm_co3_sol_arag,btm_htotal,btm_co3_ion,pco2surf \
 #                          ice_daily siconc
 
+# Testing new scripts
+
+# /archive/e1n/fre/cefi/NEP/2024_08/NEP10k_082024_clean_spinup/gfdl.ncrc5-intel22-repro/
+
 ./subset_from_archive.sh --region nep \
                          --subdomain 0 342 446 743 \
-                         --years 2025 2025 \
-                         --mmdd 0701 \
+                         --years 1993 1993 \
+                         --mmdd 0101 \
                          --archdir /archive/e1n/fre/cefi/NEP/2025_07/NEP10k_202507_physics_bgc/gfdl.ncrc6-intel23-repro/history \
                          --release e202507 \
                          --ppdir test_files \
-                         ocean_daily tos,tob \
-                         ocean_cobalt_daily_2d btm_o2,btm_co3_sol_arag,btm_htotal,btm_co3_ion,pco2surf \
-                         ice_daily siconc
+                         ocean_static areacello,deptho,sftof,Coriolis,geolon,geolat,geolon_c,geolat_c,geolon_u,geolat_u,geolon_v,geolat_v,wet,wet_c,wet_u,wet_v,dxt,dyt,dxCu,dyCu,dxCv,dyCv,areacello_cu,areacello_cv,areacello_bu
+                        #  ocean_daily tos,tob \
+                        #  ocean_cobalt_daily_2d btm_o2,btm_co3_sol_arag,btm_htotal,btm_co3_ion,pco2surf \
+                        #  ice_daily siconc
+
 

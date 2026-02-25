@@ -2,7 +2,7 @@
 
 USEAGE="Usage: ./subset_from_archive.sh [--subdomain <iq1 iq2 jq1 jq2>]
         [--years <yrstr yrend>] [--mmdd <mmdd>] [--archdir <arch_dir>]
-        [ftype1 <varstr1> ...] [-h]  
+        [ftype1 <varstr1> ...] [--split] [-h] 
 
 where
 
@@ -20,11 +20,12 @@ where
   --mmdd <mmdd>: month and day associated with each archive file start date.  
         Default of 0101 applies to most yearly-chunked data.
 
-  --archfdir <arch_dir>: path to archive folder where tarred dataset is found
+  --archdir <arch_dir>: path to archive folder where tarred dataset is found
         (without trailing slash)
 
   --ppdir <ppfol>: path to processed data folder where output files will be 
-        placed.  This will be the current directory unless otherwise specified.
+        placed (without trailing slash).  This will be the current directory 
+        unless otherwise specified.
 
   --ftypeX varstrX: file type (corresponding to a file_name in the MOM6 diag 
         table) and comma-delimited list of variables to extract from each file 
@@ -38,11 +39,20 @@ where
   --release <release>: release abbreviation (or other preferred simulation name)
         that applies to the extracted data, used for file naming only
 
+  --coordfile <coordfile>: path to coordinate variable file. If included, 
+        geolat*/geolon* variables from this file will be appended to the output
+        files (note that this will overwrite any existing geolat*/geolon*)
+        variables, so do not include if file already contains those)
+
+  --split: if included, the output will be split into individual files per 
+        variable
+
 This function extracts a subset of variables across the indicated horizontal 
 subregion from a MOM6 simulation archive. The resulting files follow the 
 following naming scheme, which loosely mimics the CEFI Data Portal conventions:
 
-<ppdir>/<ftype>.<region>.<subdomain>.hcast.<release>.YYYYMMDD.nc
+<ppdir>/<region>.<subdomain>.hcast.<release>.YYYYMMDD.<ftype>.nc
+<ppdir>/<region>.<subdomain>.hcast.<release>.YYYYMMDD.<variable>.nc
 "
 
 #--------------------
@@ -53,6 +63,7 @@ following naming scheme, which loosely mimics the CEFI Data Portal conventions:
 
 mmdd="0101"
 ppfol="."
+splitflag=0
 
 # Input parsing
 
@@ -94,6 +105,11 @@ while [[ $# -gt 0 ]]; do
       shift
       shift
       ;;
+    --coordfile)
+      coordfile=$2
+      shift
+      shift
+      ;;
     --region)
       region=$2
       shift
@@ -102,6 +118,10 @@ while [[ $# -gt 0 ]]; do
     --release)
       release=$2
       shift
+      shift
+      ;;
+    --split)
+      splitflag=1
       shift
       ;;
     -h|--help) 
@@ -160,6 +180,8 @@ for (( yr=$yrstr; yr<=$yrend; yr++ )); do
 
         echo "   extracting variables from ${ftype[$i]}..."
 
+        newfile="${ppfol}/${region}.${subdomainstr}.hcast.${release}.${yr}${mmdd}.${ftype[$i]}.nc"
+
         # Untar from archive
 
         tar -xf $arch_dir/${yr}${mmdd}.nc.tar ./${yr}${mmdd}.${ftype[$i]}.nc
@@ -198,11 +220,61 @@ for (( yr=$yrstr; yr<=$yrend; yr++ )); do
         ncks -O ${dstr} \
                 -v ${varstr[$i]} \
                 ${yr}${mmdd}.${ftype[$i]}.nc \
-                ${ppfol}/${region}.${subdomainstr}.hcast.${release}.${yr}${mmdd}.${ftype[$i]}.nc
+                ${newfile}
 
         # Delete untarred original (cleanup), move new file to 
 
         rm ${yr}${mmdd}.${ftype[$i]}.nc
+
+        # Determine which grid each variable is on and set coordinate attribute
+
+        hflag=0
+        cflag=0
+        uflag=0
+        vflag=0
+
+        IFS=',' read -ra varnames <<< "${varstr}"
+        for vv in "${varnames[@]}"; do
+          if ncdump -h ${newfile} | grep " ${vv}(" | grep -q "jh, ih)"; then # h-variable
+            ncatted -O coordinates,${vv},c,c,"geolat geolon" ${newfile}
+            hflag=1
+          fi
+          if ncdump -h ${newfile} | grep " ${vv}(" | grep -q "jq, iq)"; then # c-variable
+            ncatted -O coordinates,${vv},c,c,"geolat_c geolon_c" ${newfile}
+            cflag=1
+          fi
+          if ncdump -h ${newfile} | grep " ${vv}(" | grep -q "jh, iq)"; then # u-variable
+            ncatted -O coordinates,${vv},c,c,"geolat_u geolon_u" ${newfile}
+            uflag=1
+          fi
+          if ncdump -h ${newfile} | grep " ${vv}(" | grep -q "jq, ih)"; then # v-variable
+            ncatted -O coordinates,${vv},c,c,"geolat_v geolon_v" ${newfile}
+            vflag=1
+          fi
+        done
+
+        # Append the coordinate variables as needed
+
+        if ((${#coordfile[@]})); then # if coordfile was passed
+          if hflag; then
+            ncks -A -v geolat,geolon ${coordfile} ${newfile}
+          fi
+          if cflag; then
+            ncks -A -v geolat_c,geolon_c ${coordfile} ${newfile}
+          fi
+          if uflag; then
+            ncks -A -v geolat_u,geolon_u ${coordfile} ${newfile}
+          fi
+          if vflag; then
+            ncks -A -v geolat_v,geolon_v ${coordfile} ${newfile}
+          fi
+        fi
+
+        # Split by variable
+
+        if [ "${splitflag}" -eq 1 ]; then
+          cdo splitname ${newfile} "${ppfol}/${region}.${subdomainstr}.hcast.${release}.${yr}${mmdd}."
+        fi
 
     done
 done
