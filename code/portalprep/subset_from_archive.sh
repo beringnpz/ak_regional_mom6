@@ -151,6 +151,16 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
+if ((${#coordfile[@]})) && [[ ! -f "${coordfile}" ]]; then 
+  echo "Specified coordinate file ${coordfile} does not exist."
+  exit 1
+fi
+
+if [[ ! -d "${ppfol}" ]]; then
+  echo "Output folder ${ppfol} does not exist."
+  exit 1
+fi
+
 #--------------------
 # Extract
 #--------------------
@@ -185,7 +195,7 @@ fi
 for (( yr=$yrstr; yr<=$yrend; yr++ )); do
 
     echo $yr
-
+    
     for (( i=0; i<${#ftype[@]}; i++ )); do
 
         echo "   extracting variables from ${ftype[$i]}..."
@@ -227,26 +237,37 @@ for (( yr=$yrstr; yr<=$yrend; yr++ )); do
 
         # Determine file frequency by parsing average_DT value
 
-        freqdays=$( ncdump -v average_DT ${yr}${mmdd}.${ftype[$i]}.nc | grep "average_DT =" )
-        freqdays=${freqdays/average_DT =//}
-        freqdays=${freqdays/,//}
-        freqdays=${freqdays/;//}
-        freqdays=$( "${freqdays}" )
+        if ncdump -h ${yr}${mmdd}.${ftype[$i]}.nc | grep -q "average_DT"; then
 
-        if (( freqdays[0] == 1 )); then
-          freq="day"
-        elif (( freqdays[0] >= 28 )) && (( freqdays[0] <= 31 )); then
-          freq="mon"
-        elif (( freqdays[0] >= 365 )) && (( freqdays[0] <= 366 )); then
-          freq="ann"
+          freqdays=$( ncdump -v average_DT ${yr}${mmdd}.${ftype[$i]}.nc | grep "average_DT =" )
+        
+          freqdays=${freqdays/average_DT =/}
+          freqdays=${freqdays/;/}
+
+          if [[ "${freqdays}" == *","*  ]]; then # if multiple (contains comma)
+	    IFS=',' read -ra freqdays <<< "${freqdays}" 
+	  else 
+            freqdays=( "${freqdays}" )
+	  fi
+
+          if (( freqdays[0] == 1 )); then
+            freq="day"
+          elif (( freqdays[0] >= 28 )) && (( freqdays[0] <= 31 )); then
+            freq="mon"
+          elif (( freqdays[0] >= 365 )) && (( freqdays[0] <= 366 )); then
+            freq="ann"
+          else
+            echo "Could not parse file frequency"
+            exit 1
+          fi
         else
-          echo "Could not parse file frequency"
-          exit 1
+          freq="pnt"
         fi
 
         # Extract requested variables and region to new file
 
         newfile="${ppfol}/${region}.${subdomainstr}.${exptype}.${freq}.${release}.${yr}${mmdd}.${ftype[$i]}.nc"
+        newbase="${ppfol}/${region}.${subdomainstr}.${exptype}.${freq}.${release}.${yr}${mmdd}." # for splits
 
         ncks -O ${dstr} \
                 -v ${varstr[$i]} \
@@ -266,28 +287,28 @@ for (( yr=$yrstr; yr<=$yrend; yr++ )); do
         uflag=0
         vflag=0
 
-        if [[ "${varstr}" == *","*  ]]; then # if multiple (contains comma)
-	        IFS=',' read -ra varnames <<< "${varstr}" 
-	      else 
-          varnames=( "${varstr}" )
-	      fi
+        if [[ "${varstr[$i]}" == *","*  ]]; then # if multiple (contains comma)
+          IFS=',' read -ra varnames <<< "${varstr[$i]}" 
+        else 
+          varnames=( "${varstr[$i]}" )
+        fi
         for vv in "${varnames[@]}"; do
 
           if ncdump -h ${newfile} | grep " ${vv}(" | grep -q "jh, ih)"; then # h-variable
-	          ncatted -O -a coordinates,${vv},c,c,"geolat geolon" ${newfile}
+            ncatted -O -a coordinates,${vv},c,c,"geolat geolon" ${newfile}
             hflag=1
-          fi
-          if ncdump -h ${newfile} | grep " ${vv}(" | grep -q "jq, iq)"; then # c-variable
+          elif ncdump -h ${newfile} | grep " ${vv}(" | grep -q "jq, iq)"; then # c-variable
             ncatted -O -a coordinates,${vv},c,c,"geolat_c geolon_c" ${newfile}
             cflag=1
-          fi
-          if ncdump -h ${newfile} | grep " ${vv}(" | grep -q "jh, iq)"; then # u-variable
+          elif ncdump -h ${newfile} | grep " ${vv}(" | grep -q "jh, iq)"; then # u-variable
             ncatted -O -a coordinates,${vv},c,c,"geolat_u geolon_u" ${newfile}
             uflag=1
-          fi
-          if ncdump -h ${newfile} | grep " ${vv}(" | grep -q "jq, ih)"; then # v-variable
+          elif ncdump -h ${newfile} | grep " ${vv}(" | grep -q "jq, ih)"; then # v-variable
             ncatted -O -a coordinates,${vv},c,c,"geolat_v geolon_v" ${newfile}
             vflag=1
+          else
+            echo "Variable ${vv} did not match an expected grid type"
+            exit 1
           fi
 
         done
@@ -312,7 +333,8 @@ for (( yr=$yrstr; yr<=$yrend; yr++ )); do
         # Split by variable
 
         if [ "${splitflag}" -eq 1 ]; then
-          cdo splitname ${newfile} "${ppfol}/${region}.${subdomainstr}.${exptype}.${release}.${yr}${mmdd}."
+          cdo splitname ${newfile} ${newbase}
+          rm ${newfile}
         fi
 
     done
