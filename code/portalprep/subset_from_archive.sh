@@ -39,6 +39,10 @@ where
   --release <release>: release abbreviation (or other preferred simulation name)
         that applies to the extracted data, used for file naming only
 
+  --exptype <exptype>: experiment type abbreviation that applies to the 
+        extracted data, used for file naming only. hcast (hindcast) is the 
+        default if not included
+
   --coordfile <coordfile>: path to coordinate variable file. If included, 
         geolat*/geolon* variables from this file will be appended to the output
         files (note that this will overwrite any existing geolat*/geolon*)
@@ -51,8 +55,8 @@ This function extracts a subset of variables across the indicated horizontal
 subregion from a MOM6 simulation archive. The resulting files follow the 
 following naming scheme, which loosely mimics the CEFI Data Portal conventions:
 
-<ppdir>/<region>.<subdomain>.hcast.<release>.YYYYMMDD.<ftype>.nc
-<ppdir>/<region>.<subdomain>.hcast.<release>.YYYYMMDD.<variable>.nc
+<ppdir>/<region>.<subdomain>.<exptype>.<freq>.<release>.YYYYMMDD.<ftype>.nc
+<ppdir>/<region>.<subdomain>.<exptype>.<freq>.<release>.YYYYMMDD.<variable>.nc
 "
 
 #--------------------
@@ -64,6 +68,7 @@ following naming scheme, which loosely mimics the CEFI Data Portal conventions:
 mmdd="0101"
 ppfol="."
 splitflag=0
+exptype="hcast"
 
 # Input parsing
 
@@ -117,6 +122,11 @@ while [[ $# -gt 0 ]]; do
       ;;
     --release)
       release=$2
+      shift
+      shift
+      ;;
+    --exptype)
+      exptype=$2
       shift
       shift
       ;;
@@ -180,8 +190,6 @@ for (( yr=$yrstr; yr<=$yrend; yr++ )); do
 
         echo "   extracting variables from ${ftype[$i]}..."
 
-        newfile="${ppfol}/${region}.${subdomainstr}.hcast.${release}.${yr}${mmdd}.${ftype[$i]}.nc"
-
         # Untar from archive
 
         tar -xf $arch_dir/${yr}${mmdd}.nc.tar ./${yr}${mmdd}.${ftype[$i]}.nc
@@ -217,6 +225,29 @@ for (( yr=$yrstr; yr<=$yrend; yr++ )); do
 
         fi
 
+        # Determine file frequency by parsing average_DT value
+
+        freqdays=$( ncdump -v average_DT ${yr}${mmdd}.${ftype[$i]}.nc | grep "average_DT =" )
+        freqdays=${freqdays/average_DT =//}
+        freqdays=${freqdays/,//}
+        freqdays=${freqdays/;//}
+        freqdays=$( "${freqdays}" )
+
+        if (( freqdays[0] == 1 )); then
+          freq="day"
+        elif (( freqdays[0] >= 28 )) && (( freqdays[0] <= 31 )); then
+          freq="mon"
+        elif (( freqdays[0] >= 365 )) && (( freqdays[0] <= 366 )); then
+          freq="ann"
+        else
+          echo "Could not parse file frequency"
+          exit 1
+        fi
+
+        # Extract requested variables and region to new file
+
+        newfile="${ppfol}/${region}.${subdomainstr}.${exptype}.${freq}.${release}.${yr}${mmdd}.${ftype[$i]}.nc"
+
         ncks -O ${dstr} \
                 -v ${varstr[$i]} \
                 ${yr}${mmdd}.${ftype[$i]}.nc \
@@ -235,15 +266,15 @@ for (( yr=$yrstr; yr<=$yrend; yr++ )); do
         uflag=0
         vflag=0
 
-        if [[ "${varstr}" == *","*  ]]; then
-	  IFS=',' read -ra varnames <<< "${varstr}"
-	else 
+        if [[ "${varstr}" == *","*  ]]; then # if multiple (contains comma)
+	        IFS=',' read -ra varnames <<< "${varstr}" 
+	      else 
           varnames=( "${varstr}" )
-	fi
+	      fi
         for vv in "${varnames[@]}"; do
 
           if ncdump -h ${newfile} | grep " ${vv}(" | grep -q "jh, ih)"; then # h-variable
-	    ncatted -O -a coordinates,${vv},c,c,"geolat geolon" ${newfile}
+	          ncatted -O -a coordinates,${vv},c,c,"geolat geolon" ${newfile}
             hflag=1
           fi
           if ncdump -h ${newfile} | grep " ${vv}(" | grep -q "jq, iq)"; then # c-variable
@@ -281,7 +312,7 @@ for (( yr=$yrstr; yr<=$yrend; yr++ )); do
         # Split by variable
 
         if [ "${splitflag}" -eq 1 ]; then
-          cdo splitname ${newfile} "${ppfol}/${region}.${subdomainstr}.hcast.${release}.${yr}${mmdd}."
+          cdo splitname ${newfile} "${ppfol}/${region}.${subdomainstr}.${exptype}.${release}.${yr}${mmdd}."
         fi
 
     done
