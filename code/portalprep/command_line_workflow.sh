@@ -51,18 +51,60 @@
 
 # Testing new scripts
 
-# /archive/e1n/fre/cefi/NEP/2024_08/NEP10k_082024_clean_spinup/gfdl.ncrc5-intel22-repro/
+
+# Extract static files, no variable-splitting
 
 ./subset_from_archive.sh --region nep \
                          --subdomain 0 342 446 743 \
-                         --years 1993 1993 \
+                         --years 2024 2024 \
                          --mmdd 0101 \
                          --archdir /archive/e1n/fre/cefi/NEP/2025_07/NEP10k_202507_physics_bgc/gfdl.ncrc6-intel23-repro/history \
                          --release e202507 \
-                         --ppdir test_files \
+                         --namescheme kkflat \
+                         --ppdir /work/Kelly.Kearney/extract_tests/kkflat \
                          ocean_static areacello,deptho,sftof,Coriolis,geolon,geolat,geolon_c,geolat_c,geolon_u,geolat_u,geolon_v,geolat_v,wet,wet_c,wet_u,wet_v,dxt,dyt,dxCu,dyCu,dxCv,dyCv,areacello_cu,areacello_cv,areacello_bu
-                        #  ocean_daily tos,tob \
-                        #  ocean_cobalt_daily_2d btm_o2,btm_co3_sol_arag,btm_htotal,btm_co3_ion,pco2surf \
-                        #  ice_daily siconc
+exit
 
+# Extract primary hindcast data (1993-2025/06/31)
 
+./subset_from_archive.sh --region nep \
+                         --subdomain 0 342 446 743 \
+                         --years 2024 2025 \
+                         --mmdd 0101 \
+                         --archdir /archive/e1n/fre/cefi/NEP/2025_07/NEP10k_202507_physics_bgc/gfdl.ncrc6-intel23-repro/history \
+                         --release e202507 \
+                         --ppdir /work/Kelly.Kearney/extract_tests/kkflat \
+                         --namescheme kkflat \
+                         --coordfile /work/Kelly.Kearney/extract_tests/kkflat/nep.iq0-342jq446-743.hcast.pnt.e202507.19930101.ocean_static.nc \
+                         --split \
+                         ocean_daily tos,tob \
+                         ocean_cobalt_daily_2d btm_o2,btm_co3_sol_arag,btm_htotal,btm_co3_ion,pco2surf \
+                         ice_daily siconc
+
+# Extract extra extension (2025/07/01+)
+
+./subset_from_archive.sh --region nep \
+                         --subdomain 0 342 446 743 \
+                         --years 2025 2025 \
+                         --mmdd 0701 \
+                         --archdir /archive/e1n/fre/cefi/NEP/2025_07/NEP10k_202507_physics_bgc/gfdl.ncrc6-intel23-repro/history \
+                         --release e202507 \
+                         --namescheme kkflat \
+                         --ppdir /work/Kelly.Kearney/extract_tests/kkflat \
+                         --coordfile /work/Kelly.Kearney/extract_tests/kkflat/nep.iq0-342jq446-743.hcast.pnt.e202507.19930101.ocean_static.nc \
+                         --split \
+                         ocean_daily tos,tob \
+                         ocean_cobalt_daily_2d btm_o2,btm_co3_sol_arag,btm_htotal,btm_co3_ion,pco2surf \
+                         ice_daily siconc
+
+# Static file, portalv1
+
+./subset_from_archive.sh --region nep \
+                         --subdomain 0 342 446 743 \
+                         --years 2024 2024 \
+                         --mmdd 0101 \
+                         --archdir /archive/e1n/fre/cefi/NEP/2025_07/NEP10k_202507_physics_bgc/gfdl.ncrc6-intel23-repro/history \
+                         --release e202507 \
+                         --namescheme portalv1 \
+                         --ppdir /work/Kelly.Kearney/extract_tests/cefiportal \
+                         ocean_static areacello,deptho,sftof,Coriolis,geolon,geolat,geolon_c,geolat_c,geolon_u,geolat_u,geolon_v,geolat_v,wet,wet_c,wet_u,wet_v,dxt,dyt,dxCu,dyCu,dxCv,dyCv,areacello_cu,areacello_cv,areacello_bu

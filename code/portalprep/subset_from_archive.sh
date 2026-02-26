@@ -2,57 +2,63 @@
 
 USEAGE="Usage: ./subset_from_archive.sh [--subdomain <iq1 iq2 jq1 jq2>]
         [--years <yrstr yrend>] [--mmdd <mmdd>] [--archdir <arch_dir>]
-        [ftype1 <varstr1> ...] [--split] [-h] 
+        [ftype1 <varstr1> ...] [--split] [-h]
 
 where
 
-  --subdomain <iq1 iq2 jq1 jq2>: subdomain range, with grid variables 
-        extracted in the horizontal subregion defined by iq=iq1:iq2, 
+  --subdomain <iq1 iq2 jq1 jq2>: subdomain range, with grid variables
+        extracted in the horizontal subregion defined by iq=iq1:iq2,
         jq = jq11:jq2 (ih = iq1+0.5:iq2-0.5, jh=iq1+0.5:iq2-0.5)
         The specified subdomain must encompass at least one h-point,
         i.e., iq2-iq1>0 and jq2-jq1>0.
 
-  --years <yrstr yrend>: years to process, indicated by starting and ending 
-        years of the desired range.  The script expects to find yearly-chunked 
-        output files identified by start date (YYYYMMDD); data will be 
+  --years <yrstr yrend>: years to process, indicated by starting and ending
+        years of the desired range.  The script expects to find yearly-chunked
+        output files identified by start date (YYYYMMDD); data will be
         identified by this naming scheme rather than by file contents.
-    
-  --mmdd <mmdd>: month and day associated with each archive file start date.  
+
+  --mmdd <mmdd>: month and day associated with each archive file start date.
         Default of 0101 applies to most yearly-chunked data.
 
   --archdir <arch_dir>: path to archive folder where tarred dataset is found
         (without trailing slash)
 
-  --ppdir <ppfol>: path to processed data folder where output files will be 
-        placed (without trailing slash).  This will be the current directory 
+  --ppdir <ppfol>: path to processed data folder where output files will be
+        placed (without trailing slash).  This will be the current directory
         unless otherwise specified.
 
-  --ftypeX varstrX: file type (corresponding to a file_name in the MOM6 diag 
-        table) and comma-delimited list of variables to extract from each file 
-        type.  For example 'ocean_daily tob,tos' will extract tob and tos 
-        variables from the MMDDYYYY.ocean_daily.nc files.  Any number of 
+  --ftypeX varstrX: file type (corresponding to a file_name in the MOM6 diag
+        table) and comma-delimited list of variables to extract from each file
+        type.  For example 'ocean_daily tob,tos' will extract tob and tos
+        variables from the MMDDYYYY.ocean_daily.nc files.  Any number of
         ftype/varstr pairs can be passed as input.
 
-  --region <region>: regional abbreviation that applies to the extracted data, 
+  --region <region>: regional abbreviation that applies to the extracted data,
         used for file naming only
 
   --release <release>: release abbreviation (or other preferred simulation name)
         that applies to the extracted data, used for file naming only
 
-  --exptype <exptype>: experiment type abbreviation that applies to the 
-        extracted data, used for file naming only. hcast (hindcast) is the 
+  --exptype <exptype>: experiment type abbreviation that applies to the
+        extracted data, used for file naming only. hcast (hindcast) is the
         default if not included
 
-  --coordfile <coordfile>: path to coordinate variable file. If included, 
+  --coordfile <coordfile>: path to coordinate variable file. If included,
         geolat*/geolon* variables from this file will be appended to the output
         files (note that this will overwrite any existing geolat*/geolon*)
         variables, so do not include if file already contains those)
 
-  --split: if included, the output will be split into individual files per 
+  --namescheme <namescheme>: naming scheme.  Options are currently:
+        portalv1: mimics CEFI Data Portal circa 02/2025, with nested folders,
+                  variable-first file names
+        kkflat:   flat file structure (no folders), variable-last file names, 
+                  same-length frequency abbreviations
+
+  --split: if included, the output will be split into individual files per
         variable
 
-This function extracts a subset of variables across the indicated horizontal 
-subregion from a MOM6 simulation archive. The resulting files follow the 
+This function extracts a subset of variables across the indicated horizontal
+subregion from a MOM6 simulation archive. The resulting files follow the
 following naming scheme, which loosely mimics the CEFI Data Portal conventions:
 
 <ppdir>/<region>.<subdomain>.<exptype>.<freq>.<release>.YYYYMMDD.<ftype>.nc
@@ -69,6 +75,31 @@ mmdd="0101"
 ppfol="."
 splitflag=0
 exptype="hcast"
+namescheme="portalv1"
+
+# CEFI name tables (short-to-long name lookup)
+
+declare -A tbl_region=(
+  [nwa]="nep"
+  [nep]="northeast_pacific"
+  [arc]="arctic"
+  [pci]="pacific_islands"
+  [glk]="great_lakes"
+)
+
+declare -A tbl_subdomain=(
+  [full]="full_domain"
+)
+
+declare -A tbl_exptype=(
+  [hcast]="hindcast"
+  [ss_fcast]="seasonal_forecast"
+  [ss_fcast_init]="seasonal_forecast_initialization"
+  [ss_refcast]="seasonal_reforecast"
+  [dc_fcast_init]="decadal_forecast_initialization"
+  [dc_fcast]="decadal_forecast"
+  [ltm_proj]="long_term_projection"
+)
 
 # Input parsing
 
@@ -90,11 +121,11 @@ while [[ $# -gt 0 ]]; do
       ;;
     --years)
       yrstr=$2
-      yrend=$3 
+      yrend=$3
       shift # past argument
       shift # past value
       shift
-      ;;    
+      ;;
     --mmdd)
       mmdd=$2
       shift # past argument
@@ -134,7 +165,7 @@ while [[ $# -gt 0 ]]; do
       splitflag=1
       shift
       ;;
-    -h|--help) 
+    -h|--help)
        echo "$USEAGE"
        exit
        ;;
@@ -151,7 +182,7 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-if ((${#coordfile[@]})) && [[ ! -f "${coordfile}" ]]; then 
+if ((${#coordfile[@]})) && [[ ! -f "${coordfile}" ]]; then
   echo "Specified coordinate file ${coordfile} does not exist."
   exit 1
 fi
@@ -182,11 +213,13 @@ dj=$((jq2-jq1))
 if !((${#iq1[@]})); then # iq1 not set
     subsetflag=0
     subdomainstr="full"
+    subdomainstr_long=${tbl_subdomain["full"]}
 elif  (( di < 1 )) || (( dj < 1 )) ; then
     echo "Subregion must span at least one h-point"
     exit 1
 else
     subdomainstr="iq${iq1}-${iq2}jq${jq1}-${jq2}"
+    subdomainstr_long=${subdomainstr}
     ih2=$((iq2-1))
     jh2=$((jq2-1))
     subsetflag=1
@@ -195,7 +228,7 @@ fi
 for (( yr=$yrstr; yr<=$yrend; yr++ )); do
 
     echo $yr
-    
+
     for (( i=0; i<${#ftype[@]}; i++ )); do
 
         echo "   extracting variables from ${ftype[$i]}..."
@@ -203,8 +236,8 @@ for (( yr=$yrstr; yr<=$yrend; yr++ )); do
         # Untar from archive
 
         tar -xf $arch_dir/${yr}${mmdd}.nc.tar ./${yr}${mmdd}.${ftype[$i]}.nc
-    
-        # Rename dimensions as needed (note: this does not change the values 
+
+        # Rename dimensions as needed (note: this does not change the values
         # of any coordinate variables associated with the dimensions!)
 
         ncrename -d .xT,ih  -d .yT,jh \
@@ -217,7 +250,7 @@ for (( yr=$yrstr; yr<=$yrend; yr++ )); do
         dstr=""
         if [ "${subsetflag}" -eq 1 ]; then
 
-            # ncks annoyingly doesn't support the only-if-exists -d option of 
+            # ncks annoyingly doesn't support the only-if-exists -d option of
             # ncrename, so we have to check for dimensions
 
             if ncdump -h ${yr}${mmdd}.${ftype[$i]}.nc | grep -q "iq = "; then
@@ -240,34 +273,57 @@ for (( yr=$yrstr; yr<=$yrend; yr++ )); do
         if ncdump -h ${yr}${mmdd}.${ftype[$i]}.nc | grep -q "average_DT"; then
 
           freqdays=$( ncdump -v average_DT ${yr}${mmdd}.${ftype[$i]}.nc | grep "average_DT =" )
-        
+
           freqdays=${freqdays/average_DT =/}
           freqdays=${freqdays/;/}
 
           if [[ "${freqdays}" == *","*  ]]; then # if multiple (contains comma)
-	    IFS=',' read -ra freqdays <<< "${freqdays}" 
-	  else 
+            IFS=',' read -ra freqdays <<< "${freqdays}"
+          else
             freqdays=( "${freqdays}" )
-	  fi
+          fi
 
           if (( freqdays[0] == 1 )); then
             freq="day"
+            freq_long="daily"
           elif (( freqdays[0] >= 28 )) && (( freqdays[0] <= 31 )); then
             freq="mon"
+            freq_long="monthly"
           elif (( freqdays[0] >= 365 )) && (( freqdays[0] <= 366 )); then
             freq="ann"
+            freq_long="yearly"
           else
             echo "Could not parse file frequency"
             exit 1
           fi
         else
-          freq="pnt"
+          freq="sta"
+          freq_long="static"
         fi
 
         # Extract requested variables and region to new file
 
-        newfile="${ppfol}/${region}.${subdomainstr}.${exptype}.${freq}.${release}.${yr}${mmdd}.${ftype[$i]}.nc"
-        newbase="${ppfol}/${region}.${subdomainstr}.${exptype}.${freq}.${release}.${yr}${mmdd}." # for splits
+        case ${namingscheme} in
+          portalv1)
+            swapflag=1
+            newbase="${region}.${subdomainstr}.${exptype}.${freq_long}.${release}.${yr}${mmdd}" # for splits
+            newfile="${ftype[$i]}.${newbase}.nc" # for consolidated
+            outfilt="*${newbase}.nc"
+            outfol="${tbl_region[${region}]}/${subdomainstr_long}/${tbl_exptype[${exptype}]}/${freq_long}/raw/${release}"
+            ;;
+          kkflat)
+            newfile="${region}.${subdomainstr}.${exptype}.${freq}.${release}.${yr}${mmdd}.${ftype[$i]}.nc"
+            newbase="${region}.${subdomainstr}.${exptype}.${freq}.${release}.${yr}${mmdd}." # for splits
+            newfile="${newbase}.${ftype[$i]}.nc" # for consolidated
+            outfilt="${newbase}*.nc"
+            outfol="${ppfol}"
+            swapflag=0
+          ;;
+        esac
+
+        if [[ ! -d "${outfol}" ]]; then
+          mkdir -p ${outfol}
+        fi
 
         ncks -O ${dstr} \
                 -v ${varstr[$i]} \
@@ -288,8 +344,8 @@ for (( yr=$yrstr; yr<=$yrend; yr++ )); do
         vflag=0
 
         if [[ "${varstr[$i]}" == *","*  ]]; then # if multiple (contains comma)
-          IFS=',' read -ra varnames <<< "${varstr[$i]}" 
-        else 
+          IFS=',' read -ra varnames <<< "${varstr[$i]}"
+        else
           varnames=( "${varstr[$i]}" )
         fi
         for vv in "${varnames[@]}"; do
@@ -330,11 +386,20 @@ for (( yr=$yrstr; yr<=$yrend; yr++ )); do
           fi
         fi
 
-        # Split by variable
+        # Split by variable (if requested) and move to final output folder
 
         if [ "${splitflag}" -eq 1 ]; then
-          cdo splitname ${newfile} ${newbase}
-          rm ${newfile}
+          if [ "${swapflag}" -eq 1 ]; then
+            cdo splitname,swap ${newfile} ${newbase}
+            rm ${newfile}
+            mv ${newfilt} ${outfol}
+          else
+            cdo splitname ${newfile} ${newfol}/${newbase}
+            rm ${newfile}
+            mv ${newfilt} ${outfol}
+          fi
+        else
+          mv ${newfile} ${outfol}
         fi
 
     done
