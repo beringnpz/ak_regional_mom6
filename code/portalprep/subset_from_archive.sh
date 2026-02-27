@@ -161,6 +161,11 @@ while [[ $# -gt 0 ]]; do
       shift
       shift
       ;;
+    --namescheme)
+      namescheme=$2
+      shift
+      shift
+      ;;
     --split)
       splitflag=1
       shift
@@ -302,29 +307,32 @@ for (( yr=$yrstr; yr<=$yrend; yr++ )); do
         fi
 
         # Extract requested variables and region to new file
-
-        case ${namingscheme} in
+        
+        case ${namescheme} in
           portalv1)
             swapflag=1
-            newbase="${region}.${subdomainstr}.${exptype}.${freq_long}.${release}.${yr}${mmdd}" # for splits
-            newfile="${ftype[$i]}.${newbase}.nc" # for consolidated
+            newbase=".${region}.${subdomainstr}.${exptype}.${freq_long}.${release}.${yr}${mmdd}" # for splits
+            newfile="${ftype[$i]}${newbase}.nc" # for consolidated
             outfilt="*${newbase}.nc"
-            outfol="${tbl_region[${region}]}/${subdomainstr_long}/${tbl_exptype[${exptype}]}/${freq_long}/raw/${release}"
+            outfol="${ppfol}/${tbl_region[${region}]}/${subdomainstr_long}/${tbl_exptype[${exptype}]}/${freq_long}/raw/${release}"
             ;;
           kkflat)
             newfile="${region}.${subdomainstr}.${exptype}.${freq}.${release}.${yr}${mmdd}.${ftype[$i]}.nc"
             newbase="${region}.${subdomainstr}.${exptype}.${freq}.${release}.${yr}${mmdd}." # for splits
-            newfile="${newbase}.${ftype[$i]}.nc" # for consolidated
+            newfile="${newbase}${ftype[$i]}.nc" # for consolidated
             outfilt="${newbase}*.nc"
             outfol="${ppfol}"
             swapflag=0
-          ;;
+            ;;
+          *)
+            echo "Unrecognized naming scheme ${namescheme}"
+            exit 1
         esac
 
         if [[ ! -d "${outfol}" ]]; then
           mkdir -p ${outfol}
         fi
-
+        
         ncks -O ${dstr} \
                 -v ${varstr[$i]} \
                 ${yr}${mmdd}.${ftype[$i]}.nc \
@@ -342,7 +350,7 @@ for (( yr=$yrstr; yr<=$yrend; yr++ )); do
         cflag=0
         uflag=0
         vflag=0
-
+        
         if [[ "${varstr[$i]}" == *","*  ]]; then # if multiple (contains comma)
           IFS=',' read -ra varnames <<< "${varstr[$i]}"
         else
@@ -392,11 +400,11 @@ for (( yr=$yrstr; yr<=$yrend; yr++ )); do
           if [ "${swapflag}" -eq 1 ]; then
             cdo splitname,swap ${newfile} ${newbase}
             rm ${newfile}
-            mv ${newfilt} ${outfol}
+            mv ${outfilt} ${outfol}
           else
-            cdo splitname ${newfile} ${newfol}/${newbase}
+            cdo splitname ${newfile} ${newbase}
             rm ${newfile}
-            mv ${newfilt} ${outfol}
+            mv ${outfilt} ${outfol}
           fi
         else
           mv ${newfile} ${outfol}
