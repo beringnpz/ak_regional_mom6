@@ -80,7 +80,7 @@ namescheme="portalv1"
 # CEFI name tables (short-to-long name lookup)
 
 declare -A tbl_region=(
-  [nwa]="nep"
+  [nwa]="northwest_atlantic"
   [nep]="northeast_pacific"
   [arc]="arctic"
   [pci]="pacific_islands"
