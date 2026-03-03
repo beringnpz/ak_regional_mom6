@@ -1,44 +1,77 @@
-function Scs = build_ocean_static_ak(opt)
-% BUILD_OCEAN_STATIC_AK Create Alaska-specific version of MOM6 static file
+function [Scs, Mask] = build_ak_masks(opt)
+% BUILD_AK_MASKS Adds Alaska-specific masks to MOM6 static variables
 %
-% Scs = build_ocean_static_ak(flag);
+% [Scs, Mask] = build_ak_masks(...);
 %
-% This script extracts the Alaska subregion of the MOM6-NEP domain from a
-% simulation's static file.  It also adds custom variables related to
-% Alaska management regions.  See below for the list of new variables and
-% their attributes.
+% This script adds custom variables to the static variable collection for a
+% MOM6-NEP simulation.  These variables map various Alaska management
+% regions onto the MOM6 grid.
+%
+% Run in setup mode (setuponly=true), this script will return the
+% horizontal subsetting limits associated with these masks, as well as
+% copies of the mask variables.  In non-setup mode, these mask variables
+% will be either appended to a copy of the existing static-variable MOM6
+% output file added to a new file and placed in the freq=static, grid=extra
+% location for the indicated simulation.
 %
 % Input variables (optional, passed as parameter/value pairs):
 %
 %   setuponly:  logical scalar, true to run the masking and subsetting
-%               calculations but not create the new file
+%               calculations but not create the new file.  Note: if false,
+%               you must have write permission in the location indicated by
+%               cpopts.
 %               [false]
 %
-%   simname:    name of simulation.  This script expects to find a
-%               subfolder with this name under the ak_regional_mom6 data
-%               folder.  It will look for the existing static file and
-%               create the new Alaska-specific static file in the
-%               <datafol>/<simname>/Level1-2/ folder
-%               ["mom6nep_hc202507"]
+%   cpopts:     structure or cell array of cefiportalopts.m parameter
+%               options corresponding to the original static file used.  If
+%               empty, default options will be used.
 %
-%   origname:   base name for original static file, to be appended to
-%               <datafol>/<simname>/Level1-2/<simname>_
-%               ["ocean_static.nc"]
+%   origname:   base name for original static file (less any file extension
+%               or expanded-name elements).  At minimum, this must include
+%               the geolat, geolon, geolat_c, and geolon_c variables.
+%               ["ocean_static"]
+%
+%   expandname: logical scalar, true to expand the static file name assuming
+%               it follows the conventions of time-varying files, false if
+%               the name is just origname.nc
+%               [false]
+%
+%   yyyymmdd:   if expandname=true, starting timestamp associated with the
+%               static file
+%               ["19930101"]
 %
 %   newname:    base name for new Alaska-specific static file, to be
-%               appended to <datafol>/<simname>/Level1-2/<simname>_
-%               ["ocean_static_ak.nc"]
+%               substituted in place of the origname portion of the file
+%               name.
+%               ["ocean_static_ak"]
 %
 %   datafol:    CEFI data folder path.  Default is the path returned by the
 %               cefidatafol.m function
+%
+%   diagplot:   logical scalar, true to plot new mask variables, one
+%               variable per figure [false]
+%
+%   maskonly:   logical scalar, true to include only the new masking
+%               variables in the new file, false to append those masking
+%               files to a copy of the static file [false]
 %
 % Output variables:
 %
 %   Scs:        ncstruct subsetting structure, holding [start count stride]
 %               indices used to subset each dimension in the original
-%               static file for the Alaska region.
+%               static file for the Alaska region.  Note that these indices
+%               use the 1-based Matlab convention (as needed when reading
+%               data via ncstruct.m), not the 0-based convention needed
+%               when calling subset_from_archive.sh and seen in the
+%               subdomain naming scheme; iq/jq limits for
+%               subset_from_archive.sh can be calculated as:
+%               [Scs.iq(1)-1 sum(Scs.iq(1:2))-2 ...
+%                Scs.jq(1)-1 sum(Scs.jq(1:2))-2]
 %
-% New variables added to copied-and-trimmed version of the static file:
+%   Mask:       1x1 structure holding the mask variables listed below
+%               (values only, no metadata)
+%
+% New variables added to the new file:
 %
 %   mask_adfg_stat_area    
 %          Size:       342x297
@@ -200,10 +233,13 @@ function Scs = build_ocean_static_ak(opt)
 
 arguments
     opt.setuponly (1,1) {mustBeNumericOrLogical} =false
-    opt.simname  {mustBeTextScalar} ="mom6nep_hc202507"
-    opt.origname {mustBeTextScalar} ="ocean_static.nc"
-    opt.newname  {mustBeTextScalar} ="ocean_static_ak.nc"
-    opt.datafol {mustBeTextScalar} =cefidatafolpath
+    opt.cpopts  ={}
+    opt.origname {mustBeTextScalar} ="ocean_static"
+    opt.expandname (1,1) {mustBeNumericOrLogical} =true
+    opt.yyyymmdd {mustBeTextScalar} ="19930101"
+    opt.newname  {mustBeTextScalar} ="ocean_static_ak"
+    opt.diagplot (1,1) {mustBeNumericOrLogical} =false
+    opt.maskonly (1,1) {mustBeNumericOrLogical} =false
 end
 
 if nargin < 1
@@ -215,10 +251,35 @@ validateattributes(flag, {'logical'}, {'scalar'});
 % Folder setup
 %--------------------
 
-% Data location
+if isstruct(opt.cpopts)
+    opt.cpopts = namesargs2cell(opt.cpopts);
+end
+C = cefiportalopts(opt.cpopts{:});
 
-origfile = fullfile(opt.datafol, opt.simname, "Level1-2", opt.simname+"_"+opt.origname);
-newfile  = fullfile(opt.datafol, opt.simname, "Level1-2", opt.simname+"_"+opt.newname);
+% Data location (using portalv1 conventions)
+% Note: regardless of what frequency the original static file is marked as,
+% the new one goes to the static subfolder.
+
+origpath = fullfile(...
+    C.portalpath, C.regionl, C.subdomainl, C.exptypel, C.freql, 'raw', C.release);
+if opt.expandname
+    origfile = sprintf('%s.%s.%s.%s.%s.%s.%s.nc', ...
+        opt.origname, C.regions, C.subdomains, C.exptypes, C.freql, ...
+        C.release, opt.yyyymmdd);
+else
+    origfile = opt.origname+".nc";
+end
+
+newpath = fullfile(...
+    C.portalpath, C.regionl, C.subdomainl, C.exptypel, 'static', 'extra', C.release);
+newfile = strrep(origfile, opt.origname, opt.newname);
+
+if ~exist(newpath, 'dir')
+    mkdir(newpath);
+end
+
+origfile = fullfile(origpath, origfile);
+newfile  = fullfile(newpath, newfile);
 
 %--------------------
 % Read data
@@ -338,18 +399,20 @@ Mask.nmfs_area.flag_meanings = S.nmfs_areas.Area_Name;
 % Test plot
 %--------------------
 
-fld = fieldnames(Mask);
-for ii = 1:length(fld)
-    figure('name', fld{ii});
-    worldmap(latlim, lonlim)
-    [ic, cval] = findgroups(Mask.(fld{ii}).val(:));
-    ic = reshape(ic, size(Mask.(fld{ii}).val));
-    nc = max(ic(:));
-
-    pcolorm(Grd.geolat_c, Grd.geolon_c, padend(ic));
-    cb = colorbar;
-    set(cb, 'ticks', 1:nc, 'ticklabels', compose("%g", cval));
-    set(gca, 'clim', [0.5 nc+0.5], 'colormap', distinguishable_colors(nc));
+if opt.diagplot
+    fld = fieldnames(Mask);
+    for ii = 1:length(fld)
+        figure('name', fld{ii});
+        worldmap(latlim, lonlim)
+        [ic, cval] = findgroups(Mask.(fld{ii}).val(:));
+        ic = reshape(ic, size(Mask.(fld{ii}).val));
+        nc = max(ic(:));
+    
+        pcolorm(Grd.geolat_c, Grd.geolon_c, padend(ic));
+        cb = colorbar;
+        set(cb, 'ticks', 1:nc, 'ticklabels', compose("%g", cval));
+        set(gca, 'clim', [0.5 nc+0.5], 'colormap', distinguishable_colors(nc));
+    end
 end
 
 %--------------------
@@ -361,7 +424,12 @@ end
 
 if ~opt.setuponly
 
-    copyfile(origfile, newfile);
+    if opt.maskonly
+        cmd = sprintf('ncks -v geolat,geolon %s %s', origfile, newfile);
+        safesystem(cmd);
+    else
+        copyfile(origfile, newfile);
+    end
 
     fld = fieldnames(Mask);
     for ii = 1:length(fld)
@@ -381,14 +449,17 @@ if ~opt.setuponly
                 'name', "mask_" + fld{ii}, ...
                 'varatts', {'long_name', Mask.(fld{ii}).long_name, ...
                             'flag_values',   join(compose("%d", flagval),","), ...
-                            'flag_meanings', join(flagstr,                ", ")});
+                            'flag_meanings', join(flagstr, ", ")...
+                            'coordinates', 'geolat geolon'});
         else
 
             ncbuild(newfile, single(Mask.(fld{ii}).val), ...
                 'name', "mask_" + fld{ii}, ...
-                'varatts', {'long_name', Mask.(fld{ii}).long_name});
+                'varatts', {'long_name', Mask.(fld{ii}).long_name, ...
+                            'coordinates', 'geolat geolon'});
 
         end
+        ncaddhis(newfile, sprintf('%s added via build_ak_masks.m', fld{ii}));
     end
 
 end
@@ -405,16 +476,19 @@ Scs = struct('ih', [find(xh,1) sum(xh) 1], ...
 Scs.iq = Scs.ih + [0 1 0];
 Scs.jq = Scs.jh + [0 1 0];
 
-% Extract subset with NCKS
-
-cmd = join(["ncks -F -O", ...
-            hyperslabstring(Scs), ...
-            newfile, ...
-            newfile], " ");
-
-if ~opt.setuponly
-    system(cmd);
-end
+% % Extract subset with NCKS (if necessary)
+% 
+% if ~(all(xh) && all(yh))
+% 
+%     cmd = join(["ncks -F -O", ...
+%                 hyperslabstring(Scs), ...
+%                 newfile, ...
+%                 newfile], " ");
+% 
+%     if ~opt.setuponly
+%         safesystem(cmd);
+%     end
+% end
 
 
 end
@@ -586,7 +660,7 @@ end
 
 function str = hyperslabstring(Scs)
 %HYPERSLABSTRING Create NCO-style hyperslab string based on ncstruct
-%start-count-stride structure
+%start-count-stride structure (-F assumed)
 
     Hs = structfun(@(x) sprintf("%d,%d",[x(1) x(1)+x(2)-1]), Scs, 'uni', 0);
     str =  [fieldnames(Hs) struct2cell(Hs)]';
@@ -594,6 +668,34 @@ function str = hyperslabstring(Scs)
 end
 
 
+function [s,r] = safesystem(cmd, dr)
+%SAFESYSTEM Wrapper to run system command
+%
+% safesystem(cmd)
+% safesystem(cmd, 'dryrun')
+%
+% This function runs a system command, with the option for a dry run.  It
+% also throws an error if the system command doesn't complete successfully.
+
+    if nargin < 2
+        dr = 'run';
+    end
+    
+    validatestring(dr, {'run','dryrun'},'safesystem','dr',2);
+    
+    if strcmp(dr, 'dryrun')
+        fprintf('Dry run: %s\n', cmd);
+        s = 0;
+        r = '';
+    else
+        fprintf('Running: %s\n', cmd);
+        [s,r] = system(cmd);
+        if s
+            error(r);
+        end
+    end   
+
+end
 
 
 

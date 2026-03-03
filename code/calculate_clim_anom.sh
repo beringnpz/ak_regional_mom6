@@ -31,6 +31,8 @@ climfile=${simfol}/Level3/${simname}_daily_clim_1993-2022.nc
 
 #globstr="\'${simfol}/Level1-2/${simname}_selected_daily*.nc\'"
 
+# Example of bash filename expansion: cdo mergetime data_{01..12}.nc output.nc
+
 if ! test -f $climfile; then
   echo "Building 1993-2022 climatology"
   cdo -ydaymean -selyear,1993/2022 -cat '/gscratch/cicoes/GR011846_reem/CEFI_data/mom6nep_hc202507/Level1-2/mom6nep_hc202507_selected_daily*.nc' $climfile
