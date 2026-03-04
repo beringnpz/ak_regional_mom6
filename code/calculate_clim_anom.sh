@@ -49,7 +49,7 @@ while [[ $# -gt 0 ]]; do
       shift
       ;;
     --vars)
-      vars=$2
+      varstr=$2
       shift
       shift
       ;;
@@ -81,6 +81,10 @@ basefol="${ppfol}/${tbl_region[${region}]}/${subdomainstr_long}/${tbl_exptype[${
 rawfol="${basefol}/daily/raw/${release}"
 outfol="${basefol}/daily/extra/${release}"
 
+if [[ ! -d "${outfol}" ]]; then
+  mkdir -p ${outfol}
+fi
+
 # Parse variable names
 
 if [[ "${varstr[$i]}" == *","*  ]]; then # if multiple (contains comma)
@@ -91,17 +95,17 @@ fi
 
 
 for vv in "${varnames[@]}"; do
-
+  
   # Calculate daily climatology for 30-year period (1993-2022) 
   # (TODO: Need to figure out how to dynamically build that glob in a way cdo accepts)
 
-  climfile="${outfol}/clim_${vv}.${region}.${subdomainstr}.${exptype}.${freq_long}.${release}.1993-2022.nc"
-  globpattern="${rawfol}/${vv}.${region}.${subdomainstr}.${exptype}.${freq_long}.${release}.*.nc"
+  climfile="${outfol}/clim_${vv}.${region}.${subdomainstr}.${exptype}.daily.${release}.1993-2022.nc"
+  globpattern="${rawfol}/${vv}.${region}.${subdomainstr}.${exptype}.daily.${release}.*.nc"
+
 
   if [ ! -f $climfile ] ; then
     echo "Building 1993-2022 climatology for ${vv}"
     cdo -ydaymean -selyear,1993/2022 -cat $globpattern $climfile
-    #cdo -ydaymean -selyear,1993/2022 -cat $globstr $climfile
   fi
 
   dailyfiles=( ${globpattern} )
