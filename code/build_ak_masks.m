@@ -459,7 +459,7 @@ if ~opt.setuponly
                             'coordinates', 'geolat geolon'});
 
         end
-        ncaddhis(newfile, sprintf('%s added via build_ak_masks.m', fld{ii}));
+        ncaddhis(newfile, sprintf('mask_%s added via build_ak_masks.m', fld{ii}));
     end
 
 end
