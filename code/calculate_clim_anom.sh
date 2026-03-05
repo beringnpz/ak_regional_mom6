@@ -1,12 +1,36 @@
 #!/bin/bash
-#
-# Syntax: ./calculate_clim_anom.sh simname datafol
-#
 
-# if [ "$#" -ne 2 ]; then
-#     echo "Script expects 2 inputs (simname, datafol), exiting"
-#     exit 9
-# fi
+USAGE="Usage: calculate_clim_anom.sh [--ppdir <ppfol>] 
+      [--subdomain <subdomainstr>] [--exptype <exptype>] [--release <release>]
+      [--vars <varstr>]
+
+where
+
+  --ppdir <ppfol>: path to processed data folder where I/O files will be
+        placed (without trailing slash).  This will be the current directory
+        unless otherwise specified.
+
+  --subdomain <subdomainstr>: subdomain name, being either a short name from 
+        the CEFI Data Portal options or an iqX-XjqX-X style subdomain as created 
+        by subset_from_archive.sh
+
+  --exptype <exptype>: experiment type abbreviation that applies to the
+        data to which calculatons will be applied. hcast (hindcast) is the 
+        default if not included
+
+  --release <release>: release abbreviation (or other preferred simulation name)
+        that applies to the data to which calculatons will be applied
+
+  --vars <varstr>: comma-delimited list of variables to which calculatons will 
+        be applied
+
+This function calculates a daily 1993-2022 climatology timeseries for the 
+specified simulation and variables. It also calculates anomaly-from-climatology 
+values for all timesteps of the simulation for those variables.  It produces one 
+climatology file per variable; anomaly files will follow the same time-chunking 
+as the original raw files.  Files are placed in the freq=daily, grid=extra folder 
+corresponding to the indicated simulation.
+"
 
 #-----------------
 # Setup
@@ -14,15 +38,13 @@
 
 source cefi_name_tables.sh
 
+ppfol="."
+exptype="hcast"
+
 # Input parsing
 
 while [[ $# -gt 0 ]]; do
   case $1 in
-    --subdomain)
-      subdomainstr=$2
-      shift
-      shift
-      ;;
     --ppdir)
       ppfol=$2
       shift # past argument
@@ -33,8 +55,8 @@ while [[ $# -gt 0 ]]; do
       shift
       shift
       ;;
-    --release)
-      release=$2
+    --subdomain)
+      subdomainstr=$2
       shift
       shift
       ;;
@@ -43,8 +65,8 @@ while [[ $# -gt 0 ]]; do
       shift
       shift
       ;;
-    --namescheme)
-      namescheme=$2
+    --release)
+      release=$2
       shift
       shift
       ;;
@@ -97,11 +119,9 @@ fi
 for vv in "${varnames[@]}"; do
   
   # Calculate daily climatology for 30-year period (1993-2022) 
-  # (TODO: Need to figure out how to dynamically build that glob in a way cdo accepts)
 
   climfile="${outfol}/clim_${vv}.${region}.${subdomainstr}.${exptype}.daily.${release}.1993-2022.nc"
   globpattern="${rawfol}/${vv}.${region}.${subdomainstr}.${exptype}.daily.${release}.*.nc"
-
 
   if [ ! -f $climfile ] ; then
     echo "Building 1993-2022 climatology for ${vv}"
@@ -120,40 +140,3 @@ for vv in "${varnames[@]}"; do
     fi
   done
 done
-
-
-# climfile=${simfol}/Level3/${simname}_daily_clim_1993-2022.nc
-
-#globstr="\'${simfol}/Level1-2/${simname}_selected_daily*.nc\'"
-
-# Example of bash filename expansion: cdo mergetime data_{01..12}.nc output.nc
-
-# if [ ! -f $climfile ] ; then
-#   echo "Building 1993-2022 climatology"
-#   cdo -ydaymean -selyear,1993/2022 -cat '/gscratch/cicoes/GR011846_reem/CEFI_data/mom6nep_hc202507/Level1-2/mom6nep_hc202507_selected_daily*.nc' $climfile
-#   #cdo -ydaymean -selyear,1993/2022 -cat $globstr $climfile
-# fi
-
-# # Calculate daily anomaly relative to climatology
-
-# dailyfiles=( ${simfol}/Level1-2/${simname}_selected_daily_*.nc )
-
-# for nepdailyfile in "${dailyfiles[@]}"; do
-  
-#   anomfile=${nepdailyfile/Level1-2/Level3}
-#   anomfile=${anomfile/selected_daily/daily_anomaly}
-
-#   if ! test -f $anomfile; then
-#     echo "Calculating anomalies: ${anomfile}"
-#     cdo ydaysub $nepdailyfile $climfile $anomfile
-#   fi
-
-# done
-
-# Example
-
-# for r_number in {0..24} ; do 
-#   r_tag='r'$(printf '%02d' "$r_number")
-#   echo "$r_tag"
-#   cdo cat -apply,shifttime,$(( $r_number * 5 ))year [ dtr_m_ECEarth_PD_s01"$r_tag"_20??.nc ] dtr_m_ECEarth_PD_s01r00-24_2035-2159.nc
-# done

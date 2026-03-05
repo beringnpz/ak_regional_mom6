@@ -2,7 +2,9 @@
 
 USEAGE="Usage: ./subset_from_archive.sh [--subdomain <iq1 iq2 jq1 jq2>]
         [--years <yrstr yrend>] [--mmdd <mmdd>] [--archdir <arch_dir>]
-        [ftype1 <varstr1> ...] [--split] [-h]
+        [ftype1 <varstr1> ...] [--region <region>] [--release <release>] 
+        [--exptype <exptype>] [--coordfile <coordfile>] 
+        [--namescheme <namescheme>] [--split] [-h]
 
 where
 
@@ -10,7 +12,8 @@ where
         extracted in the horizontal subregion defined by iq=iq1:iq2,
         jq = jq11:jq2 (ih = iq1+0.5:iq2-0.5, jh=iq1+0.5:iq2-0.5)
         The specified subdomain must encompass at least one h-point,
-        i.e., iq2-iq1>0 and jq2-jq1>0.
+        i.e., iq2-iq1>0 and jq2-jq1>0.  If not included, the full domain will
+        be extracted.
 
   --years <yrstr yrend>: years to process, indicated by starting and ending
         years of the desired range.  The script expects to find yearly-chunked
@@ -57,12 +60,19 @@ where
   --split: if included, the output will be split into individual files per
         variable
 
-This function extracts a subset of variables across the indicated horizontal
-subregion from a MOM6 simulation archive. The resulting files follow the
-following naming scheme, which loosely mimics the CEFI Data Portal conventions:
-
-<ppdir>/<region>.<subdomain>.<exptype>.<freq>.<release>.YYYYMMDD.<ftype>.nc
-<ppdir>/<region>.<subdomain>.<exptype>.<freq>.<release>.YYYYMMDD.<variable>.nc
+This function extracts variables from a MOM6 simulation archive and applies 
+light processing to prepare them for upload to the CEFI Data Portal.  The data 
+itself is unaltered; only metadata is modified, including:
+ * Renaming dimensions to iq/jq/ih/jh system if needed
+ * Adding geolat[_c/u/v] and geolon[_c/u/v] coordinate attributes to all 
+   variables
+ * Adding geolat[_c/u/v] and geolon[_c/u/v] variables to all files if not 
+   present
+ * Optionally splitting archived files by variables
+ * Optionally retrieving a horizontal subregion from the domain
+ * Renaming files and placing in folders that follow the CEFI Data Portal's 
+   hierarchical system
+ * TODO: Add CEFI metadata?
 "
 
 #--------------------
