@@ -4,15 +4,6 @@
 #
 # Where fcyear is he last partially-completed year that will be used for the persistence forecast
 
-if [ "$#" -ne 4 ]; then
-    echo "Script expects 4 inputs (filedatestr, tindex, simname, datafol), exiting"
-    exit 9
-fi
-
-#-----------------
-# Setup
-#-----------------
-
 #-----------------
 # Setup
 #-----------------
@@ -147,10 +138,13 @@ for vv in "${varnames[@]}"; do
 
     cdo -select,timestep=${ntime1} $anomfilefc tmp1.nc
     cdo -select,timestep=${ntime1}/${ntime2} $climfile tmp2.nc
-
-    cdo -add tmp2.nc tmp1.nc $fcfile # order important, inherits year from first 
+    
+    cdo -add tmp2.nc tmp1.nc $fcfile # add
+   
+    cdo setyear,${fcdatestr:0:4} $fcfile $fcfile # ensure year reflects anom, not clim
     
     rm tmp1.nc tmp2.nc
+  
   fi
 
 done
