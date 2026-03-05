@@ -3,8 +3,74 @@
 # Syntax: ./calculate_surveyregion_averages.sh simname datafol
 #
 
-simname=$1
-datafol=$2
+# simname=$1
+# datafol=$2
+
+#-----------------
+# Setup
+#-----------------
+
+source cefi_name_tables.sh
+
+ppfol="."
+exptype="hcast"
+
+# Input parsing
+
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --ppdir)
+      ppfol=$2
+      shift # past argument
+      shift # past value
+      ;;
+    --region)
+      region=$2
+      shift
+      shift
+      ;;
+    --subdomain)
+      subdomainstr=$2
+      shift
+      shift
+      ;;
+    --exptype)
+      exptype=$2
+      shift
+      shift
+      ;;
+    --release)
+      release=$2
+      shift
+      shift
+      ;;
+    --maskbase)
+      maskbase=$2
+      shift
+      shift
+      ;;
+    --maskdatestr)
+      maskdatestr=$2
+      shift
+      shift
+      ;;
+    -h|--help)
+       echo "$USEAGE"
+       exit
+       ;;
+    -*|--*)
+      echo "Unknown option $1"
+      exit 1
+      ;;
+  esac
+done
+
+if [[ "${subdomainstr}" == "iq*" ]] ; then
+    subdomainstr_long=${tbl_subdomain[${subdomainstr}]}
+else
+    subdomainstr_long=${subdomainstr}
+fi
+
 
 #-------------------
 # Averaging function
@@ -52,31 +118,48 @@ regionavg () {
 # Apply to files
 #-------------------
 
-simfol=${datafol}/${simname}
+# Base folder
+
+basefol="${ppfol}/${tbl_region[${region}]}/${subdomainstr_long}/${tbl_exptype[${exptype}]}/"
+# daily/extra/${release}"
 
 # Static file with masking variables
 
-maskfile=${simfol}/Level1-2/${simname}_ocean_static_ak.nc
+maskfile=${basefol}/static/extra/${maskbase}.${region}.${subdomainstr}.${exptype}.static.${release}.${maskdatestr}.nc
 
 # Apply to daily output, forecast, anomaly, and climatology files
 
-files = (${simfol}/Level1-2/${simname}_selected_daily_*.nc
-         ${simfol}/Level3/${simname}_forecast_*.nc
-         ${simfol}/Level3/${simname}_daily_anomaly*.nc
-         ${simfol}/Level3/${simname}_daily_clim*.nc
+files = (${basefol}/daily/raw/*.nc
+         ${basefol}/daily/extra/fcpersis_*.nc
+         ${basefol}/daily/extra/anom_*.nc
+         ${basefol}/daily/extra/clim*.nc
         )
+
+# Output folder (considering survey region average indices to be its own 
+# subdomain, since this is somewhat independent of exact subdomain)
+
+outfol="${ppfol}/${tbl_region[${region}]}/ak_surveyregion_avg/${tbl_exptype[${exptype}]}/daily/extra"
+
+# files = (${simfol}/Level1-2/${simname}_selected_daily_*.nc
+#          ${simfol}/Level3/${simname}_forecast_*.nc
+#          ${simfol}/Level3/${simname}_daily_anomaly*.nc
+#          ${simfol}/Level3/${simname}_daily_clim*.nc
+#         )
 
 # dailyfiles=( ${simfol}/Level1-2/${simname}_selected_daily_*.nc )
 
-if [ ! -d "${simfol}/Level3/surveyregionavg" ]; then
-    mkdir "${simfol}/Level3/surveyregionavg"
+if [ ! -d "${outfol}" ]; then
+    mkdir -p "${outfol}"
 fi
 
 for fname in "${files[@]}"; do
-  
-  svyavgfile=${fname/Level1-2/Level3}
-  svgavgfile=${svyavgfile/Level3/Level3\/surveyregionavg}
-  svyavgfile=${svyavgfile/.nc/.svyreg.nc}
+
+  svyavgfile=$( basename "${fname}" )
+  svgavgfile=${outfol}/${svgavgfile/${subdomainstr}/aksvyreg}
+
+  # svyavgfile=${fname/Level1-2/Level3}
+  # svgavgfile=${svyavgfile/Level3/Level3\/surveyregionavg}
+  # svyavgfile=${svyavgfile/.nc/.svyreg.nc}
   
   if ! test -f $svyavgfile; then
   

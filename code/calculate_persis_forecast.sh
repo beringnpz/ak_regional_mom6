@@ -1,8 +1,43 @@
 #!/bin/bash
-#
-# Syntax: ./persis_forecast.sh filedatestr tindex simname datafol
-#
-# Where fcyear is he last partially-completed year that will be used for the persistence forecast
+
+USAGE="Usage: calculate_persis_forecast.sh [--ppdir <ppfol>] 
+      [--subdomain <subdomainstr>] [--exptype <exptype>] [--release <release>]
+      [--vars <varstr>] 
+
+where
+
+  --ppdir <ppfol>: path to processed data folder where I/O files will be
+        placed (without trailing slash).  This will be the current directory
+        unless otherwise specified.
+
+  --subdomain <subdomainstr>: subdomain name, being either a short name from 
+        the CEFI Data Portal options or an iqX-XjqX-X style subdomain as created 
+        by subset_from_archive.sh
+
+  --exptype <exptype>: experiment type abbreviation that applies to the
+        data to which calculatons will be applied. hcast (hindcast) is the 
+        default if not included
+
+  --release <release>: release abbreviation (or other preferred simulation name)
+        that applies to the data to which calculatons will be applied
+
+  --vars <varstr>: comma-delimited list of variables to which calculatons will 
+        be applied
+
+  --filedatestr <filedatestr>: YYYYMMDD file-start-time string corresponding to 
+        the anomaly file on which to base the forecast  
+
+  --tindex <tindex>: time index of time step within the anomlay file on which to 
+        base the forecast.  If not included, this will be the last time step in
+        the file.
+
+This function calculates a persistence-based forecast by adding the 
+anomaly-from-climatogy value from a single time step to the climatological daily
+timeseries.  This expects the climatology and anomaly files to already exist in 
+the freq=daily, grid=extra folder corresponding to the indicated simulation, and
+places the new output files (labeled with the fcpersis_ prefix) in the same 
+location.
+"
 
 #-----------------
 # Setup
