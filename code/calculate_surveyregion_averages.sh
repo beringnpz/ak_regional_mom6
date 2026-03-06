@@ -83,6 +83,12 @@ regionavg () {
   
   regnum=(6 47 52 78 98 143)
 
+  if cdo showname $1 | grep -w "tob"; then
+    cpflag=1
+  else
+    cpflag=0
+  fi
+
   for reg in "${regnum[@]}"; do
 
     echo "  Region ${reg}"
@@ -93,18 +99,27 @@ regionavg () {
     ncks -A -v areacello,mask_survey_area $3 tmpo.nc
   
     # Add cold pool variables
- 
-    cdo -expr,'cpool2p0=tob<2.0; cpool1p0=tob<1.0; cpool0p0=tob<0.0' $1 tmpcp.nc
-    ncks -A -v areacello,mask_survey_area $3 tmpcp.nc
+   
+    if [ ${cpflag} == 1 ]; then
+      cdo -expr,'cpool2p0=tob<2.0; cpool1p0=tob<1.0; cpool0p0=tob<0.0' $1 tmpcp.nc
+      ncks -A tmpcp.nc tmpo.nc
+      rm tmpcp.nc
+      # ncks -A -v areacello,mask_survey_area $3 tmpcp.nc
+    fi
 
     # Calculate weighted average
 
     ncwa    -w areacello -B "mask_survey_area = ${reg}" -a ih,jh tmpo.nc  tmpreg${reg}.nc
-    ncwa -A -w areacello -B "mask_survey_area = ${reg}" -a ih,jh tmpcp.nc tmpreg${reg}.nc
-  
+    #if [ ${cpflag} == 1]; then
+    #  ncwa -A -w areacello -B "mask_survey_area = ${reg}" -a ih,jh tmpcp.nc tmpreg${reg}.nc
+    #fi
+
     # Clean up 
 
-    rm tmpo.nc tmpcp.nc
+    rm tmpo.nc 
+    #if [ $cpflag == 1]; then
+    #  rm tmpcp.nc
+    #fi
   done
   
   # Concatenate regions along new dimension
@@ -120,25 +135,26 @@ regionavg () {
 
 # Base folder
 
-basefol="${ppfol}/${tbl_region[${region}]}/${subdomainstr_long}/${tbl_exptype[${exptype}]}/"
+basefol="${ppfol}/${tbl_region[${region}]}/${subdomainstr_long}/${tbl_exptype[${exptype}]}"
 # daily/extra/${release}"
 
 # Static file with masking variables
 
-maskfile=${basefol}/static/extra/${maskbase}.${region}.${subdomainstr}.${exptype}.static.${release}.${maskdatestr}.nc
+maskfile=${basefol}/static/extra/${release}/${maskbase}.${region}.${subdomainstr}.${exptype}.static.${release}.${maskdatestr}.nc
 
 # Apply to daily output, forecast, anomaly, and climatology files
 
-files = (${basefol}/daily/raw/*.nc
-         ${basefol}/daily/extra/fcpersis_*.nc
-         ${basefol}/daily/extra/anom_*.nc
-         ${basefol}/daily/extra/clim*.nc
-        )
+files=(${basefol}/daily/raw/${release}/*.nc
+       ${basefol}/daily/extra/${release}/fcpersis_*.nc
+       ${basefol}/daily/extra/${release}/anom_*.nc
+       ${basefol}/daily/extra/${release}/clim*.nc
+       )
+
 
 # Output folder (considering survey region average indices to be its own 
 # subdomain, since this is somewhat independent of exact subdomain)
 
-outfol="${ppfol}/${tbl_region[${region}]}/ak_surveyregion_avg/${tbl_exptype[${exptype}]}/daily/extra"
+outfol="${ppfol}/${tbl_region[${region}]}/ak_surveyregion_avg/${tbl_exptype[${exptype}]}/daily/extra/${release}"
 
 # files = (${simfol}/Level1-2/${simname}_selected_daily_*.nc
 #          ${simfol}/Level3/${simname}_forecast_*.nc
@@ -155,7 +171,7 @@ fi
 for fname in "${files[@]}"; do
 
   svyavgfile=$( basename "${fname}" )
-  svgavgfile=${outfol}/${svgavgfile/${subdomainstr}/aksvyreg}
+  svyavgfile=${outfol}/${svyavgfile/${subdomainstr}/aksvyreg}
 
   # svyavgfile=${fname/Level1-2/Level3}
   # svgavgfile=${svyavgfile/Level3/Level3\/surveyregionavg}
@@ -166,7 +182,7 @@ for fname in "${files[@]}"; do
     echo "Calculating regional averages: ${svyavgfile}" 
    
     # Regional averages for all variables in file
-
+    
     regionavg $fname $svyavgfile $maskfile
 
   fi
