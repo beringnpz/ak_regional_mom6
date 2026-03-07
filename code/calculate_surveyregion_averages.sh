@@ -102,13 +102,13 @@ regionavg () {
    
     if [ ${cpflag} == 1 ]; then
       cdo -expr,'cpool2p0=tob<2.0; cpool1p0=tob<1.0; cpool0p0=tob<0.0' $1 tmpcp.nc
-      ncks -A tmpcp.nc tmpo.nc
+      ncks -A -v cpool2p0,cpool1p0,cpool0.0 tmpcp.nc tmpo.nc
       rm tmpcp.nc
       # ncks -A -v areacello,mask_survey_area $3 tmpcp.nc
     fi
 
     # Calculate weighted average
-
+    
     ncwa    -w areacello -B "mask_survey_area = ${reg}" -a ih,jh tmpo.nc  tmpreg${reg}.nc
     #if [ ${cpflag} == 1]; then
     #  ncwa -A -w areacello -B "mask_survey_area = ${reg}" -a ih,jh tmpcp.nc tmpreg${reg}.nc
