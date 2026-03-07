@@ -1,4 +1,4 @@
-function [A, Grd] = akmapprep(simname, opt)
+function [A, Grd] = akmapprep(opt)
 %AKMAPPREP Calulate map-related parameters
 %
 % [A, Grd] = akmapprep(simname, opt)
@@ -6,26 +6,24 @@ function [A, Grd] = akmapprep(simname, opt)
 % This function reads in grid information and does some preliminary
 % calculations to assist in plotting MOM6-based maps for the Alaska region.
 %
-% Input variables:
-%
-%   simname:    name of simulation, used to locate output data files.
-%
 % Optional input variables:
 %
-%   staticname: base name of static file, assumed to follow the naming
-%               scheme <datafol>/<simname>/Level1-2/<staticname>.
-%               ["<simname>_ocean_static_ak.nc"]
-%
-%   datafol:    CEFI data folder path.  Default is the path returned by the
-%               cefidatafol.m function
+%   cpopts:     cefi portal options object corresponding to the simulation
+%               
+%   gfiles:     1 x n string array of filenames where relevent grid and
+%               masking data can be found.  If not specified, it will use
+%               the grid=static, variable=ocean_static and grid=extra,
+%               variable=ak_masks files from the specified simulation.
 %
 %   maskvar:    masking variable (in static collection) used to set map
 %               latitude and longitude limits.  The range will include all
 %               grid cell where maskvar == maskval.
+%               ["mask_esr_area"]
 %
 %   maskval:    masking variable value used to set map latitude and
 %               longitude limits. The range will include all grid cell
 %               where maskvar == maskval. 
+%               [3]
 %
 % Output variables:
 %
@@ -94,22 +92,39 @@ function [A, Grd] = akmapprep(simname, opt)
 % Copyright 2026 Kelly Kearney
 
 arguments
-    simname {mustBeTextScalar}
-    opt.staticname {mustBeTextScalar} =simname+"_ocean_static_ak.nc"
-    opt.datafol {mustBeTextScalar} =cefidatafolpath
+    opt.cpopts (1,1) {mustBeA(opt.cpopts, "cefiportalopts")} =cefiportalopts()
+    opt.gfiles {mustBeText} =''
     opt.maskvar ="mask_esr_area"
     opt.maskval =3
 end
 
 % Read relevant static file variables
 
-staticfile = fullfile(opt.datafol, simname, "Level1-2", opt.staticname);
+if isempty(opt.gfiles)
+    C = opt.cpopts.setopts('freq','static');
+    opt.gfiles = [...
+        fullfile(C.cefifolder('extra'), C.cefifilename('ak_masks', C.yyyymmdd))
+        fullfile(C.cefifolder('raw'  ), C.cefifilename('ocean_static', C.yyyymmdd))];
+end
+if ~all(cellfun(@(x) exist(x,'file'), opt.gfiles))
+    error('Specified grid files not found');
+end
 
 vars = ["geolat", "geolon", "geolat_c", "geolon_c", ...
-        "mask_esr_area", "mask_survey_strata", "mask_survey_area", 'wet'];
+        "mask_esr_area", "mask_survey_strata", "mask_survey_area", ...
+        "wet"];
 vars = unique([vars opt.maskvar]);
 
-Grd = ncstruct(staticfile, vars{:});
+Grd = struct;
+for ii = 1:length(opt.gfiles)
+    I = ncinfo(opt.gfiles{ii});
+    vread = intersect(vars, {I.Variables.Name});
+    Tmp = ncstruct(opt.gfiles{ii}, vread{:});
+    for iv = 1:length(vread)
+        Grd.(vread{iv}) = Tmp.(vread{iv});
+    end
+    vars = setdiff(vars, vread);
+end
 
 gsz = size(Grd.geolat);
 

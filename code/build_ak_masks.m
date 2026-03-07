@@ -22,9 +22,9 @@ function [Scs, Mask] = build_ak_masks(opt)
 %               cpopts.
 %               [false]
 %
-%   cpopts:     structure or cell array of cefiportalopts.m parameter
-%               options corresponding to the original static file used.  If
-%               empty, default options will be used.
+%   cpopts:     cefiportalopts object corresponding to the original static
+%               file used.
+%               [cefiportalopts()]
 %
 %   origname:   base name for original static file (less any file extension
 %               or expanded-name elements).  At minimum, this must include
@@ -35,10 +35,6 @@ function [Scs, Mask] = build_ak_masks(opt)
 %               it follows the conventions of time-varying files, false if
 %               the name is just origname.nc
 %               [false]
-%
-%   yyyymmdd:   if expandname=true, starting timestamp associated with the
-%               static file
-%               ["19930101"]
 %
 %   newname:    base name for new Alaska-specific static file, to be
 %               substituted in place of the origname portion of the file
@@ -233,10 +229,9 @@ function [Scs, Mask] = build_ak_masks(opt)
 
 arguments
     opt.setuponly (1,1) {mustBeNumericOrLogical} =false
-    opt.cpopts  ={}
+    opt.cpopts  (1,1) {mustBeA(opt.cpopts, "cefiportalopts")} =cefiportalopts()
     opt.origname {mustBeTextScalar} ="ocean_static"
     opt.expandname (1,1) {mustBeNumericOrLogical} =true
-    opt.yyyymmdd {mustBeTextScalar} ="19930101"
     opt.newname  {mustBeTextScalar} ="ocean_static_ak"
     opt.diagplot (1,1) {mustBeNumericOrLogical} =false
     opt.maskonly (1,1) {mustBeNumericOrLogical} =false
@@ -251,27 +246,18 @@ validateattributes(flag, {'logical'}, {'scalar'});
 % Folder setup
 %--------------------
 
-if isstruct(opt.cpopts)
-    opt.cpopts = namesargs2cell(opt.cpopts);
-end
-C = cefiportalopts(opt.cpopts{:});
-
 % Data location (using portalv1 conventions)
 % Note: regardless of what frequency the original static file is marked as,
 % the new one goes to the static subfolder.
 
-origpath = fullfile(...
-    C.portalpath, C.regionl, C.subdomainl, C.exptypel, C.freql, 'raw', C.release);
+origpath = opt.cpopts.cefifolder('raw');
 if opt.expandname
-    origfile = sprintf('%s.%s.%s.%s.%s.%s.%s.nc', ...
-        opt.origname, C.regions, C.subdomains, C.exptypes, C.freql, ...
-        C.release, opt.yyyymmdd);
+    origfile = opt.cpopts.cefifilename(opt.origname, C.yyyymmdd);
 else
     origfile = opt.origname+".nc";
 end
 
-newpath = fullfile(...
-    C.portalpath, C.regionl, C.subdomainl, C.exptypel, 'static', 'extra', C.release);
+newpath = opt.cpopts.setopts('freq','static').cefifolder('extra');
 newfile = strrep(origfile, opt.origname, opt.newname);
 
 if ~exist(newpath, 'dir')
@@ -425,7 +411,7 @@ end
 if ~opt.setuponly
 
     if opt.maskonly
-        cmd = sprintf('ncks -v geolat,geolon %s %s', origfile, newfile);
+        cmd = sprintf('ncks -v geolat,geolon,areacello %s %s', origfile, newfile);
         safesystem(cmd);
     else
         copyfile(origfile, newfile);

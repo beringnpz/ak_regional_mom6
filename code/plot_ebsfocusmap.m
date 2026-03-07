@@ -1,5 +1,5 @@
-function h = plot_ebsfocusmap(simname, yrcurrent, opt)
-%PLOT_BERING_BOTTOM_TEMP_MAP_5X4 Bering Sea ESR figure
+function h = plot_ebsfocusmap(opt)
+%PLOT_EBSFOCUSMAP Plot values/anonalies in EBS region
 %
 % h = plot_ebsfocusmap(simname, yrcurrent, ...)
 %
@@ -8,23 +8,15 @@ function h = plot_ebsfocusmap(simname, yrcurrent, opt)
 % ESR spatial map of bottom temperature, extended so one can quickly plot
 % any variable, either values or anomalies.
 %
-% Input variables:
-%
-%   simname:    name of simulation, used to locate output data files.  The
-%               path will be constructed as <datafol>/<simname>/Level1-2/.
+% Optional input variables (passed as parameter/value pairs, default in []):
 %
 %   yrcurrent:  year for which to produce a plot.  The plot will hold a 5x4
 %               grid of axes depicting this year (bottom right) and the
 %               previous 19 years' worth of data.
 %
-% Optional input variables (passed as parameter/value pairs, default in []):
-%
-%   staticname: base name of static file, assumed to follow the naming
-%               scheme <datafol>/<simname>/Level1-2/<staticname>.
-%               ["<simname>_ocean_static_ak.nc"]
-%
-%   datafol:    CEFI data folder path.  Default is the path returned by the
-%               cefidatafol.m function
+%   cpopts:     cefiportalopts object corresponding to the original static
+%               file used.
+%               [cefiportalopts()]
 %
 %   yrfilter:   'all':  plot 1970 to yrcurrent. This range reflects the
 %                       older ROMS Bering10K hindcast extent for direct
@@ -61,10 +53,8 @@ function h = plot_ebsfocusmap(simname, yrcurrent, opt)
 %--------------------
 
 arguments
-    simname {mustBeTextScalar}
-    yrcurrent (1,1) {mustBeInteger}
-    opt.staticname {mustBeTextScalar} =simname+"_ocean_static_ak.nc"
-    opt.datafol {mustBeTextScalar} =cefidatafolpath
+    opt.yrcurrent (1,1) {mustBeInteger} =year(datetime('today'))
+    opt.cpopts (1,1) {mustBeA(opt.cpopts, "cefiportalopts")} =cefiportalopts()
     opt.yrfilter {mustBeTextScalar} ="all"
     opt.ncol (1,1) {mustBeInteger} =6
     opt.var {mustBeTextScalar} ='tob'
@@ -80,15 +70,15 @@ end
 % Setup
 %--------------------
 
-A = akmapprep(simname);
+A = akmapprep('cpopts', opt.cpopts);
 
 % Years to plot
 
 switch opt.yrfilter
     case "all"
-        yrplt = 1970:yrcurrent;
+        yrplt = 1970:opt.yrcurrent;
     case "last20"
-        yrplt = yrcurrent - (19:-1:0);
+        yrplt = opt.yrcurrent - (19:-1:0);
 end
 nyr = length(yrplt);
 
@@ -125,9 +115,11 @@ for ii = 1:nyr
 
     switch opt.vartype
         case 'anomaly'
-            fglob = fullfile(opt.datafol, simname, "Level3", simname+"_daily_anomaly_" + yrplt(ii) + "*.nc");
+            fglob = fullfile(opt.cpopts.setopts('freq','daily').cefifolder('extra'), ...
+                             opt.cpopts.setopts('freq','daily').cefifilename("anom_"+opt.var, yrplt(ii)+"*"));
         case 'value'
-            fglob = fullfile(opt.datafol, simname, "Level1-2", simname+"_selected_daily_" + yrplt(ii) + "*.nc");
+            fglob = fullfile(opt.cpopts.setopts('freq','daily').cefifolder('raw'), ...
+                             opt.cpopts.setopts('freq','daily').cefifilename(opt.var, yrplt(ii)+"*"));
     end
     fname = dir(fglob);
     nfile = length(fname);

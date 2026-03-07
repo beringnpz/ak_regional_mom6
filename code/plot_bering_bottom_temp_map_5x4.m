@@ -1,4 +1,4 @@
-function h = plot_bering_bottom_temp_map_5x4(simname, yrcurrent, opt)
+function h = plot_bering_bottom_temp_map_5x4(yrcurrent, cpopts)
 %PLOT_BERING_BOTTOM_TEMP_MAP_5X4 Bering Sea ESR figure
 %
 % h = plot_bering_bottom_temp_map_5x4(simname, yrcurrent, ...)
@@ -34,19 +34,16 @@ function h = plot_bering_bottom_temp_map_5x4(simname, yrcurrent, opt)
 %--------------------
 
 arguments
-    simname {mustBeTextScalar}
     yrcurrent (1,1) {mustBeInteger}
-    opt.staticname {mustBeTextScalar} =simname+"_ocean_static_ak.nc"
-    opt.datafol {mustBeTextScalar} =cefidatafolpath
+    cpopts (1,1) {mustBeA(cpopts, "cefiportalopts")} =cefiportalopts()
 end
 
 %--------------------
 % Setup
 %--------------------
 
-h = plot_ebsfocusmap(simname, yrcurrent, ...
-    'staticname', opt.staticname, ...
-    'datafol', opt.datafol, ...
+h = plot_ebsfocusmap('yrcurrent', yrcurrent, ...
+    'cpopts', cpopts, ...
     'yrfilter', 'last20', ...
     'ncol', 4, ...
     'var', 'tob', ...

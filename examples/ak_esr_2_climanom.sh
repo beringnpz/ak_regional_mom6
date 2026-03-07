@@ -15,7 +15,6 @@
 #                        --filedatestr 20250101 \
 #                        --tindex 101
 
-
 calculate_surveyregion_averages.sh --region nep \
                        --subdomain iq0-342jq446-743 \
                        --release e202507 \
