@@ -104,22 +104,15 @@ regionavg () {
       cdo -expr,'cpool2p0=tob<2.0; cpool1p0=tob<1.0; cpool0p0=tob<0.0' $1 tmpcp.nc
       ncks -A -v cpool2p0,cpool1p0,cpool0.0 tmpcp.nc tmpo.nc
       rm tmpcp.nc
-      # ncks -A -v areacello,mask_survey_area $3 tmpcp.nc
     fi
 
     # Calculate weighted average
     
     ncwa    -w areacello -B "mask_survey_area = ${reg}" -a ih,jh tmpo.nc  tmpreg${reg}.nc
-    #if [ ${cpflag} == 1]; then
-    #  ncwa -A -w areacello -B "mask_survey_area = ${reg}" -a ih,jh tmpcp.nc tmpreg${reg}.nc
-    #fi
 
     # Clean up 
 
     rm tmpo.nc 
-    #if [ $cpflag == 1]; then
-    #  rm tmpcp.nc
-    #fi
   done
   
   # Concatenate regions along new dimension
@@ -145,7 +138,7 @@ maskfile=${basefol}/static/extra/${release}/${maskbase}.${region}.${subdomainstr
 # Apply to daily output, forecast, anomaly, and climatology files
 
 files=(${basefol}/daily/raw/${release}/*.nc
-       ${basefol}/daily/extra/${release}/fcpersis_*.nc
+       ${basefol}/daily/extra/${release}/fcpersist_*.nc
        ${basefol}/daily/extra/${release}/anom_*.nc
        ${basefol}/daily/extra/${release}/clim*.nc
        )

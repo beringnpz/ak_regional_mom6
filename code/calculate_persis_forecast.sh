@@ -174,11 +174,11 @@ for vv in "${varnames[@]}"; do
     cdo -select,timestep=${ntime1} $anomfilefc tmp1.nc
     cdo -select,timestep=${ntime1}/${ntime2} $climfile tmp2.nc
     
-    cdo -add tmp2.nc tmp1.nc $fcfile # add
+    cdo -add tmp2.nc tmp1.nc tmp3.nc # add
    
-    cdo setyear,${fcdatestr:0:4} $fcfile $fcfile # ensure year reflects anom, not clim
+    cdo setyear,${fcdatestr:0:4} tmp3.nc $fcfile # ensure year reflects anom, not clim
     
-    rm tmp1.nc tmp2.nc
+    rm tmp1.nc tmp2.nc tmp3.nc
   
   fi
 
