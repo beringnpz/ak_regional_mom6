@@ -1,4 +1,4 @@
-function [h, Cdata] = cluster_on_anomalies(simname, mmdd, opt)
+function [h, Cdata] = cluster_on_anomalies(mmdd, opt)
 %CLUSTER_ON_ANALOMALIES Yearly cluster analysis based on spatial anomalies
 %
 % [h, Cdata] = cluster_on_anomalies(simname, mmdd, opt)
@@ -15,26 +15,19 @@ function [h, Cdata] = cluster_on_anomalies(simname, mmdd, opt)
 %
 % Input variables:
 %
-%   simname:    name of simulation, used to locate output data files.  The
-%               path will be constructed as <datafol>/<simname>.
-%
 %   mmdd:       1 x 2 array holding month and day of month when data will
 %               be extracted for each year (e.g., [7 1] will extract July 1
 %               data for each year).
 %
 % Optional input variables (passed as parameter/value pairs), default in []:
 %
+%   cpopts:     cefi portal options object corresponding to the simulation
+%
 %   ndays:      number of days following the mmdd date over which anomaly
 %               data will be averaged for each year.  For example, if mmdd
 %               = [7 1] and ndays = 1, the July 1 anomaly will be used.  If
 %               ndays=31, the average across July 1-July 31 will be used
 %               instead. [1]
-%
-%   staticname: name of static file holding coordinate data
-%               [<simname>_ocean_static_ak.nc]
-%
-%   datafol:    path to simulation data folder [path returned by
-%               cefidatafolpath.m] 
 %
 %   yr:         array of years to include in cluster analysis
 %               [1993 through current year]
@@ -44,10 +37,11 @@ function [h, Cdata] = cluster_on_anomalies(simname, mmdd, opt)
 %
 %   maskvar:    masking variable indicating spatial region for cluster
 %               analysis.  Can be either a scalar string corresponding to
-%               the name of a mask variable in the static file or an array
-%               matching the spatial dimensions of the anomaly variables.
-%               This is paired with the maskval input to create a logical
-%               mask. ["mask_esr_area"]
+%               the name of a mask variable in the static file (which will
+%               be paired with the maskval input to create a logical array)
+%               or a logical array matching the spatial dimensions of the
+%               anomaly variables. 
+%               ["mask_esr_area"]
 %
 %   maskval:    Values in the mask array that are included in the analysis.
 %               [1 3 4].
@@ -79,11 +73,9 @@ function [h, Cdata] = cluster_on_anomalies(simname, mmdd, opt)
 % Copyright 2025 Kelly Kearney
 
 arguments
-    simname {mustBeTextScalar}
     mmdd (1,2) {mustBeInteger}
+    opt.cpopts (1,1) {mustBeA(opt.cpopts, "cefiportalopts")} =cefiportalopts()
     opt.ndays =1
-    opt.staticname {mustBeTextScalar} =simname+"_ocean_static_ak.nc"
-    opt.datafol {mustBeTextScalar} =cefidatafolpath
     opt.yr {mustBeInteger, mustBeVector} =(1993:year(datetime('today')))
     opt.vars {mustBeText} =["tob", "tos"]
     opt.maskvar ="mask_esr_area"
@@ -100,9 +92,6 @@ end
 % Setup
 %--------------------
 
-staticfile = fullfile(opt.datafol, simname, "Level1-2", opt.staticname);
-lev3fol = fullfile(opt.datafol, simname, "Level3");
-
 % Read data for clustering
 
 nyr = length(opt.yr);
@@ -117,30 +106,27 @@ nv = length(opt.vars);
 
 if isempty(opt.Cdata)
 
-    for iy = nyr:-1:1
-        fprintf('Reading data: %d\n', opt.yr(iy));
+    for iv = 1:nv
+        for iy = nyr:-1:1
+            fprintf('Reading data: %s, %d\n', opt.vars{iv}, opt.yr(iy));
     
-        % Check for files for this year
-    
-        fglob = fullfile(opt.datafol, simname, "Level3", simname+"_daily_anomaly_" + opt.yr(iy) + "*.nc");
-        fanom = dir(fglob);
-        nfile = length(fanom);
-        if nfile < 1
-            error('No anomaly files found for %d; adjust yr input accordingly', opt.yr(iy));
-        end
-        fanom = fullfile({fanom.folder}, {fanom.name});
-    
-        % Find time index corresponding to clustering target date
-    
-        t = ncdateread(fanom, 'time');
+            % Check for files for this year
+                    
+            fanom = opt.cpopts.setopts('freq','daily','grid','extra').cefifilelist("anom_"+opt.vars{iv}, opt.yr(iy)+"*");
 
-        tidx = interp1(t, 1:length(t), datetime(opt.yr(iy), mmdd(1), mmdd(2)), 'nearest');
+            % Find time index corresponding to clustering target date
+        
+            t = ncdateread(fanom, 'time');
     
-        Cdata(iy) = ncstruct(fanom, struct('time', [tidx opt.ndays 1]), opt.vars{:});
-        if opt.ndays>1
-            Cdata(iy) = structfun(@(x) nanmean(x,3), Cdata(iy), 'uni', 0);
+            tidx = interp1(t, 1:length(t), datetime(opt.yr(iy), mmdd(1), mmdd(2)), 'nearest');
+        
+            Tmp = ncstruct(fanom, struct('time', [tidx opt.ndays 1]), opt.vars{iv});
+            if opt.ndays>1
+                Cdata(iy).(opt.vars{iv}) = mean(Tmp.(opt.vars{iv}), 3, 'omitnan');
+            else
+                Cdata(iy).(opt.vars{iv}) = Tmp.(opt.vars{iv});
+            end
         end
-    
     end
 else
     Cdata = opt.Cdata;
@@ -150,9 +136,9 @@ end
 
 if islogical(opt.maskvar) && isequal(size(Cdata(1).(opt.vars{1})), size(opt.maskvar))
     mask = opt.maskvar;
-    Grd = ncstruct(staticfile, 'geolat', 'geolon', 'geolat_c', 'geolon_c');
+    Grd = readcefigridvars(opt.cpopts, {'geolat', 'geolon', 'geolat_c', 'geolon_c'});
 elseif ischar(opt.maskvar) || isstring(opt.maskvar)
-    Grd = ncstruct(staticfile, 'geolat', 'geolon', 'geolat_c', 'geolon_c', 'wet', opt.maskvar{:});
+    Grd = readcefigridvars(opt.cpopts, {'geolat', 'geolon', 'geolat_c', 'geolon_c', 'wet', opt.maskvar{:}});
     mask = Grd.wet == 1 & ismember(Grd.(opt.maskvar), opt.maskval);
 else
     error('Incorrect format for maskvar input')

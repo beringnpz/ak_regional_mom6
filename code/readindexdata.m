@@ -1,25 +1,18 @@
-function [Idx, regnum] = readindexdata(simname, opt)
+function [Idx, regnum] = readindexdata(cpopts, opt)
 %READINDEXDATA Reads data from survey-region-average files
 %
-% [Idx, regnum] = readindexdata(simname, opt)
+% [Idx, regnum] = readindexdata(opt)
 %
 % This function reads in data from the survey-region-average files, holding
 % spatially-averaged timeseries from the hindcast, plus persistence
 % forecast and climatology for that hindcast.
 %
-% Input variables:
-%
-%   simname:    name of simulation, used to locate output data files.  The
-%               index data will be read from files under
-%               <datafol>/<simname>/Level3/surveyregionavg/
-%
 % Optional input variables (passed as parameter/value pairs, default in []):
 %
-%   datafol:    CEFI data folder path.  Default is the path returned by the
-%               cefidatafol.m function
+%   cpopts:     cefi portal options object corresponding to the simulation
 %
 %   vars:       variable names for which index data will be returned.  Can
-%               be any of the variables in the file, or one of the
+%               be any of the variables in the files, or one of the
 %               following additional ones that will be calculated based on
 %               those: pH, omega.  If empty, all variables found in file
 %               will be returned. [''] 
@@ -49,32 +42,33 @@ function [Idx, regnum] = readindexdata(simname, opt)
 % Copyright 2025 Kelly Kearney
 
 arguments
-    simname {mustBeTextScalar}
-    opt.datafol {mustBeTextScalar} =cefidatafolpath
+    cpopts (1,1) {mustBeA(cpopts, "cefiportalopts")} =cefiportalopts()
     opt.vars {mustBeText} =''
     opt.regnum {mustBeNumeric} =NaN
 end
 
-% Survey-region-based index data files
+% Check variables in survey-region-based index data files
 
-fnamehc = dir(fullfile(opt.datafol, simname, 'Level3', 'surveyregionavg', '*selected_daily*svyreg.nc'));
-fnamefc = dir(fullfile(opt.datafol, simname, 'Level3', 'surveyregionavg', '*forecast*svyreg.nc'));
-fnamecm = dir(fullfile(opt.datafol, simname, 'Level3', 'surveyregionavg', '*daily_clim*svyreg.nc'));
+favail = cpopts.setopts('grid', 'extra').cefifilelist('*','*');
+[~, fshort] = fileparts(favail);
 
-% Check variables in file vs requested ones
+vmain = unique(regexp(fshort, '^[^\.]*', 'match', 'once'));
 
-ftmp = fullfile(fnamehc(1).folder, fnamehc(1).name);
-I = ncinfo(ftmp);
-isv = arrayfun(@(X) isequal({X.Dimensions.Name}, {'time', 'surveyregion'}), I.Variables);
-
-varsinfile = {I.Variables(isv).Name};
+varsinfile = cell(size(vmain));
+for iv = 1:length(vmain)
+    I = ncinfo(favail{iv});
+    isv = arrayfun(@(X) ~isempty(X.Dimensions) && isequal({X.Dimensions.Name}, {'time', 'surveyregion'}), I.Variables);
+    varsinfile{iv} = {I.Variables(isv).Name};
+end
+varsinfile = cat(2, varsinfile{:});
 
 if isempty(opt.vars)
     opt.vars = varsinfile;
 end
 opt.vars = string(opt.vars);
 
-% Adjust reading for potential extra variables (pH, omega)
+% Adjust reading for potential extra variables (pH, omega) or tagalong
+% variables (cpoolX.X)
 
 varsread = setdiff(opt.vars, ["pH", "omega"]);
 if ismember("pH", opt.vars)
@@ -84,12 +78,9 @@ if ismember("omega", opt.vars)
     varsread = union(varsread, ["btm_co3_ion","btm_co3_sol_arag"]);
 end
 
-% vars = ["tob", "tos", "btm_htotal", "btm_o2", "cpool0p0", "cpool2p0", "btm_co3_ion", "btm_co3_sol_arag"];
-% vlong = ["Bottom temp. (\circC)", "SST (\circC)", "Bottom pH", "Bottom O_2 (mmol/kg)"];
-
 % Check regions
 
-regnum = ncread(ftmp, 'mask_survey_area');
+regnum = ncread(favail{1}, 'mask_survey_area');
 if isscalar(opt.regnum) && isnan(opt.regnum)
     opt.regnum = regnum;
 end
@@ -101,9 +92,27 @@ end
 
 % Read data
 
-Idx.Hc   = readandconcat(fnamehc, varsread);
-Idx.Fc   = readandconcat(fnamefc, varsread);
-Idx.Clim = readandconcat(fnamecm, varsread);
+Idx.Hc   = struct;
+Idx.Fc   = struct;
+Idx.Clim = struct;
+
+for iv = 1:length(varsread)
+
+    if startsWith(varsread{iv}, 'cpool')
+        vfile = "tob";
+    else
+        vfile = varsread{iv};
+    end
+   
+    flisthc = cpopts.setopts('grid','extra').cefifilelist(vfile, '*');
+    flistfc = cpopts.setopts('grid','extra').cefifilelist("fcpersist_"+vfile, '*');
+    flistcm = cpopts.setopts('grid','extra').cefifilelist("clim_"+vfile, '*');
+
+    Idx.Hc   = readandconcat(Idx.Hc,   flisthc, varsread{iv}, iv==1);
+    Idx.Fc   = readandconcat(Idx.Fc,   flistfc, varsread{iv}, iv==1);
+    Idx.Clim = readandconcat(Idx.Clim, flistcm, varsread{iv}, iv==1);
+
+end
 
 % A few adjustments and additions
 
@@ -127,16 +136,20 @@ end
 
 % Subfunction: read selected data into a structure
 
-function A = readandconcat(fname, vars)
+function A = readandconcat(A, fname, vv, tflag)
 
-    fname = fullfile({fname.folder}, {fname.name});
-
-    Tmp = arrayfun(@(x) ncstruct(x, vars{:}, 'time'), fname);
-    for iv = 1:length(vars)
-        A.(vars{iv}) = cat(1, Tmp.(vars{iv}));
+    if tflag
+        Tmp = arrayfun(@(x) ncstruct(x, vv, 'time'), fname);
+    else
+        Tmp = arrayfun(@(x) ncstruct(x, vv), fname);
     end
-    A.time = cat(1, Tmp.time);
-    A.t = ncdateread(fname{1}, 'time', A.time);
+
+    if tflag
+        A.time = cat(1, Tmp.time);
+        A.t = ncdateread(fname{1}, 'time', A.time);
+    end
+
+    A.(vv) = cat(1, Tmp.(vv));
 
 end
 

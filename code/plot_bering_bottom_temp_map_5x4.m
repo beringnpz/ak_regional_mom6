@@ -1,7 +1,7 @@
 function h = plot_bering_bottom_temp_map_5x4(yrcurrent, cpopts)
 %PLOT_BERING_BOTTOM_TEMP_MAP_5X4 Bering Sea ESR figure
 %
-% h = plot_bering_bottom_temp_map_5x4(simname, yrcurrent, ...)
+% h = plot_bering_bottom_temp_map_5x4(...)
 %
 % This function creates a figure showing the simulated July 1 bottom
 % temperature for the last 20 years in the eastern Bering Sea shelf region.
@@ -11,21 +11,15 @@ function h = plot_bering_bottom_temp_map_5x4(yrcurrent, cpopts)
 %
 % Input variables:
 %
-%   simname:    name of simulation, used to locate output data files.  The
-%               path will be constructed as <datafol>/<simname>/Level1-2/.
-%
 %   yrcurrent:  year for which to produce a plot.  The plot will hold a 5x4
 %               grid of axes depicting this year (bottom right) and the
 %               previous 19 years' worth of data.
 %
 % Optional input variables (passed as parameter/value pairs, default in []):
 %
-%   staticname: base name of static file, assumed to follow the naming
-%               scheme <datafol>/<simname>/Level1-2/<staticname>.
-%               ["<simname>_ocean_static_ak.nc"]
-%
-%   datafol:    CEFI data folder path.  Default is the path returned by the
-%               cefidatafol.m function
+%   cpopts:     cefiportalopts object corresponding to the original
+%               simulation to be plotted
+%               [cefiportalopts()]
 
 % Copyright 2025 Kelly Kearney
 

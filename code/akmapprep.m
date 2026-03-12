@@ -1,7 +1,7 @@
 function [A, Grd] = akmapprep(opt)
 %AKMAPPREP Calulate map-related parameters
 %
-% [A, Grd] = akmapprep(simname, opt)
+% [A, Grd] = akmapprep(opt)
 %
 % This function reads in grid information and does some preliminary
 % calculations to assist in plotting MOM6-based maps for the Alaska region.
@@ -100,33 +100,37 @@ end
 
 % Read relevant static file variables
 
-if isempty(opt.gfiles)
-    C = opt.cpopts.setopts('freq','static');
-    opt.gfiles = [...
-        fullfile(C.cefifolder('extra'), C.cefifilename('ak_masks', C.yyyymmdd))
-        fullfile(C.cefifolder('raw'  ), C.cefifilename('ocean_static', C.yyyymmdd))];
-end
-if ~all(cellfun(@(x) exist(x,'file'), opt.gfiles))
-    error('Specified grid files not found');
-end
-
 vars = ["geolat", "geolon", "geolat_c", "geolon_c", ...
         "mask_esr_area", "mask_survey_strata", "mask_survey_area", ...
         "wet"];
 vars = unique([vars opt.maskvar]);
 
-Grd = struct;
-for ii = 1:length(opt.gfiles)
-    I = ncinfo(opt.gfiles{ii});
-    vread = intersect(vars, {I.Variables.Name});
-    Tmp = ncstruct(opt.gfiles{ii}, vread{:});
-    for iv = 1:length(vread)
-        Grd.(vread{iv}) = Tmp.(vread{iv});
-    end
-    vars = setdiff(vars, vread);
-end
+Grd = readcefigridvars(opt.cpopts, vars);
 
-gsz = size(Grd.geolat);
+% if isempty(opt.gfiles)
+%     C = opt.cpopts.setopts('freq','static');
+%     opt.gfiles = [...
+%         fullfile(C.cefifolder('extra'), C.cefifilename('ak_masks', C.yyyymmdd))
+%         fullfile(C.cefifolder('raw'  ), C.cefifilename('ocean_static', C.yyyymmdd))];
+% end
+% if ~all(cellfun(@(x) exist(x,'file'), opt.gfiles))
+%     error('Specified grid files not found');
+% end
+% 
+% 
+% 
+% Grd = struct;
+% for ii = 1:length(opt.gfiles)
+%     I = ncinfo(opt.gfiles{ii});
+%     vread = intersect(vars, {I.Variables.Name});
+%     Tmp = ncstruct(opt.gfiles{ii}, vread{:});
+%     for iv = 1:length(vread)
+%         Grd.(vread{iv}) = Tmp.(vread{iv});
+%     end
+%     vars = setdiff(vars, vread);
+% end
+% 
+% gsz = size(Grd.geolat);
 
 % EBS region
 
@@ -150,6 +154,7 @@ bp = polyshape(wrapTo360([blon{:}]), [blat{:}]);
 
 % Projection setup
 
+warning('off', 'map:projections:notStandardProjection');
 hfig = figure('visible', 'off');
 hb = boxworldmap(latlim, lonlim);
 m = getm(hb.ax);

@@ -20,7 +20,9 @@ classdef cefiportalopts
 %               ["nep"]
 %
 %   subdomain:  short or long subdomain name: 
-%                 "full" "full_domain" "iq#-#jq#-#"
+%                 "full"      "full_domain" 
+%                 "aksvyreg", "ak_surveyregion_avg"                 
+%                 "iq#-#jq#-#"
 %               or [iqmin iqmax jqmin jqmax] vector of corner-point indices
 %               describing a subdomain
 %               ["full"]
@@ -42,7 +44,14 @@ classdef cefiportalopts
 %                 "sta" "static"
 %               ["daily"]
 %
-%   release:    release name
+%   grid:       grid type name.  Typically "raw" or "regrid" but allows for 
+%               any string to allow for ongoing development of this option.
+%               ["raw"]
+%
+%   release:    release name.  Typically corresponds to a Portal-hosted
+%               release date ("rYYYYMMDD"), but allows for any string for
+%               ongoing development of this option.
+%               ["latest"]
 %
 %   yyyymmdd:   default datestring, typically used when generating static
 %               filenames
@@ -60,8 +69,10 @@ classdef cefiportalopts
         subdomain ="full"
         exptype {mustBeTextScalar} ="hcast"
         freq {mustBeTextScalar} ="daily"
+        grid {mustBeTextScalar} ="raw"
         release {mustBeTextScalar} ="latest"
         yyyymmdd {mustBeTextScalar} ="19930101"
+        
     end
     properties (SetAccess = private, GetAccess = public)
         regions
@@ -85,6 +96,7 @@ classdef cefiportalopts
                 opt.subdomain ="full"
                 opt.exptype {mustBeTextScalar} ="hcast"
                 opt.freq {mustBeTextScalar} ="daily"
+                opt.grid {mustBeTextScalar} ="raw"
                 opt.release {mustBeTextScalar} ="latest"
                 opt.yyyymmdd {mustBeTextScalar} ="20240101"
             end
@@ -96,6 +108,7 @@ classdef cefiportalopts
             C.freq        = opt.freq;
             C.release     = opt.release;
             C.yyyymmdd    = opt.yyyymmdd;
+            C.grid        = opt.grid;
         end
 
         function C = set.region(C, val)
@@ -170,6 +183,7 @@ classdef cefiportalopts
         end
 
         function C = setopts(C, prop, val)
+        %SETOPTS Modify options of a cefiportalopts object
             arguments
                 C
             end
@@ -182,18 +196,30 @@ classdef cefiportalopts
             end
         end
 
-        function pth = cefifolder(C, gridval)
+        function pth = cefifolder(C)
+        %CEFIFOLDER Generate path to CEFI folder based on set values
+
             pth = fullfile(C.portalpath, ...
                            C.regionl, ...
                            C.subdomainl, ...
                            C.exptypel, ...
                            C.freql, ...
-                           gridval, ...
+                           C.grid, ...
                            C.release);
         end
 
-        function fname = cefifilename(C, varname, datestr)
-            fname = sprintf('%s.%s.%s.%s.%s.%s.%s.nc', ...
+        function fname = cefifilename(C, varname, datestr, flag)
+        %CEFIFOLDER Generate name of CEFI file based on set values
+        %
+        % Input variables:
+        %
+        %   varname:    name of variable or variable collection
+        %
+        %   datestr:    YYYYMMDD datestring indicating the start date of
+        %               file of interest.  
+
+            if nargin > 3 && flag % temporary fix to mistake in local file naming
+                fname = sprintf('%s.%s.%s.%s.%s.%s.%s.nc', ...
                         varname, ...
                         C.regions, ...
                         C.subdomains, ...
@@ -201,7 +227,48 @@ classdef cefiportalopts
                         C.freql, ...
                         C.release, ...
                         datestr);
+            else
+                fname = sprintf('%s.%s.%s.%s.%s.%s.%s.%s.nc', ...
+                        varname, ...
+                        C.regions, ...
+                        C.subdomains, ...
+                        C.exptypes, ...
+                        C.freql, ...
+                        C.grid, ...
+                        C.release, ...
+                        datestr);
+            end
 
+        end
+
+        function flist = cefifilelist(C, varname, datestr)
+        %CEFIFILELIST Return list of files matching pattern(s)
+        % Note: OpenDAP version only allows globs at the varname or datestr
+        % level
+        %
+        % TODO: need to make more robust, 
+        %   latest -> proper one
+        %   wildcards at all levels
+        
+            if exist(C.portalpath, 'dir')
+                % If local, we can do a simple dir using the glob
+    
+                fglob = fullfile(C.cefifolder(), C.cefifilename(varname, datestr, true));
+                flist = dir(fglob);
+                flist = fullfile({flist.folder}', {flist.name}');
+            else
+                % If OpenDAP, need to parse the catalog
+ 
+                pthsim = strrep(C.cefifolder(gridval), 'dodsC', 'catalog');
+                Tmp = readtable(fullfile(pthsim, 'catalog.html'));
+
+                flist = Tmp.Dataset(2:end);
+
+                fpattern = regexpPattern(regexptranslate('wildcard', C.cefifilename(gridval, varname, datestr)));
+
+                flist = flist(matches(flist, fpattern));
+
+            end
         end
 
     end

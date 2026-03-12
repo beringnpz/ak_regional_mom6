@@ -104,6 +104,8 @@ set(h.fig, 'color', 'w');
 
 % Plot bottom temperature
 
+warnstate = warning('off', 'map:projections:notStandardProjection');
+
 for ii = 1:nyr
 
     % Box-ed map axis
@@ -115,15 +117,17 @@ for ii = 1:nyr
 
     switch opt.vartype
         case 'anomaly'
-            fglob = fullfile(opt.cpopts.setopts('freq','daily').cefifolder('extra'), ...
-                             opt.cpopts.setopts('freq','daily').cefifilename("anom_"+opt.var, yrplt(ii)+"*"));
+            fname = opt.cpopts.setopts('freq','daily','grid','extra').cefifilelist("anom_"+opt.var, yrplt(ii)+"*");
+            % fglob = fullfile(opt.cpopts.setopts('freq','daily').cefifolder('extra'), ...
+            %                  opt.cpopts.setopts('freq','daily').cefifilename("anom_"+opt.var, yrplt(ii)+"*"));
         case 'value'
-            fglob = fullfile(opt.cpopts.setopts('freq','daily').cefifolder('raw'), ...
-                             opt.cpopts.setopts('freq','daily').cefifilename(opt.var, yrplt(ii)+"*"));
+            fname = opt.cpopts.setopts('freq','daily','grid','raw').cefifilelist(opt.var, yrplt(ii)+"*");
+            % fglob = fullfile(opt.cpopts.setopts('freq','daily').cefifolder('raw'), ...
+            %                  opt.cpopts.setopts('freq','daily').cefifilename(opt.var, yrplt(ii)+"*"));
     end
-    fname = dir(fglob);
+    % fname = dir(fglob);
     nfile = length(fname);
-    fname = fullfile({fname.folder}, {fname.name});
+    % fname = fullfile({fname.folder}, {fname.name});
  
     if nfile > 0
         t = ncdateread(fname, 'time');
@@ -143,6 +147,8 @@ for ii = 1:nyr
     plot(h.ax(ii), A.sx, A.sy, 'k');
     set([h.b(ii).lblpar; h.b(ii).lblmer], 'visible', 'off');
 end
+
+warning(warnstate);
 
 % Label axes by year
 
