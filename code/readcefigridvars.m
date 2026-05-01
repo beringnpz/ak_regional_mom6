@@ -1,4 +1,4 @@
-function Grd = readcefigridvars(gdata, vars)
+function Grd = readcefigridvars(gdata, vars, opt)
 %READCEFIGRIDVARS Read grid (other) variables from one or more static files
 %
 % Grd = readcefigrdivars(cptopts, vars)
@@ -15,6 +15,13 @@ function Grd = readcefigridvars(gdata, vars)
 %
 %   vars:       text array of variable names to read from files
 %
+% Optional input variables:
+%
+%   expandname: logical scalar, true to expand the static file name assuming
+%               it follows the conventions of time-varying files, false if
+%               the name is just ocean_static.nc
+%               [false]
+%
 % Output variables:
 %
 %   Grd:        1x1 structure array with fields corresponding to the
@@ -23,16 +30,22 @@ function Grd = readcefigridvars(gdata, vars)
 arguments
     gdata =cefiportalopts()
     vars {mustBeText} =["geolat", "geolon"]
+    opt.expandname (1,1) {mustBeNumericOrLogical} =true
 end
 
 % Build or verify file names
 
 if isa(gdata, 'cefiportalopts')
-    C = gdata.setopts('freq','static');
-    gfiles = [...
-        C.setopts('grid', 'extra').cefifilelist('ak_masks', C.yyyymmdd)
-        C.setopts('grid', 'raw'  ).cefifilelist('ocean_static', C.yyyymmdd)
-            ];
+    if opt.expandname
+        C = gdata.setopts('freq','static');
+        gfiles = [...
+            C.setopts('grid', 'extra').cefifilelist('ak_masks', C.yyyymmdd)
+            C.setopts('grid', 'raw'  ).cefifilelist('ocean_static', C.yyyymmdd)
+                ];
+    else
+        C = gdata.setopts('freq','monthly');
+        gfiles = fullfile(C.cefifolder, "ocean_static.nc");
+    end
 else
     mustBeText(gdata);
     gfiles = string(gdata);

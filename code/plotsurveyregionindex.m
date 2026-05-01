@@ -92,7 +92,8 @@ switch opt.style
         
         tk = datetime(opt.year,1:12,1);
         tk.Format = 'MMM';
-        set(opt.ax, 'xtick', doy(tk), 'xticklabel', string(tk), 'xgrid', 'on', 'xlim', [0 365]);
+        set(opt.ax, 'xtick', doy(tk), 'xticklabel', string(tk), ...
+            'xgrid', 'on', 'xlim', [0 365], 'fontsize', 8);
 
         hfig = ancestor(opt.ax, 'figure'); % this does assume default axis (normalized) and figure (pixels) units
         dypx = (10./(opt.ax.Position(4)*hfig.Position(4))).*diff(opt.ax.YLim);

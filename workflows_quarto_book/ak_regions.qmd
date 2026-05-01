@@ -1,0 +1,204 @@
+---
+toc: true
+reference-location: margin
+# citation-location: margin
+---
+
+# Alaska customization
+
+For our Alaska-centric analysis, we've introduced some not-officially-CEFI-endorsed additions and tweaks to the CEFI Dataset described in the previous section.
+
+- horizontal subset subdomain: `iqX-XjqX-X`, where X's indicate the iq/jq values that bound the subdomain 
+- horizontal average subdomain: `ak_surveyregion_avg` for metrics where the horizontal dimensions were collapsed to regional averages based on Alaska survey area polygons
+- grid type: `extra` for variables that fall on the native grid but are not part of the "raw" dataset, e.g. variables added in postprocessing, and also for variables that do not fall on either the native or regridded grids (e.g., regional averages).  I will probably revisit this naming scheme as workflows mature... but it works for now.
+
+## The Alaska subregion of the MOM6-NEP grid
+
+These analyses focus on regions that fall under Alaska management, including the Bering Sea, Aleutian Islands, Gulf of Alaska, and Arctic regions. ^[We do not currently produce any Arctic metrics for the PEEC or ESRs, but we include that region for future possiblities.]  
+
+```{matlab}
+%| label: fig-esr-regions
+%| fig-cap: Ecosystem area polygons as defined for the Alaska Ecosystem Status Reports.
+%| code-fold: true
+
+addpath('../code');
+warning('off','map:projections:notStandardProjection');
+
+% Alaska-region shapes
+
+S = akshapes;
+
+% Map setup: Axis limits
+
+Esr = geotable2struct(S.esr_regions(1:4,:));
+
+[ltlim(1), ltlim(2)] = bounds([Esr.Lat]);
+[lnlim(1), lnlim(2)] = bounds(wrapTo360([Esr.Lon]));
+[ltc, lnc] = deal(nan(4,1));
+
+% Map setup: Coastline coordinates
+
+[blat, blon] = deal(cell(3,1));
+[blat{1}, blon{1}] = borders('russia');
+[blat{2}, blon{2}] = borders('alaska');
+[blat{3}, blon{3}] = borders('canada');
+
+% Map setup: Polygon "center" for label
+
+crs = projcrs(3338);
+for ii = 1:length(Esr)
+    [x, y] = projfwd(crs, Esr(ii).Lat, Esr(ii).Lon);
+    xy = dpsimplify([x' y'], sqrt(S.esr_regions.Shape(ii).area)/500);
+    [xc, yc] = polycenter(xy(:,1), xy(:,2));
+    [ltc(ii), lnc(ii)] = projinv(crs,xc,yc);
+end
+
+% Plot regions
+
+axes('position', [0.01 0.01 0.96 0.96]);
+h = boxworldmap(ltlim, lnlim, 'mticks', 't', 'pticks', 'l');
+set(h.ax, 'fontsize', 8);
+plotm([Esr.Lat], [Esr.Lon]);
+
+[bx,by] = projfwd(getm(gca), [blat{:}], wrapTo360([blon{:}]));
+plot(bx, by, 'color', [1 1 1]*0.5);
+
+lbl = arrayfun(@(x) string(wraptext(char(x.Area_Name), 10)), Esr, 'uni', 0);
+
+textm(ltc, lnc, lbl, 'horiz', 'center');
+```
+
+The bounds of these regions cover a bit over a third of the total MOM6 northeast Pacific (NEP) grid.  For much of our Alaska analysis, we will extract only the data from this relevant region.
+
+```{matlab}
+%| label: calc-ak-masks
+%| code-fold: true
+
+% Use a static file from the latest release on the Portal 
+ 
+C = cefiportalopts('region', 'nep', ...
+                   'release', 'r20250912', ...
+                   'freq', 'monthly'); 
+
+w = warning('off'); % ignore the polygon warnings...
+
+% Generate masks of all Alaska polygons
+
+Mask = build_ak_masks(...
+    'cpopts', C, ...
+    'expandname', false, ....
+    'setuponly', true);
+Grd = readcefigridvars(C, {'geolat_c', 'geolon_c'}, 'expandname', false);
+
+% Extract bounding subregion based on ESR area mask
+
+subregidx = mask2hyperslab(~isnan(Mask.esr_area.val), "vector");
+fprintf("Subregion iq/jq indices: %d %d %d %d\n", subregidx);
+```
+
+Within local datasets, this subregion is identified as `iq0-342jq446-743`, indicating the indices of the corner grid cells that bound the region.
+
+## Masks for spatially-averaged indices
+
+Our analysis summarizes regional model output across a variety of management-related geometries, often collapsing the 3D and 4D model data to one-dimensional time series by averaging across regions of interest.  These include marine management areas, marine statistical areas, and fishery-independent survey regions in Alaska, as defined via the AFSC GAP program's [akgfmaps R package](https://github.com/afsc-gap-products/akgfmaps). Masks relating these polygons to the MOM6-NEP model grid can be found in the frequency=`static`, grid=`extra` variable collection for the relevant hindcast simulations.
+
+```{matlab}
+%| label: fig-ak-masks
+%| fig-cap: Alaska-region vector geometries mapped onto the MOM6-NEP grid.
+%| fig-subcap: 
+%|   - "Alaska Marine Ecosystem Status Reports: Ecosystem Area"
+%|   - "Alaska Marine Ecosystem Status Reports: Ecosystem Subarea"
+%|   - "ADFG Stat Area"
+%|   - "Bottom trawl survey area"
+%|   - "Bottom trawl survey strata ID"
+%|   - "INPFC Area"
+%|   - "Marine Regions of the Bering Sea Shelf and Slope (Bering Sea Integrated Ecosystem Research Program)"
+%|   - "Red King Crab survey strata"
+%|   - "Blue King Crab survey strata"
+%|   - "Snow crab survey strata"
+%|   - "Tanner crab survey strata"
+%|   - "NMFS Reporting Area (Electronic Code of Federal Regulations, Part 679, Appendix A)"
+%| code-fold: true
+%| layout-ncol: 2
+
+% Plot masks
+
+cmapbase = [...
+            141,211,199
+            255,255,179
+            190,186,218
+            251,128,114
+            128,177,211
+            253,180,98
+            179,222,105
+            252,205,229
+            217,217,217
+            188,128,189]./255; % ColorBrewer pastel
+
+padh = @(x) [x nan(size(x,1),1); nan(1,size(x,2)+1)];
+
+fld = fieldnames(Mask);
+for ii = 1:length(fld)
+    figure;
+    h = boxworldmap(ltlim, lnlim, 'mticks', 't', 'pticks', 'l');
+
+    if ismember(fld{ii}, {'adfg_stat_area', 'bsierp_region', 'nmfs_area'})
+        x = Mask.(fld{ii}).val;
+    else
+        [xunq, x, n] = discretemask(Mask.(fld{ii}).val);
+    end
+
+    switch fld{ii}
+        case 'adfg_stat_area'
+            cmap = vivid(cmapbase(1:7,:), 7*20);
+            clim = [300000 1000000];
+            ctk = 300000:100000:1000000;
+            ctklbl = string(ctk);
+        case 'survey_strata'
+            cmap = vivid(cmapbase, n);
+            clim = [0.5 n+0.5];
+            ctk = 1:3:n;
+            ctklbl = string(xunq(1:3:n));
+        case 'bsierp_region'
+            n = max(x(:));
+            cmap = cmocean('matter', n);
+            clim = [0.5 n+0.5];
+            ctk = 1:n;
+            ctklbl = string(ctk);
+        case 'nmfs_area'
+            cmap = vivid(cmapbase(1:3,:), 30);
+            clim = [400 700];
+            ctk = [];
+            ctklbl = [];
+        otherwise
+            cmap = cmapbase(1:n,:);
+            clim = [0.5 n+0.5];
+            ctk = 1:n;
+            ctklbl = string(xunq);
+    end
+
+    pcolorm(Grd.geolat_c, Grd.geolon_c, padh(x));
+    set(h.ax, 'fontsize', 8, 'colormap', cmap, 'clim', clim);
+    plot(bx, by, 'color', [1 1 1]*0.5);
+    h.cb = colorbar('west');
+    h.cb.Position(2) = 0.5;
+    h.cb.Position(4) = 0.35;
+    h.cb.Position(1) = 0.15;
+    if ~isempty(ctk)
+        set(h.cb, 'ticks', ctk, 'ticklabels', ctklbl);
+    end
+
+end
+
+function [xunq, x, n] = discretemask(a)
+
+    [xunq,~,x] = unique(a);
+    xunq = xunq(~isnan(xunq));
+    x = reshape(x, size(a));
+    x(isnan(a)) = NaN;
+    n = max(x(:));
+
+end
+```
+
+

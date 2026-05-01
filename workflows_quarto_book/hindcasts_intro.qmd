@@ -1,0 +1,35 @@
+---
+toc: true
+reference-location: margin
+engine: jupyter-matlab
+---
+
+# Hindcast extension workflows
+
+## Overview
+
+Hindcast simulations cover the near-historical period (1992-present) and are forced by atmospheric and oceanic reanalysis products.  They are intended to represent past conditions as closely to reality as possible.
+
+This section covers the steps needed to download the relevent hindcast data, calculate regional variables and indices, and produce figures for various presentations and publications.
+
+## Full-year, partial-year, and near-real-time extensions
+
+The MOM6-NEP hindcast simulations are updated at least once per year to bring them up to date with recent forcing data.  
+
+**Full-year extensions** can be run when all forcing data for the documented configuration [@drenkard_regional_2025] is available.  While many of the forcing datasets are regularly updated, a few of them can only be updated in annual blocks.  Therefore, the current CEFI convention is to update the hindcasts in one year blocks as well, with updates typically lagging real time by a few months.
+
+**Partial-year updates** are used to initialize seasonal forecasts, and are (or are planned to be) updated every 3 months.  The majority of the forcing for these will use the same datasets as the full-year simulations, which typically lag real time by a few weeks to a month. A few (e.g. carbonate variable boundary conditions) rely on interim estimates.  Partial-year updates will eventually be replaced by full-year extensions once the full-year forcing data is available.
+
+::: {.callout-tip title="TODO"}
+Naming scheme for partial-year releases?  Or just based on date range of file?
+:::
+
+Additional extensions are also run to support Alaska-region management needs that require **near-real-time simulations** (e.g., within a few weeks of real time).  These updates typically occur in the spring in advance of the annual Spring Preview of Ecological and Economic Conditions (PEEC), and in the summer ahead of the annual crab and groundfish assessment season to inform the Ecosystem Status Reports (ESRs).  These rely on near-real-time and interim variants of the primary forcing datasets.  These simulations are not part of the primary CEFI suite and are presented with the caveat that output is preliminary.
+
+::: {.callout-tip title="TODO"}
+Naming scheme for NRT releases?
+:::
+
+
+
+

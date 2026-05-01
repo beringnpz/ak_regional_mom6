@@ -1,8 +1,9 @@
 classdef cefiportalopts
-%CEFIPORTALOPTS Create structure of CEFI Portal path/filename components
+%CEFIPORTALOPTS CEFI Portal path/filename component object
 %
-% This class holds parameters values corresponding to file/foldername
-% components of the CEFI Data Portal.  
+% This class holds parameter values corresponding to file/foldername
+% components of the CEFI Data Portal.  It also provides a few simple
+% method functions to 
 %
 % Input variables (passed as parameter/value pairs, default in []):
 %
@@ -64,14 +65,14 @@ classdef cefiportalopts
 %               filename components, based in input options. 
 
     properties
-        portalpath {mustBeTextScalar} ="http://psl.noaa.gov/thredds/dodsC/Projects/CEFI/regional_mom6/cefi_portal/"
-        region {mustBeTextScalar} ="nep"
-        subdomain ="full"
-        exptype {mustBeTextScalar} ="hcast"
-        freq {mustBeTextScalar} ="daily"
-        grid {mustBeTextScalar} ="raw"
-        release {mustBeTextScalar} ="latest"
-        yyyymmdd {mustBeTextScalar} ="19930101"
+        portalpath %{mustBeTextScalar} ="http://psl.noaa.gov/thredds/dodsC/Projects/CEFI/regional_mom6/cefi_portal/"
+        region %{mustBeTextScalar} ="nep"
+        subdomain %="full"
+        exptype %{mustBeTextScalar} ="hcast"
+        freq %{mustBeTextScalar} ="daily"
+        grid %{mustBeTextScalar} ="raw"
+        release %{mustBeTextScalar} ="latest"
+        yyyymmdd %{mustBeTextScalar} ="19930101"
         
     end
     properties (SetAccess = private, GetAccess = public)
@@ -87,8 +88,9 @@ classdef cefiportalopts
 
     methods
         function C = cefiportalopts(opt)
-            %UNTITLED2 Construct an instance of this class
-            %   Detailed explanation goes here
+        %CEFIPORTALOPTS Construct an instance of the cefiportalopts class
+        %  
+        % 
 
             arguments
                 opt.portalpath {mustBeTextScalar} ="http://psl.noaa.gov/thredds/dodsC/Projects/CEFI/regional_mom6/cefi_portal/"
@@ -98,7 +100,7 @@ classdef cefiportalopts
                 opt.freq {mustBeTextScalar} ="daily"
                 opt.grid {mustBeTextScalar} ="raw"
                 opt.release {mustBeTextScalar} ="latest"
-                opt.yyyymmdd {mustBeTextScalar} ="20240101"
+                opt.yyyymmdd {mustBeTextScalar} ="19930101"
             end
             
             C.portalpath  = opt.portalpath;
@@ -184,6 +186,9 @@ classdef cefiportalopts
 
         function C = setopts(C, prop, val)
         %SETOPTS Modify options of a cefiportalopts object
+        %
+        % Cnew = C.setopts(param1, val1, ...)
+        
             arguments
                 C
             end
@@ -197,7 +202,11 @@ classdef cefiportalopts
         end
 
         function pth = cefifolder(C)
-        %CEFIFOLDER Generate path to CEFI folder based on set values
+        %CEFIFOLDER Returns path to CEFI folder for the given parameters
+        %
+        % This returns the folder name or TDS address where
+        % variable-specific files/datasets can be found for the given
+        % simulation
 
             pth = fullfile(C.portalpath, ...
                            C.regionl, ...
@@ -209,14 +218,26 @@ classdef cefiportalopts
         end
 
         function fname = cefifilename(C, varname, datestr, flag)
-        %CEFIFOLDER Generate name of CEFI file based on set values
+        %CEFIFILENAME Returns name of CEFI file(s) for the given parameters
         %
         % Input variables:
         %
         %   varname:    name of variable or variable collection
         %
         %   datestr:    YYYYMMDD datestring indicating the start date of
-        %               file of interest.  
+        %               file of interest. 
+
+            if strcmp(C.release, 'latest')
+                if ~contains(C.cefifolder, 'dodsC')
+                    warning('release=latest only supported for CDP access');
+                end
+                parentfol = strrep(fileparts(C.cefifolder), 'dodsC', 'catalog');
+                Tmp = readtable(fullfile(parentfol, 'catalog.html'));
+                release = sort(Tmp.Dataset(startsWith(Tmp.Dataset, 'r')));
+                release = release{end};
+            else
+                release = C.release;
+            end
 
             if nargin > 3 && flag % temporary fix to mistake in local file naming
                 fname = sprintf('%s.%s.%s.%s.%s.%s.%s.nc', ...
@@ -225,7 +246,7 @@ classdef cefiportalopts
                         C.subdomains, ...
                         C.exptypes, ...
                         C.freql, ...
-                        C.release, ...
+                        release, ...
                         datestr);
             else
                 fname = sprintf('%s.%s.%s.%s.%s.%s.%s.%s.nc', ...
@@ -235,7 +256,7 @@ classdef cefiportalopts
                         C.exptypes, ...
                         C.freql, ...
                         C.grid, ...
-                        C.release, ...
+                        release, ...
                         datestr);
             end
 
@@ -259,14 +280,14 @@ classdef cefiportalopts
             else
                 % If OpenDAP, need to parse the catalog
  
-                pthsim = strrep(C.cefifolder(gridval), 'dodsC', 'catalog');
+                pthsim = strrep(C.cefifolder, 'dodsC', 'catalog');
                 Tmp = readtable(fullfile(pthsim, 'catalog.html'));
 
                 flist = Tmp.Dataset(2:end);
 
-                fpattern = regexpPattern(regexptranslate('wildcard', C.cefifilename(gridval, varname, datestr)));
-
+                fpattern = regexpPattern(regexptranslate('wildcard', C.cefifilename(varname, datestr)));
                 flist = flist(matches(flist, fpattern));
+                flist = fullfile(C.cefifolder, flist);
 
             end
         end

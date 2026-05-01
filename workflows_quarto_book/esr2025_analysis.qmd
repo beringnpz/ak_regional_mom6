@@ -1,0 +1,397 @@
+---
+toc: true
+reference-location: margin
+# citation-location: margin
+engine: jupyter-matlab
+---
+
+# ESR 2025: Analysis
+
+:::{.callout-note}
+This is not an Ecosystem Status Report (ESR).  This is simply an analysis of regional model output intended to inform Alaska ESRs.
+:::
+
+## Summary for ESRs: simulated temperature
+
+### Bering Sea
+
+Winter 2025 conditions in the Bering Sea began warmer than average, with the sea ice edge further north than average and warm anomalies in both surface and bottom temperature across the majority of the eastern Bering Sea shelf.  Through March and into April, the leading edge of sea ice extended further south, but open water areas appeared in northwestern regions (southwest of St. Lawrence and in the Gulf of Anadyr).  The southern portions of the shelf continued to experience warm anomalies in surface and bottom temperature, but the NBS region was cooler than average.  Beginning in late May, cold bottom temperature anomalies appeared in the inner shelf in the vicinity of Nunivak Island, while warm bottom temperature anomalies persisted across the rest of the shelf into late August.  In contrast, surface temperatures in the early June through July were cooler than average.  This cool surface anomaly persisted across most of the shelf (and extended into the basin) through late July, at which point the southern portions shifted to a warm anomaly while the north remained cool.  Cluster analysis applied to mean June through August surface and bottom temperature suggests a few other years with this warm bottom, cool surface pattern, including 2023, 1996, and 1998 (@fig-esr25-cluster-bering).
+
+```{matlab}
+%| label: fig-esr25-btemp5x4
+%| fig-cap: Bering Sea bottom temperature for the past 20 years, extracted on July 1 of each year.
+%| code-fold: true
+
+% Local "CEFI Portal" options
+
+addpath('../code');
+
+C = cefiportalopts('portalpath', '~/Documents/Data/CEFI/ak_cefiportal', ...
+                   'release', 'e202507', ...
+                   'subdomain', [0 342 446 743], ...
+                   'yyyymmdd', '20240101');
+
+yr = 2025;
+esrfol = '~/Documents/Manuscripts/2025_ESR/';
+
+% Map of bottom temperature, past 20 years
+
+fname = fullfile(esrfol, sprintf('btemp_map_%d-%d', [yr-20+1 yr]));
+
+h = plot_bering_bottom_temp_map_5x4(yr, C);
+
+if ~exist([fname '.png'], 'file')
+    export_fig(fname, h.fig, '-png', '-r150', '-nocrop');
+end
+
+```
+
+```{matlab}
+%| label: fig-esr25-tsindex-ebs
+%| fig-cap: Time series calculated across the EBS survey area.  Red line = 2025, red dotted line = spring-initiated persistence forecast, black solid line = median across 1993–2025, black dashed line = climatological (1993–2022) mean, shaded gray = 1993–2025 percentiles (lightest = 0-10% and 90-100%, darkest = 40-60%).  Numbers indicate the values on the first of the month in the climatological mean (bottom, black) and in 2025 (red, top).
+%| fig-subcap: 
+%|   - "Bottom temperature"
+%|   - "Surface temperature"
+%|   - "2C cold pool index"
+%|   - "0C cold pool index"
+%| code-fold: true
+%| layout-ncol: 2
+
+regnum = [98 143 52 47]; % EBS, NBS, AI, GOA
+regname = ["EBS", "NBS", "AI", "GOA"];
+
+% Variable setup: which ones do we plot?
+
+vplt = ["tob", "tos", "cpool2p0", "cpool0p0"];
+
+% Read surveyavg indices from file
+
+Tbl = readindexdata(C.setopts('subdomain', 'aksvyreg'), ...
+    'regnum', regnum, ...
+    'vars', vplt);
+
+% Remove leap days from climatology
+
+isleap = month(Tbl.Clim.t) == 2 & day(Tbl.Clim.t) == 29;
+Tbl.Clim = Tbl.Clim(~isleap,:);
+
+% Extract July 1 values from each year
+
+Jul1 = structfun(@(x) retime(x, datetime(1993:yr,7,1), 'nearest', 'endvalues', NaN), Tbl, 'uni', 0);
+
+% Plot timeseries: ebs
+
+V = ak_variable_info;
+
+ii = 1;
+for iv = 1:length(vplt)
+        
+    h = plotgrid('size', [1 1], 'mar', 0.08, 'mr', 0.01);
+    h.fig.Position(3:4) = [6 4]*72;
+    h.fig.Color = 'w';
+
+    h.gobj = plotsurveyregionindex(Tbl, vplt{iv}, 'col', ii, 'year', yr);
+
+    title(h.ax, sprintf('%s: %s', regname(ii), V{vplt{iv},'labelname'}));
+
+    fname = fullfile(esrfol, sprintf('timeseries_%s_%s',regname{ii}, vplt{iv}));
+
+    if ~exist([fname '.png'], 'file')
+        export_fig(fname, h.fig, '-png', '-r150', '-nocrop');
+    end
+
+end
+```
+
+```{matlab}
+%| label: fig-esr25-tsindex-nbs
+%| fig-cap: Time series calculated across the NBS survey area.  See @fig-esr25-tsindex-ebs for details
+%| fig-subcap: 
+%|   - "Bottom temperature"
+%|   - "Surface temperature"
+%|   - "2C cold pool index"
+%|   - "0C cold pool index"
+%| code-fold: true
+%| layout-ncol: 2
+
+ii = 2;
+for iv = 1:length(vplt)
+        
+    h = plotgrid('size', [1 1], 'mar', 0.08, 'mr', 0.01);
+    h.fig.Position(3:4) = [6 4]*72;
+    h.fig.Color = 'w';
+
+    h.gobj = plotsurveyregionindex(Tbl, vplt{iv}, 'col', ii, 'year', yr);
+
+    title(h.ax, sprintf('%s: %s', regname(ii), V{vplt{iv},'labelname'}));
+
+    fname = fullfile(esrfol, sprintf('timeseries_%s_%s',regname{ii}, vplt{iv}));
+
+    if ~exist([fname '.png'], 'file')
+        export_fig(fname, h.fig, '-png', '-r150', '-nocrop');
+    end
+
+end
+```
+
+
+
+```{matlab}
+%| label: fig-esr25-cluster-bering
+%| fig-cap: Hierarchical cluster analysis of surface and bottom temperature anomalies (relative to the 1993–2022 climatology), temporally-averaged across the period of 2025/06/11–2025/08/22, within the Bering Sea ecosystem status report area
+%| code-fold: true
+%| output: false
+
+[hclus(1), Cdata] = cluster_on_anomalies(...
+    [6 1], ...
+    'cpopts', C, ...
+    'yr', 1993:yr, ...
+    'maskval', 3, ...
+    'ndays', 82);
+```
+
+### Aleutian Islands
+
+Aleutian Island bottom temperatures have low variability over the simulation period.  2025 conditions were near the upper end of the observed range, with anomalies of ~0.3°C in the winter and increasing to 0.4°C above the climatological (1993 – 2022) mean by mid summer.  Surface temperatures were also above average for most of the winter and early spring, but approached mean conditions in spring.  Stronger warm anomalies reappeared in late July through August, extending across the Aleutian Islands, western Gulf of Alaska, and southern Bering Sea.  Cluster analysis suggested these conditions were similar to 2007, 2021, and 2023 (@fig-esr25-cluster-ai).
+
+```{matlab}
+%| label: fig-esr25-tsindex-ai
+%| fig-cap: Time series calculated across the NBS survey area.  See @fig-esr25-tsindex-ebs for details
+%| fig-subcap: 
+%|   - "Bottom temperature"
+%|   - "Surface temperature"
+%| code-fold: true
+%| layout-ncol: 2
+
+ii = 3;
+for iv = 1:2 %length(vplt)
+        
+    h = plotgrid('size', [1 1], 'mar', 0.08, 'mr', 0.01);
+    h.fig.Position(3:4) = [6 4]*72;
+    h.fig.Color = 'w';
+
+    h.gobj = plotsurveyregionindex(Tbl, vplt{iv}, 'col', ii, 'year', yr);
+
+    title(h.ax, sprintf('%s: %s', regname(ii), V{vplt{iv},'labelname'}));
+
+    fname = fullfile(esrfol, sprintf('timeseries_%s_%s',regname{ii}, vplt{iv}));
+
+    if ~exist([fname '.png'], 'file')
+        export_fig(fname, h.fig, '-png', '-r150', '-nocrop');
+    end
+
+end
+```
+
+```{matlab}
+%| label: fig-esr25-cluster-ai
+%| fig-cap: Hierarchical cluster analysis of surface and bottom temperature anomalies (relative to the 1993–2022 climatology), temporally-averaged across the period of 2025/06/11–2025/08/22, within the Aleutian Islands ecosystem status report area
+%| code-fold: true
+
+hclus(2) = cluster_on_anomalies(...
+    [6 1], ...
+    'cpopts', C, ...
+    'yr', 1993:yr, ...
+    'maskval', 1, ...
+    'Cdata', Cdata, ...
+    'ndays', 82);
+```
+
+
+### Gulf of Alaska
+
+Like the AI region, Gulf of Alaska bottom temperatures were in the upper 10-20th percentile for most of the year, approximately 0.5 – 0.6°C above the climatological mean.  Surface temperatures began the year slightly above average, though there were some cool anomalies inshore in the eastern Gulf region.  In June and July, the cooler anomalies expanded their footprint, with the far western regions also cooling.  However, in late July through earlier Aug, temperatures rose above mean both inshore and off the shelf, with a 1.36°C anomaly (spatially averaged over the survey region) on Aug 1.  This pattern of warm bottom temperatures with warm western, cool eastern surface temperature clusters most closely with 2017, followed by 2001 (@fig-esr25-cluster-goa).
+
+
+```{matlab}
+%| label: fig-esr25-tsindex-goa
+%| fig-cap: Time series calculated across the NBS survey area.  See @fig-esr25-tsindex-ebs for details
+%| fig-subcap: 
+%|   - "Bottom temperature"
+%|   - "Surface temperature"
+%| code-fold: true
+%| layout-ncol: 2
+
+ii = 4;
+for iv = 1:2 %length(vplt)
+        
+    h = plotgrid('size', [1 1], 'mar', 0.08, 'mr', 0.01);
+    h.fig.Position(3:4) = [6 4]*72;
+    h.fig.Color = 'w';
+
+    h.gobj = plotsurveyregionindex(Tbl, vplt{iv}, 'col', ii, 'year', yr);
+
+    title(h.ax, sprintf('%s: %s', regname(ii), V{vplt{iv},'labelname'}));
+
+    fname = fullfile(esrfol, sprintf('timeseries_%s_%s',regname{ii}, vplt{iv}));
+
+    if ~exist([fname '.png'], 'file')
+        export_fig(fname, h.fig, '-png', '-r150', '-nocrop');
+    end
+
+end
+```
+
+```{matlab}
+%| label: fig-esr25-cluster-goa
+%| fig-cap: Hierarchical cluster analysis of surface and bottom temperature anomalies (relative to the 1993–2022 climatology), temporally-averaged across the period of 2025/06/11–2025/08/22, within the Gulf of Alaska ecosystem status report area
+%| code-fold: true
+
+hclus(3) = cluster_on_anomalies(...
+    [6 1], ...
+    'cpopts', C, ...
+    'yr', 1993:yr, ...
+    'maskval', 4, ...
+    'Cdata', Cdata, ...
+    'ndays', 82);
+```
+
+### All regions
+
+```{matlab}
+%| label: fig-esr25-valanommap
+%| fig-cap: Spatially resolved 2025 values (left) and 2025 anomalies relative to the 1993 – 2022 mean (right) for sea ice, bottom temperature, and surface temperature across the three Alaska ESR regions.  Values are shown for the first of each month, from January (top) through August (bottom).
+%| code-fold: true
+%| code-eval: false
+
+ttarget = datetime(2025,1:8,1);
+tidx = interp1(t, 1:length(t), ttarget, 'nearest', 'extrap');
+nt = length(ttarget);
+
+plt = {Hc.siconc Hc.tob Hc.tos An.siconc An.tob An.tos};
+lbl = ["Sea ice", "Bottom temp. (\circC)", "SST (\circC)", ...
+       "Anomaly: Sea ice", "Anomaly: Bottom temp. (\circC)", "Anomaly: SST (\circC)"];
+np = length(plt);
+
+padend = @(x) [x nan(size(x,1),1); nan(1,size(x,2)+1)];
+
+h = plotgrid('size', [nt np], 'sp', 0, 'mar', 0, 'mt', 0.08);
+h.fig.Position(3:4) = [800 600]*1.5;
+h.fig.Color = 'w';
+for ii = 1:nt
+    for jj = 1:np
+        axes(h.ax(ii,jj));
+        h.bx = A.addboxmap();
+        pcolorpad(A.xc, A.yc, plt{jj}(:,:,tidx(ii)));
+        shading flat;
+        set([h.bx.lblmer; h.bx.lblpar], 'visible', 'off');
+    end
+end
+
+set(h.ax(:,1), 'colormap', cmocean('ice'), 'clim', [0 1]);
+set(h.ax(:,2:3), 'colormap', cmocean('thermal'), 'clim', [-2 15]);
+set(h.ax(:,4), 'colormap', cmocean('balance'), 'clim', [-1 1]);
+set(h.ax(:,5:6), 'colormap', cmocean('balance'), 'clim', [-3 3]);
+
+for ip = 1:np
+    h.cb(ip) = colorbar(h.ax(1,ip), 'north');
+    h.cb(ip).Position(2) = 0.93;
+    xlabel(h.cb(ip), lbl{ip});
+end
+set(h.cb, 'axisloc', 'out', 'tickdir', 'out');
+
+labelaxes(h.ax(:,1), string(ttarget), 'northwest');
+
+fname = fullfile(esrfol, 'val_anom_2025');
+if ~exist([fname '.png'], 'file')
+    export_fig(fname, h.fig, '-png', '-r150', '-nocrop');
+end
+```
+
+
+## Additional plots
+
+```{matlab}
+%| label: fig-esr25-cluster-allESR
+%| fig-cap: TODO
+%| code-fold: true
+%| code-eval: false
+
+hclus(4) = cluster_on_anomalies(...
+    [6 1], ...
+    'cpopts', C, ...
+    'yr', 1993:yr, ...
+    'Cdata', Cdata, ...
+    'ndays', 82);
+
+% NBS vs SEBS
+
+hclus(5) = cluster_on_anomalies( ...
+    [6 1], ...
+    'cpopts', C, ...
+    'yr', 1993:yr, ...
+    'ndays', 82, ...
+    'vars', ["tob", "tos"], ...
+    'maskvar', "mask_esr_subarea", ...
+    'maskval', 3, ...
+    'Cdata', Cdata);
+
+hclus(6) = cluster_on_anomalies( ...
+    [6 1], ...
+    'cpopts', C, ...
+    'yr', 1993:yr, ...
+    'ndays', 82, ...
+    'vars', ["tob", "tos"], ...
+    'maskvar', "mask_esr_subarea", ...
+    'maskval', 4, ...
+    'Cdata', Cdata);
+
+% AI, bottom vs surface and survey (nearshore) vs ESR (larger) region
+
+hclus(7) = cluster_on_anomalies( ...
+    [6 1], ...
+    'cpopts', C, ...
+    'yr', 1993:yr, ...
+    'ndays', 82, ...
+    'vars', "tob", ...
+    'maskvar', "mask_esr_subarea", ...
+    'maskval', [1 2 7], ...
+    'Cdata', Cdata);
+set(hclus(7).ax, 'clim', [-1 1]*0.5)
+
+hclus(8) = cluster_on_anomalies( ...
+    [6 1], ...
+    'cpopts', C, ...
+    'yr', 1993:yr, ...
+    'ndays', 82, ...
+    'vars', "tob", ...
+    'maskvar', "mask_survey_area", ...
+    'maskval', 52, ...
+    'Cdata', Cdata);
+set(hclus(8).ax, 'clim', [-1 1]*0.5)
+
+Grd = readcefigridvars(C, ["wet", "mask_esr_area", "mask_survey_area"]);
+mask = Grd.wet == 1 & Grd.mask_esr_area == 1 & isnan(Grd.mask_survey_area);
+
+hclus(9) = cluster_on_anomalies( ...
+    [6 1], ...
+    'cpopts', C, ...
+    'yr', 1993:yr, ...
+    'ndays', 82, ...
+    'vars', "tob", ...
+    'maskvar', mask, ...
+    'Cdata', Cdata);
+set(hclus(9).ax, 'clim', [-1 1]*0.5)
+
+hclus(10) = cluster_on_anomalies(...
+    [6 1], ...
+    'cpopts', C, ...
+    'yr', 1993:yr, ...
+    'ndays', 82, ...
+    'vars', "tos", ...
+    'maskvar', "mask_esr_subarea", ...
+    'maskval', [1 2 7], ...
+    'Cdata', Cdata);
+
+% Save to file
+
+masklbls = ["BS", "AI", "GOA", "allESR", "NBS", "SEBS", "AItob", "AItobsvy", "AItobdeep", "AItos"];
+
+for ii = 1:10
+    fname = fullfile(esrfol, sprintf('clustering_0701-0822_%s',masklbls{ii}));
+    if ~exist([fname '.png'], 'file')
+        export_fig(fname, h(ii).fig, '-png', '-r150');
+    end
+end
+
+```

@@ -1,0 +1,37 @@
+project:
+  type: book
+
+book:
+  title: "Alaska MOM6 regional workflows and skill assessment"
+  author: "Kelly Kearney"
+  date: "4/13/2026"
+  chapters:
+    - index.qmd
+    - part: "Regional model output"
+      chapters:
+        - cefi_dataset.qmd
+        - ak_regions.qmd
+    - part: hindcasts_intro.qmd
+      chapters:
+        - peec2025_analysis.qmd
+        - esr2025_data.qmd
+        - esr2025_analysis.qmd
+      # - peec2026.qmd
+    - part: "Skill assessment"
+        # - groundfish_survey.qmd
+        # - moorings_and_popups.qmd
+    - references.qmd
+
+bibliography: references.bib
+
+format:
+  html:
+    lightbox: auto
+    theme:
+      - cosmo
+      - brand
+  pdf:
+    documentclass: scrreprt
+
+number-depth: 3
+

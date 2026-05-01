@@ -128,6 +128,12 @@ if ismember("omega", opt.vars)
     Idx.Clim.omega = Idx.Clim.btm_co3_ion./Idx.Clim.btm_co3_sol_arag;
 end
 
+if ismember("btm_o2", opt.vars)
+    Idx.Hc.btm_o2 = Idx.Hc.btm_o2*1e6;
+    Idx.Fc.btm_o2 = Idx.Fc.btm_o2*1e6;
+    Idx.Clim.btm_o2 = Idx.Clim.btm_o2*1e6;
+end
+
 % Convert to timetable and extract only specified regions
 
 Idx = structfun(@(X) idxstruct2table(X, loc, opt.vars), Idx, 'uni', 0);

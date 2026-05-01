@@ -111,23 +111,19 @@ for ii = 1:nyr
     % Box-ed map axis
 
     axes(h.ax(ii));
-    h.b(ii) = boxworldmap(A.latlim, A.lonlim, 'latgrid', 55:5:60, 'longrid', 180:10:200);
+    h.b(ii) = boxworldmap(A.latlim, A.lonlim, ...
+        'latgrid', 55:5:60, 'longrid', 180:10:200, ...
+        'mticks', '', 'pticks', '');
 
-    % Read and plot bottom temps for each year
+    % Read and plot selected variable for each year
 
     switch opt.vartype
         case 'anomaly'
             fname = opt.cpopts.setopts('freq','daily','grid','extra').cefifilelist("anom_"+opt.var, yrplt(ii)+"*");
-            % fglob = fullfile(opt.cpopts.setopts('freq','daily').cefifolder('extra'), ...
-            %                  opt.cpopts.setopts('freq','daily').cefifilename("anom_"+opt.var, yrplt(ii)+"*"));
         case 'value'
             fname = opt.cpopts.setopts('freq','daily','grid','raw').cefifilelist(opt.var, yrplt(ii)+"*");
-            % fglob = fullfile(opt.cpopts.setopts('freq','daily').cefifolder('raw'), ...
-            %                  opt.cpopts.setopts('freq','daily').cefifilename(opt.var, yrplt(ii)+"*"));
     end
-    % fname = dir(fglob);
     nfile = length(fname);
-    % fname = fullfile({fname.folder}, {fname.name});
  
     if nfile > 0
         t = ncdateread(fname, 'time');
@@ -145,7 +141,6 @@ for ii = 1:nyr
 
     plot(h.ax(ii), A.bx, A.by, 'color', rgb('gray'));
     plot(h.ax(ii), A.sx, A.sy, 'k');
-    set([h.b(ii).lblpar; h.b(ii).lblmer], 'visible', 'off');
 end
 
 warning(warnstate);

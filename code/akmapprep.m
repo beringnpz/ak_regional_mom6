@@ -22,7 +22,7 @@ function [A, Grd] = akmapprep(opt)
 %
 %   maskval:    masking variable value used to set map latitude and
 %               longitude limits. The range will include all grid cell
-%               where maskvar == maskval. 
+%               where maskvar matches any maskval. 
 %               [3]
 %
 % Output variables:
@@ -96,6 +96,8 @@ arguments
     opt.gfiles {mustBeText} =''
     opt.maskvar ="mask_esr_area"
     opt.maskval =3
+    opt.latbuffer = 0.1;
+    opt.lonbuffer = 0.1;
 end
 
 % Read relevant static file variables
@@ -107,47 +109,29 @@ vars = unique([vars opt.maskvar]);
 
 Grd = readcefigridvars(opt.cpopts, vars);
 
-% if isempty(opt.gfiles)
-%     C = opt.cpopts.setopts('freq','static');
-%     opt.gfiles = [...
-%         fullfile(C.cefifolder('extra'), C.cefifilename('ak_masks', C.yyyymmdd))
-%         fullfile(C.cefifolder('raw'  ), C.cefifilename('ocean_static', C.yyyymmdd))];
-% end
-% if ~all(cellfun(@(x) exist(x,'file'), opt.gfiles))
-%     error('Specified grid files not found');
-% end
-% 
-% 
-% 
-% Grd = struct;
-% for ii = 1:length(opt.gfiles)
-%     I = ncinfo(opt.gfiles{ii});
-%     vread = intersect(vars, {I.Variables.Name});
-%     Tmp = ncstruct(opt.gfiles{ii}, vread{:});
-%     for iv = 1:length(vread)
-%         Grd.(vread{iv}) = Tmp.(vread{iv});
-%     end
-%     vars = setdiff(vars, vread);
-% end
-% 
-% gsz = size(Grd.geolat);
-
-% EBS region
+% Region of interest
 
 mask = ismember(Grd.(opt.maskvar), opt.maskval);
 
-% isebs = Grd.mask_esr_area == 3;
-latlim = minmax(Grd.geolat(mask), 'expand');
-lonlim = minmax(Grd.geolon(mask), 'expand');
+[latlim, lonlim] = deal(nan(1,2));
+
+[latlim(1),latlim(2)] = bounds(Grd.geolat(mask));
+[lonlim(1),lonlim(2)] = bounds(Grd.geolon(mask));
+
+latlim = latlim + [-1 1]*opt.latbuffer*diff(latlim);
+lonlim = lonlim + [-1 1]*opt.lonbuffer*diff(lonlim);
+% latlim = minmax(Grd.geolat(mask), 'expand');
+% lonlim = minmax(Grd.geolon(mask), 'expand');
 
 % Map decor data: borders, survey region
 
 issebs = Grd.mask_survey_area == 98 & Grd.mask_survey_strata <= 62;
 [slon,slat] = mask2poly(Grd.geolon_c, Grd.geolat_c, issebs);
 
-[blat, blon] = deal(cell(1,2));
+[blat, blon] = deal(cell(1,3));
 [blat{1}, blon{1}] = borders('alaska');
 [blat{2}, blon{2}] = borders('russia');
+[blat{3}, blon{3}] = borders('canada');
 
 warnstate = warning('off', 'MATLAB:polyshape:repairedBySimplify');
 bp = polyshape(wrapTo360([blon{:}]), [blat{:}]);
@@ -157,7 +141,7 @@ bp = polyshape(wrapTo360([blon{:}]), [blat{:}]);
 warning('off', 'map:projections:notStandardProjection');
 hfig = figure('visible', 'off');
 hb = boxworldmap(latlim, lonlim);
-m = getm(hb.ax);
+m = getm(hb.ax(1));
 close(hfig);
 
 [xc,yc] = projfwd(m, Grd.geolat_c, Grd.geolon_c);
@@ -178,4 +162,4 @@ A.sy = sy;
 A.b = b;
 A.latlim = latlim;
 A.lonlim = lonlim;
-A.addboxmap = @() boxworldmap(latlim, lonlim);
+A.addboxmap = @(x) boxworldmap(latlim, lonlim, x{:});

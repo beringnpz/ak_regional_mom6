@@ -280,7 +280,9 @@ xgfs_normal12 = [235, 172, 35; 184, 0, 88; 0, 140, 249; 0, 110, 0; 0, 187, 173; 
 % xgfs_tarnish6 = [39, 77, 82; 199, 162, 166; 129, 139, 112; 96, 78, 60; 140, 159, 183; 121, 104, 128; 192, 192, 192];
 
 dcol = unique(cat(1, h.dh.Color), 'rows');
-dcol = dcol(~ismember(dcol, [0 0 0], 'rows'),:);
+isgray = dcol(:,1)==dcol(:,2) & dcol(:,2)==dcol(:,3);
+dcol = dcol(~isgray,:);
+
 ncol = size(dcol,1);
 
 if ncol <= 6

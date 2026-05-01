@@ -33,7 +33,7 @@ V = {...
     "cpool0p0"         [-3 3]             [-2 3]          cmocean('-dense', 5)    [0 1]      "0\circC cold pool index"
     "tos"              [-3 3]             [-2 15]         cmocean('thermal')      [-2 15]    "Surface temperature (\circC)"
     "pH"               [-0.3 0.3]         [7.5 8.1]       cmocean('-curl')        [7.8 8.2]  "pH"
-    "btm_o2"           [-180 180]         [0 300]         cmocean('oxy')          [140 350]  "Bottom oxygen (mol/kg)"
+    "btm_o2"           [-180 180]         [0 300]         cmocean('oxy')          [140 350]  "Bottom oxygen (umol/kg)"
     "omega"            [-1 1]             [0.5 1.5]       cmocean('delta')        [0.8 1.5]  "Aragontite saturation state"
     "btm_co3_ion"      [NaN NaN]          [NaN NaN]       parula()                [NaN NaN]  "Bottom [CO3-]"
     "btm_co3_sol_arag" [NaN NaN]          [NaN NaN]       parula()                [NaN NaN]  "Aragonite solubility"

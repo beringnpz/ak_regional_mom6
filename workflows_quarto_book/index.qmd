@@ -1,0 +1,7 @@
+# Preface {.unnumbered}
+
+This book documents Alaska-centric regional workflows associated with the Changing Ecosystems and Fisheries Initiative (CEFI) regional ocean model simulations for the northeast Pacific region.  This is a living document that will be updated regularly as simulations are introduced, assessed for skill, and updated to inform management decisions in the Alaska region.
+
+## A note on coding languages {.unnumbered}
+
+In this document, you'll note the various workflows use an eclectic mishmash of coding languages, including Matlab, R, python, and bash (so far...), sometimes switching back and forth within the same workflow.  This reflects our choice to meet various users where they are and to use tools that are already well-developed, rather than trying to reinvent the wheel for the sake of consistency.  The OAR teams that run the CEFI regional models tend to favor python for their analysis code, the models themselves are written in Fortran, the NCO and CDO libraries are mature and reliable tools for working with netCDF from shell scripts or command line, fisheries end users lean toward R, and this author still favors Matlab for its robust graphics and matrix-oriented logic.  All code blocks include an indicator of the language being used in the upper right of the block.

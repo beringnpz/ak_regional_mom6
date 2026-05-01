@@ -1,7 +1,7 @@
-function [Scs, Mask] = build_ak_masks(opt)
+function Mask = build_ak_masks(opt)
 % BUILD_AK_MASKS Adds Alaska-specific masks to MOM6 static variables
 %
-% [Scs, Mask] = build_ak_masks(...);
+% Mask = build_ak_masks(...);
 %
 % This script adds custom variables to the static variable collection for a
 % MOM6-NEP simulation.  These variables map various Alaska management
@@ -250,17 +250,17 @@ validateattributes(flag, {'logical'}, {'scalar'});
 % Note: regardless of what frequency the original static file is marked as,
 % the new one goes to the static subfolder.
 
-origpath = opt.cpopts.cefifolder('raw');
+origpath = opt.cpopts.cefifolder;
 if opt.expandname
     origfile = opt.cpopts.cefifilename(opt.origname, C.yyyymmdd);
 else
     origfile = opt.origname+".nc";
 end
 
-newpath = opt.cpopts.setopts('freq','static').cefifolder('extra');
+newpath = opt.cpopts.setopts('freq','static','grid','extra').cefifolder;
 newfile = strrep(origfile, opt.origname, opt.newname);
 
-if ~exist(newpath, 'dir')
+if ~opt.setuponly && ~exist(newpath, 'dir')
     mkdir(newpath);
 end
 
@@ -452,29 +452,15 @@ end
 
 % Extract relevant hyperslab only
 
-xh = any(~isnan(Mask.esr_area.val),2);
-yh = any(~isnan(Mask.esr_area.val),1);
-
-% start-count-stride
-
-Scs = struct('ih', [find(xh,1) sum(xh) 1], ...
-             'jh', [find(yh,1) sum(yh) 1]);
-Scs.iq = Scs.ih + [0 1 0];
-Scs.jq = Scs.jh + [0 1 0];
-
-% % Extract subset with NCKS (if necessary)
+% xh = any(~isnan(Mask.esr_area.val),2);
+% yh = any(~isnan(Mask.esr_area.val),1);
 % 
-% if ~(all(xh) && all(yh))
+% % start-count-stride
 % 
-%     cmd = join(["ncks -F -O", ...
-%                 hyperslabstring(Scs), ...
-%                 newfile, ...
-%                 newfile], " ");
-% 
-%     if ~opt.setuponly
-%         safesystem(cmd);
-%     end
-% end
+% Scs = struct('ih', [find(xh,1) sum(xh) 1], ...
+%              'jh', [find(yh,1) sum(yh) 1]);
+% Scs.iq = Scs.ih + [0 1 0];
+% Scs.jq = Scs.jh + [0 1 0];
 
 
 end
