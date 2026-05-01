@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.31">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>1&nbsp; The CEFI Dataset – Alaska MOM6 regional workflows and skill assessment</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./ak_regions.html" rel="next">
+<link href="./index.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-e1a5c8363afafaef2c763b6775fbf3ca.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-485d01fc63b59abcd3ee1bf1e8e2748d.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating slimcontent quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./cefi_dataset.html">Regional model output</a></li><li class="breadcrumb-item"><a href="./cefi_dataset.html"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">The CEFI Dataset</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Alaska MOM6 regional workflows and skill assessment</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Regional model output</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./cefi_dataset.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">The CEFI Dataset</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ak_regions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Alaska customization</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./hindcasts_intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Hindcast extension workflows</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./peec2025_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Spring PEEC 2025</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./esr2025_data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">ESR 2025: Methods</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./esr2025_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">ESR 2025: Analysis</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Skill assessment</span></span>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">1.1</span> Introduction</a></li>
+  <li><a href="#regions" id="toc-regions" class="nav-link" data-scroll-target="#regions"><span class="header-section-number">1.2</span> Regions</a></li>
+  <li><a href="#subdomains-and-grid-types" id="toc-subdomains-and-grid-types" class="nav-link" data-scroll-target="#subdomains-and-grid-types"><span class="header-section-number">1.3</span> Subdomains and grid types</a>
+  <ul class="collapse">
+  <li><a href="#the-native-raw-horizontal-grid" id="toc-the-native-raw-horizontal-grid" class="nav-link" data-scroll-target="#the-native-raw-horizontal-grid"><span class="header-section-number">1.3.1</span> The native (raw) horizontal grid</a></li>
+  <li><a href="#the-regridded-regrid-option" id="toc-the-regridded-regrid-option" class="nav-link" data-scroll-target="#the-regridded-regrid-option"><span class="header-section-number">1.3.2</span> The regridded (regrid) option</a></li>
+  <li><a href="#the-vertical-grid" id="toc-the-vertical-grid" class="nav-link" data-scroll-target="#the-vertical-grid"><span class="header-section-number">1.3.3</span> The vertical grid</a></li>
+  </ul></li>
+  <li><a href="#experiment-types" id="toc-experiment-types" class="nav-link" data-scroll-target="#experiment-types"><span class="header-section-number">1.4</span> Experiment types</a>
+  <ul class="collapse">
+  <li><a href="#hindcasts" id="toc-hindcasts" class="nav-link" data-scroll-target="#hindcasts"><span class="header-section-number">1.4.1</span> Hindcasts</a></li>
+  <li><a href="#forecasts" id="toc-forecasts" class="nav-link" data-scroll-target="#forecasts"><span class="header-section-number">1.4.2</span> Forecasts</a></li>
+  <li><a href="#decadal-forecasts" id="toc-decadal-forecasts" class="nav-link" data-scroll-target="#decadal-forecasts"><span class="header-section-number">1.4.3</span> Decadal forecasts</a></li>
+  <li><a href="#multi-decadal-outlooks" id="toc-multi-decadal-outlooks" class="nav-link" data-scroll-target="#multi-decadal-outlooks"><span class="header-section-number">1.4.4</span> Multi-decadal outlooks</a></li>
+  </ul></li>
+  <li><a href="#output-frequency" id="toc-output-frequency" class="nav-link" data-scroll-target="#output-frequency"><span class="header-section-number">1.5</span> Output frequency</a></li>
+  <li><a href="#releases" id="toc-releases" class="nav-link" data-scroll-target="#releases"><span class="header-section-number">1.6</span> Releases</a></li>
+  <li><a href="#variables" id="toc-variables" class="nav-link" data-scroll-target="#variables"><span class="header-section-number">1.7</span> Variables</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content page-columns page-full" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./cefi_dataset.html">Regional model output</a></li><li class="breadcrumb-item"><a href="./cefi_dataset.html"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">The CEFI Dataset</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">The CEFI Dataset</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introduction" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">1.1</span> Introduction</h2>
+<p>The workflows within this document rely on MOM6-NEP regional model output that can be found in one of two locations.</p>
+<p>The first is the official <a href="https://psl.noaa.gov/cefi_portal/">CEFI Data Portal</a>, with individual file-like datasets downloaded via the OpenDAP protocol from the <a href="https://psl.noaa.gov/thredds/catalog/Projects/CEFI/regional_mom6/cefi_portal/catalog.html">CEFI THREDDS Data Server</a>.</p>
+<p>Data is also sometimes written to and read from a local location with a Portal-like folder structure. This option is usually reserved for simulation output that needs to be accessed before it has been fully quality-controlled for upload to the Portal, or for Alaska-specific subregions and near-real-time extensions that are not part of the official operational CEFI dataset. This local dataset follows a similar folder and file naming structure as the Portal, allowing for interchangable use of data access functions across these locations. Workflow code that targets local data will only be fully functional on a machine with access to the local drive, but is provided here for methods transparency. Where possible, code references publicly-accessible datasets.</p>
+<p>All datasets follow a hierarchical folder structure:</p>
+<p><code>&lt;region&gt;/&lt;subdomain&gt;/&lt;experiment_type&gt;/&lt;output_frequency&gt;/&lt;grid_type&gt;/&lt;release&gt;/</code></p>
+<p>and file naming scheme:</p>
+<p><code>variable_name.region.subdomain.experiment_type.output_frequency.grid_type.rYYYYMMDD.YYYY0M-YYYY0M.nc</code></p>
+<p>The following sections provide backgorund information that can help users sort through this dataset and understand the folder/file organizational structure. This information applies to all CEFI MOM6 output, not just the northeast Pacific.</p>
+</section>
+<section id="regions" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="regions"><span class="header-section-number">1.2</span> Regions</h2>
+<p>The CEFI project includes regional MOM6 configurations for five different domains:</p>
+<div id="fig-cefigrids" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-cefigrids-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="./images/cefi_grids_cookbook.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Figure&nbsp;1.1: The CEFI regional grids"><img src="./images/cefi_grids_cookbook.png" class="img-fluid figure-img"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-cefigrids-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1.1: The CEFI regional grids
+</figcaption>
+</figure>
+</div>
+<p>These five regions cover the entirety of the US’s federally-managed oceans, plus the Great Lakes.</p>
+<ul>
+<li>Northwest Atlantic (NWA): New England, Mid-Atlantic, South Atlantic, Caribbean, and Gulf</li>
+<li>Northeast Pacific (NEP): Alaska (Bering Sea, Aleutian Islands, and Gulf of Alaska), Washington, Oregon, and California</li>
+<li>Pan-Arctic: Alaska (Chukchi Sea, Beaufort Sea)</li>
+<li>Pacific Islands: Western Pacific</li>
+<li>Great Lakes</li>
+</ul>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The Alaska region falls in the overlap region between the NEP and Pan-Arctic grids. For most applications, the NEP domain will be more appropriate when looking at regions south of Bering Strait (the Bering Sea, Aleutian Islands, or Gulf of Alaska), while the Pan-Arctic domain will be more appropriate for regions north of Bering Strait (Chukchi Sea).</p>
+</div>
+</div>
+</section>
+<section id="subdomains-and-grid-types" class="level2 page-columns page-full" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="subdomains-and-grid-types"><span class="header-section-number">1.3</span> Subdomains and grid types</h2>
+<p>The subdomain and grid type selectors are both related to how the 4D model space is subsetted. It’s useful to first understand the horizontal and vertical structure of the MOM6 model itself.</p>
+<section id="the-native-raw-horizontal-grid" class="level3 page-columns page-full" data-number="1.3.1">
+<h3 data-number="1.3.1" class="anchored" data-anchor-id="the-native-raw-horizontal-grid"><span class="header-section-number">1.3.1</span> The native (raw) horizontal grid</h3>
+<section id="the-arakawa-c-grid" class="level4 page-columns page-full">
+<h4 class="anchored" data-anchor-id="the-arakawa-c-grid">The Arakawa C grid</h4>
+<p>MOM6 uses an Arakawa C grid, which co-locates different types of model variables in different parts of the model grid cells, as follows:</p>
+<div id="cell-fig-arakawagrid" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode matlab code-with-copy"><code class="sourceCode matlab"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="va">iq</span> <span class="op">=</span> <span class="fl">0</span><span class="op">:</span><span class="fl">2</span><span class="op">;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="va">ih</span> <span class="op">=</span> <span class="fl">0.5</span><span class="op">:</span><span class="fl">1.5</span><span class="op">;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>[<span class="va">iqg</span><span class="op">,</span><span class="va">jqg</span>] <span class="op">=</span> <span class="va">ndgrid</span>(<span class="va">iq</span><span class="op">,</span><span class="va">iq</span>)<span class="op">;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>[<span class="va">ihg</span><span class="op">,</span><span class="va">jhg</span>] <span class="op">=</span> <span class="va">ndgrid</span>(<span class="va">ih</span><span class="op">,</span><span class="va">ih</span>)<span class="op">;</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>[<span class="va">iug</span><span class="op">,</span><span class="va">jug</span>] <span class="op">=</span> <span class="va">ndgrid</span>(<span class="va">iq</span><span class="op">,</span><span class="va">ih</span>)<span class="op">;</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>[<span class="va">ivg</span><span class="op">,</span><span class="va">jvg</span>] <span class="op">=</span> <span class="va">ndgrid</span>(<span class="va">ih</span><span class="op">,</span><span class="va">iq</span>)<span class="op">;</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="va">hf</span> <span class="op">=</span> <span class="va">figure</span><span class="op">;</span> <span class="va">hf</span>.<span class="va">Position</span>(<span class="fl">3</span><span class="op">:</span><span class="fl">4</span>) <span class="op">=</span> [<span class="fl">600</span> <span class="fl">600</span>]<span class="op">;</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="va">axes</span><span class="op">;</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="va">hold</span> <span class="va">on</span><span class="op">;</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="va">scatter</span>([<span class="va">iqg</span>(<span class="op">:</span>)<span class="op">;</span> <span class="va">ihg</span>(<span class="op">:</span>)<span class="op">;</span> <span class="va">iug</span>(<span class="op">:</span>)<span class="op">;</span> <span class="va">ivg</span>(<span class="op">:</span>)]<span class="op">,</span> <span class="op">...</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>        [<span class="va">jqg</span>(<span class="op">:</span>)<span class="op">;</span> <span class="va">jhg</span>(<span class="op">:</span>)<span class="op">;</span> <span class="va">jug</span>(<span class="op">:</span>)<span class="op">;</span> <span class="va">jvg</span>(<span class="op">:</span>)]<span class="op">,</span> <span class="op">...</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>        <span class="fl">100</span><span class="op">,</span> <span class="op">...</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>        [<span class="va">ones</span>(<span class="va">numel</span>(<span class="va">iqg</span>)<span class="op">,</span><span class="fl">1</span>)<span class="op">*</span><span class="fl">1</span><span class="op">;</span> <span class="va">ones</span>(<span class="va">numel</span>(<span class="va">ihg</span>)<span class="op">,</span><span class="fl">1</span>)<span class="op">*</span><span class="fl">2</span><span class="op">;</span> <span class="va">ones</span>(<span class="va">numel</span>(<span class="va">iug</span>)<span class="op">,</span><span class="fl">1</span>)<span class="op">*</span><span class="fl">3</span><span class="op">;</span> <span class="va">ones</span>(<span class="va">numel</span>(<span class="va">ivg</span>)<span class="op">,</span><span class="fl">1</span>)<span class="op">*</span><span class="fl">4</span>]<span class="op">,</span> <span class="op">...</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>        <span class="ss">'filled'</span><span class="op">,</span> <span class="ss">'markeredgecolor'</span><span class="op">,</span> <span class="ss">'k'</span>)<span class="op">;</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="va">cmap</span> <span class="op">=</span> [<span class="op">...</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>            <span class="fl">0.4</span>      <span class="fl">0.76078</span>      <span class="fl">0.64706</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>        <span class="fl">0.98824</span>      <span class="fl">0.55294</span>      <span class="fl">0.38431</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>        <span class="fl">0.55294</span>      <span class="fl">0.62745</span>      <span class="fl">0.79608</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>        <span class="fl">0.90588</span>      <span class="fl">0.54118</span>      <span class="fl">0.76471</span>]<span class="op">;</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="va">set</span>(<span class="va">gca</span><span class="op">,</span> <span class="ss">'colormap'</span><span class="op">,</span> <span class="va">cmap</span><span class="op">,</span> <span class="ss">'clim'</span><span class="op">,</span> [<span class="fl">0.5</span> <span class="fl">4.5</span>]<span class="op">,</span> <span class="op">...</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'xlim'</span><span class="op">,</span> [<span class="va">iq</span>(<span class="fl">1</span>) <span class="va">iq</span>(<span class="kw">end</span>)<span class="op">+</span><span class="fl">0.5</span>]<span class="op">,</span> <span class="ss">'ylim'</span><span class="op">,</span> [<span class="va">iq</span>(<span class="fl">1</span>) <span class="va">iq</span>(<span class="kw">end</span>)<span class="op">+</span><span class="fl">0.5</span>]<span class="op">,</span> <span class="op">...</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'dataaspectratio'</span><span class="op">,</span> [<span class="fl">1</span> <span class="fl">1</span> <span class="fl">1</span>]<span class="op">,</span> <span class="ss">'visible'</span><span class="op">,</span> <span class="ss">'off'</span>)<span class="op">;</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="va">xt</span> <span class="op">=</span> {<span class="op">...</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>    <span class="va">iq</span> <span class="op">-</span><span class="fl">0.2</span> <span class="va">compose</span>(<span class="st">"iq=%.0f"</span><span class="op">,</span> <span class="va">iq</span>)</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>    <span class="va">ih</span> <span class="op">-</span><span class="fl">0.2</span> <span class="va">compose</span>(<span class="st">"ih=%.1f"</span><span class="op">,</span> <span class="va">ih</span>)</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>    <span class="va">iq</span> <span class="op">-</span><span class="fl">0.1</span> <span class="va">compose</span>(<span class="st">"i=%.0f"</span><span class="op">,</span> <span class="va">iq</span>)</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>    <span class="va">ih</span> <span class="op">-</span><span class="fl">0.1</span> <span class="va">compose</span>(<span class="st">"i=%.0f"</span><span class="op">,</span> <span class="va">iq</span>(<span class="fl">1</span><span class="op">:</span><span class="fl">2</span>))}<span class="op">;</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="va">yt</span> <span class="op">=</span> {<span class="op">...</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>    <span class="va">iq</span><span class="op">-</span><span class="fl">0.05</span> <span class="op">-</span><span class="fl">0.15</span> <span class="va">compose</span>(<span class="st">"iq=%.0f"</span><span class="op">,</span> <span class="va">iq</span>)</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>    <span class="va">ih</span><span class="op">-</span><span class="fl">0.05</span> <span class="op">-</span><span class="fl">0.15</span> <span class="va">compose</span>(<span class="st">"ih=%.1f"</span><span class="op">,</span> <span class="va">ih</span>)</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>    <span class="va">iq</span><span class="op">+</span><span class="fl">0.05</span> <span class="op">-</span><span class="fl">0.15</span> <span class="va">compose</span>(<span class="st">"i=%.0f"</span><span class="op">,</span> <span class="va">iq</span>)</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>    <span class="va">ih</span><span class="op">+</span><span class="fl">0.05</span> <span class="op">-</span><span class="fl">0.15</span> <span class="va">compose</span>(<span class="st">"i=%.0f"</span><span class="op">,</span> <span class="va">iq</span>(<span class="fl">1</span><span class="op">:</span><span class="fl">2</span>))}<span class="op">;</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a><span class="va">txplot</span> <span class="op">=</span> <span class="op">@</span>(<span class="va">x</span><span class="op">,</span><span class="va">y</span><span class="op">,</span><span class="va">t</span>) <span class="va">text</span>(<span class="va">x</span><span class="op">,</span> <span class="va">ones</span>(<span class="va">size</span>(<span class="va">x</span>))<span class="op">*</span><span class="va">y</span><span class="op">,</span> <span class="va">t</span><span class="op">,</span> <span class="ss">'horiz'</span><span class="op">,</span> <span class="ss">'center'</span>)<span class="op">;</span></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="va">typlot</span> <span class="op">=</span> <span class="op">@</span>(<span class="va">y</span><span class="op">,</span><span class="va">x</span><span class="op">,</span><span class="va">t</span>) <span class="va">text</span>(<span class="va">ones</span>(<span class="va">size</span>(<span class="va">y</span>))<span class="op">*</span><span class="va">x</span><span class="op">,</span> <span class="va">y</span><span class="op">,</span> <span class="va">t</span><span class="op">,</span> <span class="ss">'horiz'</span><span class="op">,</span> <span class="ss">'center'</span>)<span class="op">;</span></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> <span class="va">ii</span> <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="va">size</span>(<span class="va">xt</span><span class="op">,</span><span class="fl">1</span>)</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>    <span class="va">txplot</span>(<span class="va">xt</span>{<span class="va">ii</span><span class="op">,:</span>})<span class="op">;</span></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>    <span class="va">typlot</span>(<span class="va">yt</span>{<span class="va">ii</span><span class="op">,:</span>})<span class="op">;</span></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a><span class="va">text</span>(<span class="va">ih</span>(<span class="fl">1</span>)<span class="op">+</span><span class="fl">0.03</span><span class="op">,</span> <span class="va">ih</span>(<span class="fl">1</span>)<span class="op">-</span><span class="fl">0.03</span><span class="op">,</span> <span class="ss">'T/h-point'</span><span class="op">,</span> <span class="ss">'color'</span><span class="op">,</span> <span class="va">cmap</span>(<span class="fl">2</span><span class="op">,:</span>)<span class="op">,</span> <span class="ss">'horiz'</span><span class="op">,</span> <span class="ss">'left'</span><span class="op">,</span> <span class="ss">'vert'</span><span class="op">,</span> <span class="ss">'top'</span><span class="op">,</span> <span class="ss">'fontweight'</span><span class="op">,</span> <span class="ss">'b'</span>)</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a><span class="va">text</span>(<span class="va">iq</span>(<span class="fl">2</span>)<span class="op">-</span><span class="fl">0.03</span><span class="op">,</span> <span class="va">iq</span>(<span class="fl">2</span>)<span class="op">-</span><span class="fl">0.03</span><span class="op">,</span> <span class="ss">'C/q-point'</span><span class="op">,</span> <span class="ss">'color'</span><span class="op">,</span> <span class="va">cmap</span>(<span class="fl">1</span><span class="op">,:</span>)<span class="op">,</span> <span class="ss">'horiz'</span><span class="op">,</span> <span class="ss">'right'</span><span class="op">,</span> <span class="ss">'vert'</span><span class="op">,</span> <span class="ss">'top'</span><span class="op">,</span> <span class="ss">'fontweight'</span><span class="op">,</span> <span class="ss">'b'</span>)</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a><span class="va">text</span>(<span class="va">ih</span>(<span class="fl">1</span>)<span class="op">,</span> <span class="va">iq</span>(<span class="fl">1</span>)<span class="op">+</span><span class="fl">0.06</span><span class="op">,</span> <span class="ss">'v-point'</span><span class="op">,</span> <span class="ss">'color'</span><span class="op">,</span> <span class="va">cmap</span>(<span class="fl">4</span><span class="op">,:</span>)<span class="op">,</span> <span class="ss">'horiz'</span><span class="op">,</span> <span class="ss">'center'</span><span class="op">,</span> <span class="ss">'vert'</span><span class="op">,</span> <span class="ss">'base'</span><span class="op">,</span> <span class="ss">'fontweight'</span><span class="op">,</span> <span class="ss">'b'</span>)</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a><span class="va">text</span>(<span class="va">iq</span>(<span class="fl">1</span>)<span class="op">+</span><span class="fl">0.06</span><span class="op">,</span> <span class="va">ih</span>(<span class="fl">1</span>)<span class="op">,</span> <span class="ss">'u-point'</span><span class="op">,</span> <span class="ss">'color'</span><span class="op">,</span> <span class="va">cmap</span>(<span class="fl">3</span><span class="op">,:</span>)<span class="op">,</span> <span class="ss">'horiz'</span><span class="op">,</span> <span class="ss">'left'</span><span class="op">,</span> <span class="ss">'vert'</span><span class="op">,</span> <span class="ss">'middle'</span><span class="op">,</span> <span class="ss">'fontweight'</span><span class="op">,</span> <span class="ss">'b'</span>)</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a><span class="va">drawbrace</span>([<span class="va">iq</span>(<span class="fl">2</span>)<span class="op">,</span> <span class="va">ih</span>(<span class="fl">2</span>)]<span class="op">,</span> [<span class="va">iq</span>(<span class="fl">3</span>) <span class="va">ih</span>(<span class="fl">2</span>)]<span class="op">,</span> <span class="fl">10</span><span class="op">,</span> <span class="ss">'color'</span><span class="op">,</span> <span class="va">cmap</span>(<span class="fl">2</span><span class="op">,:</span>))<span class="op">;</span> <span class="co">% dxt</span></span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a><span class="va">text</span>(<span class="va">mean</span>(<span class="va">iq</span>(<span class="fl">2</span><span class="op">:</span><span class="fl">3</span>))<span class="op">,</span> <span class="va">ih</span>(<span class="fl">2</span>)<span class="op">+</span><span class="fl">0.12</span><span class="op">,</span> <span class="st">"dxt"</span><span class="op">,</span> <span class="ss">'color'</span><span class="op">,</span> <span class="va">cmap</span>(<span class="fl">2</span><span class="op">,:</span>)<span class="op">,</span> <span class="ss">'vert'</span><span class="op">,</span> <span class="ss">'base'</span>)<span class="op">;</span></span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a><span class="va">drawbrace</span>([<span class="va">ih</span>(<span class="fl">2</span>)<span class="op">,</span> <span class="va">iq</span>(<span class="fl">2</span>)]<span class="op">,</span> [<span class="va">ih</span>(<span class="fl">2</span>) <span class="va">iq</span>(<span class="fl">3</span>)]<span class="op">,</span> <span class="fl">10</span><span class="op">,</span> <span class="ss">'color'</span><span class="op">,</span> <span class="va">cmap</span>(<span class="fl">2</span><span class="op">,:</span>))<span class="op">;</span> <span class="co">% dyt</span></span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a><span class="va">text</span>(<span class="va">ih</span>(<span class="fl">2</span>)<span class="op">-</span><span class="fl">0.12</span><span class="op">,</span> <span class="va">mean</span>(<span class="va">iq</span>(<span class="fl">2</span><span class="op">:</span><span class="fl">3</span>))<span class="op">,</span> <span class="st">"dyt"</span><span class="op">,</span> <span class="ss">'color'</span><span class="op">,</span> <span class="va">cmap</span>(<span class="fl">2</span><span class="op">,:</span>)<span class="op">,</span> <span class="ss">'horiz'</span><span class="op">,</span> <span class="ss">'right'</span>)<span class="op">;</span></span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a><span class="va">drawbrace</span>([<span class="va">iq</span>(<span class="fl">2</span>)<span class="op">,</span> <span class="va">iq</span>(<span class="fl">2</span>)]<span class="op">,</span> [<span class="va">iq</span>(<span class="fl">3</span>) <span class="va">iq</span>(<span class="fl">2</span>)]<span class="op">,</span> <span class="fl">10</span><span class="op">,</span> <span class="ss">'color'</span><span class="op">,</span>  <span class="va">cmap</span>(<span class="fl">3</span><span class="op">,:</span>))<span class="op">;</span> <span class="co">% dxCv</span></span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a><span class="va">text</span>(<span class="va">mean</span>(<span class="va">iq</span>(<span class="fl">2</span><span class="op">:</span><span class="fl">3</span>))<span class="op">,</span> <span class="va">iq</span>(<span class="fl">2</span>)<span class="op">+</span><span class="fl">0.12</span><span class="op">,</span> <span class="st">"dxCv"</span><span class="op">,</span> <span class="ss">'color'</span><span class="op">,</span> <span class="va">cmap</span>(<span class="fl">3</span><span class="op">,:</span>)<span class="op">,</span> <span class="ss">'vert'</span><span class="op">,</span> <span class="ss">'base'</span>)<span class="op">;</span></span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a><span class="va">drawbrace</span>([<span class="va">ih</span>(<span class="fl">1</span>)<span class="op">,</span> <span class="va">ih</span>(<span class="fl">1</span>)]<span class="op">,</span> [<span class="va">ih</span>(<span class="fl">1</span>) <span class="va">ih</span>(<span class="fl">2</span>)]<span class="op">,</span> <span class="fl">10</span><span class="op">,</span> <span class="ss">'color'</span><span class="op">,</span>  <span class="va">cmap</span>(<span class="fl">3</span><span class="op">,:</span>))<span class="op">;</span> <span class="co">% dyCv</span></span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a><span class="va">text</span>(<span class="va">ih</span>(<span class="fl">1</span>)<span class="op">-</span><span class="fl">0.12</span><span class="op">,</span> <span class="va">mean</span>(<span class="va">ih</span>(<span class="fl">1</span><span class="op">:</span><span class="fl">2</span>))<span class="op">,</span> <span class="st">"dyCv"</span><span class="op">,</span> <span class="ss">'color'</span><span class="op">,</span> <span class="va">cmap</span>(<span class="fl">3</span><span class="op">,:</span>)<span class="op">,</span> <span class="ss">'horiz'</span><span class="op">,</span> <span class="ss">'right'</span><span class="op">,</span> <span class="ss">'vert'</span><span class="op">,</span> <span class="ss">'top'</span>)<span class="op">;</span></span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a><span class="va">drawbrace</span>([<span class="va">ih</span>(<span class="fl">1</span>)<span class="op">,</span> <span class="va">ih</span>(<span class="fl">1</span>)]<span class="op">,</span> [<span class="va">ih</span>(<span class="fl">2</span>) <span class="va">ih</span>(<span class="fl">1</span>)]<span class="op">,</span> <span class="fl">10</span><span class="op">,</span> <span class="ss">'color'</span><span class="op">,</span>  <span class="va">cmap</span>(<span class="fl">4</span><span class="op">,:</span>))<span class="op">;</span> <span class="co">% dxCu</span></span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a><span class="va">text</span>(<span class="va">mean</span>(<span class="va">ih</span>(<span class="fl">1</span><span class="op">:</span><span class="fl">2</span>))<span class="op">,</span> <span class="va">ih</span>(<span class="fl">1</span>)<span class="op">+</span><span class="fl">0.12</span><span class="op">,</span> <span class="st">"dxCu"</span><span class="op">,</span> <span class="ss">'color'</span><span class="op">,</span> <span class="va">cmap</span>(<span class="fl">4</span><span class="op">,:</span>)<span class="op">,</span> <span class="ss">'vert'</span><span class="op">,</span> <span class="ss">'base'</span>)<span class="op">;</span></span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a><span class="va">drawbrace</span>([<span class="va">iq</span>(<span class="fl">2</span>)<span class="op">,</span> <span class="va">iq</span>(<span class="fl">2</span>)]<span class="op">,</span> [<span class="va">iq</span>(<span class="fl">2</span>) <span class="va">iq</span>(<span class="fl">3</span>)]<span class="op">,</span> <span class="fl">10</span><span class="op">,</span> <span class="ss">'color'</span><span class="op">,</span>  <span class="va">cmap</span>(<span class="fl">4</span><span class="op">,:</span>))<span class="op">;</span> <span class="co">% dyCu</span></span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a><span class="va">text</span>(<span class="va">iq</span>(<span class="fl">2</span>)<span class="op">-</span><span class="fl">0.12</span><span class="op">,</span> <span class="va">mean</span>(<span class="va">iq</span>(<span class="fl">2</span><span class="op">:</span><span class="fl">3</span>))<span class="op">,</span> <span class="st">"dyCu"</span><span class="op">,</span> <span class="ss">'color'</span><span class="op">,</span> <span class="va">cmap</span>(<span class="fl">4</span><span class="op">,:</span>)<span class="op">,</span> <span class="ss">'horiz'</span><span class="op">,</span> <span class="ss">'right'</span>)<span class="op">;</span></span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a><span class="va">gridxy</span>(<span class="va">iq</span><span class="op">,</span><span class="va">iq</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div id="fig-arakawagrid" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-arakawagrid-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="cefi_dataset_files/figure-html/fig-arakawagrid-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Figure&nbsp;1.2: Schematic of the Arakawa C grid, showing positioning of tracer (h- or T-), corner (C- or q-), u-, and v-points, as well as indices for arrays within the model (i,j) and dimensions in files (iq,jq,ih,jh)."><img src="cefi_dataset_files/figure-html/fig-arakawagrid-output-1.png" class="img-fluid figure-img"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-arakawagrid-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1.2: Schematic of the Arakawa C grid, showing positioning of tracer (h- or T-), corner (C- or q-), u-, and v-points, as well as indices for arrays within the model (i,j) and dimensions in files (iq,jq,ih,jh).
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<!-- ![Schematic of the Arakawa C grid](./images/arakawaCGrid.png){width=40% fig-align="left" #fig-arakawac} -->
+<p>Within each grid cell, there are few primary locations where data will be located:</p>
+<ul>
+<li><strong>h-points</strong> (also sometimes known as T-points): These are located in the center-ish of each grid cell, and are where most of the tracer variables — like temperature, salinity, and all the biogeochemical variables — are located.</li>
+<li><strong>u-points</strong> and <strong>v-points</strong>: These are located in the middle-ish of the grid cell edges, and are where variables related to velocities are found. They are staggered such that things pertaining to the x-direction (u-points) are offset from those pertaining to the y-direction (v-points).<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></li>
+<li><strong>q-points</strong>: These are the grid cell corners, and are where variables related to vorticities are found. q-point coordinates are also useful when plotting h-point data, since the adjacent q-points define the bounds of the grid cell in which tracer data is located.</li>
+</ul>
+<div class="no-row-height column-margin column-container"><div id="fn1"><p><sup>1</sup>&nbsp;This staggering of variables is employed to retain non-divergence of the flow at all times, and it allows for more accurate representation and computation of physical quantities in numerical models.</p></div></div><p>All points are indexed with an (i,j) scheme, where i increases in the x direction (east-ish for most domains) and j increases in the y direction (north-ish for most domains).</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The indexing uses a north-east convention, meaning that q(i,j), u(i,j), and v(i,j) are north and/or east of h(i,j) in the MOM6 calculations. This is primarily relevent if one is looking at array-based equations in the model code.</p>
+</div>
+</div>
+</section>
+<section id="sec-geocoord" class="level4">
+<h4 class="anchored" data-anchor-id="sec-geocoord">Geographical coordinates for the raw grid</h4>
+<p>While the diagram above shows a grid cell as a neat square, most MOM6 grids (including all the CEFI ones) are neither orthogonal nor east/north-aligned. This means that the x- and y- (i.e., i- and j-) axes do not align neatly with longitude and latitude axes.</p>
+<p>The geographical coordinates for all points can be found in the following variables:</p>
+<ul>
+<li>h-points: <code>geolat</code>, <code>geolon</code></li>
+<li>q-points: <code>geolat_c</code>, <code>geolon_c</code></li>
+<li>u-points: <code>geolat_u</code>, <code>geolon_u</code></li>
+<li>v-points: <code>geolat_v</code>, <code>geolon_v</code></li>
+</ul>
+<p>See the static variable (<a href="#sec-static" class="quarto-xref"><span>Section 1.3.1.4</span></a>) discussion below for more information on how to access these data.</p>
+</section>
+<section id="indexing-the-horizontal-grid" class="level4">
+<h4 class="anchored" data-anchor-id="indexing-the-horizontal-grid">Indexing the horizontal grid</h4>
+<p>Each raw-grid variable file includes a set of coordinate variables that describe the along-axis dimensions of the grid that the variable lies on. Depending on the archiving options used for a given simulation, and whether the variable derives from the ocean or ice module, you will find one of the following sets of dimensions with associated coordinate variables:</p>
+<ul>
+<li><p><strong>ih, jh, iq, jq</strong>: integer-like indices that represent where each point is in grid-cell space, with i along the x axis and j along the y axis. The q-points count in whole numbers (0, 1, 2, …, N), while the h-points are staggered halfway (0.5, 1.5, 2.5, …, N-0.5).</p></li>
+<li><p><strong>xh, yh, xq, yq</strong>: “nominal longitude/latitude” values. These reflect the location of the grid’s first row and column in geographical space. But despite the label, these are <em>not</em> the true geographical coordinates of the points. Depending on the characteristics of a grid, plotting values using these coordinates may look almost correct (NWA) or very distorted (NEP, Arctic) in terms of geographic location.</p></li>
+<li><p><strong>xT, yT, xTe, yTe</strong>: identical to the above “nominal longitude/latitude” values, but for variables that derive from the ice model rather than the ocean model.</p></li>
+</ul>
+<p>To get the true geographic coordinates associated with each variable, you need the geolat/geolon variables (see <a href="#sec-geocoord" class="quarto-xref"><span>Section 1.3.1.2</span></a>). These are not included with each individual raw-grid file due to storage space considerations, but are instead found in the static (<a href="#sec-static" class="quarto-xref"><span>Section 1.3.1.4</span></a>) collection.</p>
+<p>Below, you can see the results of visualizing the northeast Pacific (NEP) grid using these various dimensions and/or coordinates.</p>
+<div id="cell-fig-dimensioncoord" class="cell" data-execution_count="2">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode matlab code-with-copy"><code class="sourceCode matlab"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="va">addpath</span>(<span class="ss">'../code'</span>)<span class="op">;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="va">Copt</span> <span class="op">=</span> <span class="va">cefiportalopts</span>(<span class="ss">'region'</span><span class="op">,</span> <span class="ss">'nep'</span><span class="op">,</span> <span class="op">...</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>                   <span class="ss">'release'</span><span class="op">,</span> <span class="ss">'r20250912'</span><span class="op">,</span> <span class="op">...</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>                   <span class="ss">'freq'</span><span class="op">,</span> <span class="ss">'monthly'</span>)<span class="op">;</span> </span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="va">C</span> <span class="op">=</span> <span class="va">cell</span>(<span class="fl">2</span><span class="op">,</span><span class="fl">1</span>)<span class="op">;</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="va">C</span>{<span class="fl">1</span>} <span class="op">=</span> <span class="va">readcefigridvars</span>(<span class="va">Copt</span><span class="op">,</span> {<span class="ss">'ih'</span><span class="op">,</span> <span class="ss">'jh'</span><span class="op">,</span> <span class="ss">'geolat_c'</span><span class="op">,</span> <span class="ss">'geolon_c'</span><span class="op">,</span> <span class="ss">'iq'</span><span class="op">,</span> <span class="ss">'jq'</span><span class="op">,</span> <span class="ss">'wet'</span>}<span class="op">,</span> <span class="ss">'expandname'</span><span class="op">,</span> <span class="va">false</span>)<span class="op">;</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="va">C</span>{<span class="fl">2</span>} <span class="op">=</span> <span class="va">readcefigridvars</span>(<span class="va">Copt</span>.<span class="va">setopts</span>(<span class="ss">'release'</span><span class="op">,</span> <span class="ss">'r20241015'</span>)<span class="op">,</span> {<span class="ss">'xh'</span><span class="op">,</span> <span class="ss">'yh'</span>}<span class="op">,</span> <span class="ss">'expandname'</span><span class="op">,</span> <span class="va">false</span>)<span class="op">;</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="va">padend</span> <span class="op">=</span> <span class="op">@</span>(<span class="va">x</span>) [<span class="va">x</span> <span class="va">nan</span>(<span class="va">size</span>(<span class="va">x</span><span class="op">,</span><span class="fl">1</span>)<span class="op">,</span><span class="fl">1</span>)<span class="op">;</span> <span class="va">nan</span>(<span class="fl">1</span><span class="op">,</span><span class="va">size</span>(<span class="va">x</span><span class="op">,</span><span class="fl">2</span>)<span class="op">+</span><span class="fl">1</span>)]<span class="op">;</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="va">h</span>.<span class="va">fig</span> <span class="op">=</span> <span class="va">figure</span><span class="op">;</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="va">h</span>.<span class="va">fig</span>.<span class="va">Position</span>(<span class="fl">3</span><span class="op">:</span><span class="fl">4</span>) <span class="op">=</span> [<span class="fl">1000</span> <span class="fl">400</span>]<span class="op">;</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="va">h</span>.<span class="va">t</span> <span class="op">=</span> <span class="va">tiledlayout</span>(<span class="fl">1</span><span class="op">,</span><span class="fl">4</span>)<span class="op">;</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="va">h</span>.<span class="va">t</span>.<span class="va">TileSpacing</span> <span class="op">=</span> <span class="ss">'tight'</span><span class="op">;</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="va">h</span>.<span class="va">t</span>.<span class="va">Padding</span> <span class="op">=</span> <span class="ss">'compact'</span><span class="op">;</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="va">h</span>.<span class="va">ax</span>(<span class="fl">1</span>) <span class="op">=</span> <span class="va">nexttile</span>(<span class="va">h</span>.<span class="va">t</span>)<span class="op">;</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="va">pcolor</span>(<span class="va">h</span>.<span class="va">ax</span>(<span class="fl">1</span>)<span class="op">,</span> <span class="va">C</span>{<span class="fl">1</span>}.<span class="va">iq</span><span class="op">,</span> <span class="va">C</span>{<span class="fl">1</span>}.<span class="va">jq</span><span class="op">,</span> <span class="va">padend</span>(<span class="va">C</span>{<span class="fl">1</span>}.<span class="va">wet</span><span class="op">'</span>))<span class="op">;</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="va">shading</span> <span class="va">flat</span><span class="op">;</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="va">xlabel</span>(<span class="ss">'i-value (ih,iq)'</span>)<span class="op">;</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="va">ylabel</span>(<span class="ss">'j-value (jh,jq)'</span>)<span class="op">;</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="va">axis</span> <span class="va">tight</span> <span class="va">equal</span><span class="op">;</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="va">h</span>.<span class="va">ax</span>(<span class="fl">2</span>) <span class="op">=</span> <span class="va">nexttile</span>(<span class="va">h</span>.<span class="va">t</span>)<span class="op">;</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="va">pcolor</span>(<span class="va">h</span>.<span class="va">ax</span>(<span class="fl">2</span>)<span class="op">,</span> <span class="va">C</span>{<span class="fl">2</span>}.<span class="va">xh</span><span class="op">,</span> <span class="va">C</span>{<span class="fl">2</span>}.<span class="va">yh</span><span class="op">,</span> <span class="va">C</span>{<span class="fl">1</span>}.<span class="va">wet</span><span class="op">'</span>)<span class="op">;</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a><span class="va">shading</span> <span class="va">flat</span><span class="op">;</span></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="va">xlabel</span>(<span class="ss">'nominal longitude (xh,xq)'</span>)<span class="op">;</span></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a><span class="va">ylabel</span>(<span class="ss">'nominal latitude (yh,yq)'</span>)<span class="op">;</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a><span class="va">axis</span> <span class="va">tight</span> <span class="va">equal</span><span class="op">;</span></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a><span class="va">h</span>.<span class="va">ax</span>(<span class="fl">3</span>) <span class="op">=</span> <span class="va">nexttile</span>(<span class="va">h</span>.<span class="va">t</span><span class="op">,</span> [<span class="fl">1</span> <span class="fl">2</span>])<span class="op">;</span></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>[<span class="va">latlim</span>(<span class="fl">1</span>)<span class="op">,</span> <span class="va">latlim</span>(<span class="fl">2</span>)] <span class="op">=</span> <span class="va">bounds</span>(<span class="va">C</span>{<span class="fl">1</span>}.<span class="va">geolat_c</span>(<span class="op">:</span>))<span class="op">;</span></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>[<span class="va">lonlim</span>(<span class="fl">1</span>)<span class="op">,</span> <span class="va">lonlim</span>(<span class="fl">2</span>)] <span class="op">=</span> <span class="va">bounds</span>(<span class="va">C</span>{<span class="fl">1</span>}.<span class="va">geolon_c</span>(<span class="op">:</span>))<span class="op">;</span></span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a><span class="va">worldmap</span>(<span class="va">latlim</span><span class="op">,</span> <span class="va">lonlim</span>)<span class="op">;</span></span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a><span class="va">setm</span>(<span class="va">h</span>.<span class="va">ax</span>(<span class="fl">3</span>)<span class="op">,</span> <span class="ss">'flinewidth'</span><span class="op">,</span> <span class="fl">1</span>)<span class="op">;</span></span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a><span class="va">pcolorm</span>(<span class="va">C</span>{<span class="fl">1</span>}.<span class="va">geolat_c</span><span class="op">,</span> <span class="va">C</span>{<span class="fl">1</span>}.<span class="va">geolon_c</span><span class="op">,</span> <span class="va">padend</span>(<span class="va">C</span>{<span class="fl">1</span>}.<span class="va">wet</span>))<span class="op">;</span></span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a><span class="va">set</span>(<span class="va">h</span>.<span class="va">ax</span><span class="op">,</span> <span class="ss">'colormap'</span><span class="op">,</span> <span class="va">cmocean</span>(<span class="ss">'gray'</span>)<span class="op">,</span> <span class="ss">'clim'</span><span class="op">,</span> [<span class="fl">0</span> <span class="fl">1.1</span>]<span class="op">,</span> <span class="ss">'layer'</span><span class="op">,</span> <span class="ss">'top'</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="2">
+<div id="fig-dimensioncoord" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-dimensioncoord-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="cefi_dataset_files/figure-html/fig-dimensioncoord-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="Figure&nbsp;1.3: The NEP grid plotted using cartesian i/j space, cartesian nominal lat/lon, and geographic coordinates using an equidistant conic projection."><img src="cefi_dataset_files/figure-html/fig-dimensioncoord-output-1.png" class="img-fluid figure-img"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-dimensioncoord-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1.3: The NEP grid plotted using cartesian i/j space, cartesian nominal lat/lon, and geographic coordinates using an equidistant conic projection.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<!-- ![Coordinate data options](./images/nep_coordinate_variable_plots.png){#fig-coordinates} -->
+</section>
+<section id="sec-static" class="level4">
+<h4 class="anchored" data-anchor-id="sec-static">Static variables in the CEFI data</h4>
+<p>Static variables refer to variables that do not vary over time. You’ll find these variables grouped together in files named “ocean_static” or “ice_static” that are duplicated throughout the CEFI file tree (with usually one copy under each simulations monthly and daily data folders).</p>
+<p>The static collections include the following variables:</p>
+<ul>
+<li><strong>geolat/geolon variations</strong>: Geographic coordinates (lat/lon) for the h-, q-, u-, and v-grids.</li>
+<li><strong>areacello variations</strong>: derived from “area [of] cell o[cean]”, these hold the areas of the grid cells</li>
+<li><strong>deptho</strong>: depth of each ocean grid cell</li>
+<li><strong>Coriolis</strong>: Coriolis parameter at each corner point</li>
+<li><strong>wet variations</strong>: wet/dry mask indicating which grid cells are ocean (1) and which are land (0)</li>
+<li><strong>dx/dy variations</strong>: geometry variables defining various distances across and between grid cells. These are handy shortcuts when you need to calculate areas, derivatives, etc (<a href="#fig-arakawagrid" class="quarto-xref">Figure&nbsp;<span>1.2</span></a>).</li>
+<li><strong>COSROT,SINROT</strong>: found in the ice static collection, these are rotation values to transform directional values from along-grid orientation to geographic east/north orientation.</li>
+</ul>
+<!-- ![Arakawa C grid distance metrics](./images/arakawaCGrid_dist.png){fig-align="left" #fig-arakawacdist} -->
+</section>
+</section>
+<section id="the-regridded-regrid-option" class="level3" data-number="1.3.2">
+<h3 data-number="1.3.2" class="anchored" data-anchor-id="the-regridded-regrid-option"><span class="header-section-number">1.3.2</span> The regridded (regrid) option</h3>
+<p>The CEFI datasets include output in both native-grid (<code>raw</code>) and regridded (<code>regrid</code>) formats.</p>
+<p>The regridded data has been interpolated to a regular, east/north-oriented grid, with vector coordinate data (<code>lat</code>, <code>lon</code>, and <code>time</code>) included within the individual data files for easy access. This makes the files easy to work with and compatible with most netCDF-reading software using out-of-the-box settings.</p>
+<p>There are some tradeoffs when opting for this data, though. First, for data size considerations, the choice was made to maintain the approximate grid size when moving from the native grid to the regridded one. For nearly rectilinear grids (e.g.&nbsp;the northwest Atlantic (NWA)), this preserves a similar spatial resolution to the native grid. But for the diagonally-oriented northeast Pacific (NEP), the regridding loses significant resolution in the southern portion of the domain and increases the sparsity of the dataset.</p>
+<div class="cell" data-execution_count="3">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode matlab code-with-copy"><code class="sourceCode matlab"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="va">Copt</span> <span class="op">=</span> <span class="va">cefiportalopts</span>(<span class="ss">'region'</span><span class="op">,</span> <span class="ss">'nep'</span><span class="op">,</span> <span class="op">...</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>                      <span class="ss">'release'</span><span class="op">,</span> <span class="ss">'latest'</span><span class="op">,</span> <span class="op">...</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>                      <span class="ss">'freq'</span><span class="op">,</span> <span class="ss">'monthly'</span>)<span class="op">;</span> </span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co">% raw-grid area: in static files</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="va">Rw</span>.<span class="va">nep</span> <span class="op">=</span> <span class="va">readcefigridvars</span>(<span class="va">Copt</span><span class="op">,</span> {<span class="ss">'areacello'</span><span class="op">,</span> <span class="ss">'geolat_c'</span><span class="op">,</span> <span class="ss">'geolon_c'</span><span class="op">,</span> <span class="ss">'wet'</span>}<span class="op">,</span> <span class="ss">'expandname'</span><span class="op">,</span> <span class="va">false</span>)<span class="op">;</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="va">Rw</span>.<span class="va">nwa</span> <span class="op">=</span> <span class="va">readcefigridvars</span>(<span class="va">Copt</span>.<span class="va">setopts</span>(<span class="ss">'region'</span><span class="op">,</span><span class="ss">'nwa'</span>)<span class="op">,</span> {<span class="ss">'areacello'</span><span class="op">,</span> <span class="ss">'geolat_c'</span><span class="op">,</span> <span class="ss">'geolon_c'</span><span class="op">,</span> <span class="ss">'wet'</span>}<span class="op">,</span> <span class="ss">'expandname'</span><span class="op">,</span> <span class="va">false</span>)<span class="op">;</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co">% regridded: calculate based on coordinates</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="va">fname</span> <span class="op">=</span> <span class="va">Copt</span>.<span class="va">setopts</span>(<span class="ss">'grid'</span><span class="op">,</span> <span class="ss">'regrid'</span><span class="op">,</span> <span class="ss">'region'</span><span class="op">,</span> <span class="ss">'nep'</span>).<span class="va">cefifilelist</span>(<span class="ss">'tob*'</span><span class="op">,</span> <span class="ss">'*'</span>)<span class="op">;</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="va">Rg</span>.<span class="va">nep</span> <span class="op">=</span> <span class="va">ncstruct</span>(<span class="va">fname</span><span class="op">,</span> <span class="ss">'tob'</span><span class="op">,</span> <span class="ss">'lat'</span><span class="op">,</span> <span class="ss">'lon'</span><span class="op">,</span> <span class="va">struct</span>(<span class="ss">'time'</span><span class="op">,</span> [<span class="fl">1</span> <span class="fl">1</span> <span class="fl">1</span>]))<span class="op">;</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="va">fname</span> <span class="op">=</span> <span class="va">Copt</span>.<span class="va">setopts</span>(<span class="ss">'grid'</span><span class="op">,</span> <span class="ss">'regrid'</span><span class="op">,</span> <span class="ss">'region'</span><span class="op">,</span> <span class="ss">'nwa'</span>).<span class="va">cefifilelist</span>(<span class="ss">'tob*'</span><span class="op">,</span> <span class="ss">'*'</span>)<span class="op">;</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="va">Rg</span>.<span class="va">nwa</span> <span class="op">=</span> <span class="va">ncstruct</span>(<span class="va">fname</span><span class="op">,</span> <span class="ss">'tob'</span><span class="op">,</span> <span class="ss">'lat'</span><span class="op">,</span> <span class="ss">'lon'</span><span class="op">,</span> <span class="va">struct</span>(<span class="ss">'time'</span><span class="op">,</span> [<span class="fl">1</span> <span class="fl">1</span> <span class="fl">1</span>]))<span class="op">;</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="va">ell</span> <span class="op">=</span> <span class="va">referenceEllipsoid</span>(<span class="ss">'earth'</span><span class="op">,</span> <span class="ss">'km'</span>)<span class="op">;</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="va">dfun</span> <span class="op">=</span> <span class="op">@</span>(<span class="va">a</span><span class="op">,</span><span class="va">b</span>) <span class="va">distance</span>(<span class="va">a</span>(<span class="op">:,</span><span class="fl">1</span>)<span class="op">,</span> <span class="va">a</span>(<span class="op">:,</span><span class="fl">2</span>)<span class="op">,</span> <span class="va">b</span>(<span class="op">:,</span><span class="fl">1</span>)<span class="op">,</span> <span class="va">b</span>(<span class="op">:,</span><span class="fl">2</span>)<span class="op">,</span> <span class="va">ell</span>)<span class="op">;</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="va">fld</span> <span class="op">=</span> [<span class="st">"nep"</span><span class="op">,</span> <span class="st">"nwa"</span>]<span class="op">;</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="va">rgarea</span> <span class="op">=</span> <span class="va">cell</span>(<span class="va">size</span>(<span class="va">fld</span>))<span class="op">;</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> <span class="va">ii</span> <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="va">length</span>(<span class="va">fld</span>)</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    <span class="va">dln</span> <span class="op">=</span> <span class="va">mean</span>(<span class="va">diff</span>(<span class="va">Rg</span>.(<span class="va">fld</span>{<span class="va">ii</span>}).<span class="va">lon</span>))<span class="op">;</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>    <span class="va">dlt</span> <span class="op">=</span> <span class="va">mean</span>(<span class="va">diff</span>(<span class="va">Rg</span>.(<span class="va">fld</span>{<span class="va">ii</span>}).<span class="va">lat</span>))<span class="op">;</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>    [<span class="va">lt</span><span class="op">,</span><span class="va">ln</span>] <span class="op">=</span> <span class="va">ndgrid</span>(<span class="va">wrapTo360</span>(<span class="va">Rg</span>.(<span class="va">fld</span>{<span class="va">ii</span>}).<span class="va">lat</span>)<span class="op">,</span> <span class="va">Rg</span>.(<span class="va">fld</span>{<span class="va">ii</span>}).<span class="va">lon</span>)<span class="op">;</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    <span class="va">ln1</span> <span class="op">=</span> <span class="va">ln</span> <span class="op">-</span> <span class="va">dln</span><span class="op">/</span><span class="fl">2</span><span class="op">;</span></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>    <span class="va">ln2</span> <span class="op">=</span> <span class="va">ln</span> <span class="op">+</span> <span class="va">dln</span><span class="op">/</span><span class="fl">2</span><span class="op">;</span></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    <span class="va">lt1</span> <span class="op">=</span> <span class="va">lt</span> <span class="op">-</span> <span class="va">dlt</span><span class="op">/</span><span class="fl">2</span><span class="op">;</span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>    <span class="va">lt2</span> <span class="op">=</span> <span class="va">lt</span> <span class="op">+</span> <span class="va">dlt</span><span class="op">/</span><span class="fl">2</span><span class="op">;</span></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>    <span class="va">rgarea</span>{<span class="va">ii</span>} <span class="op">=</span> <span class="va">arrayfun</span>(<span class="op">@</span>(<span class="va">a</span><span class="op">,</span><span class="va">b</span><span class="op">,</span><span class="va">c</span><span class="op">,</span><span class="va">d</span>) <span class="va">areaquad</span>(<span class="va">a</span><span class="op">,</span><span class="va">b</span><span class="op">,</span><span class="va">c</span><span class="op">,</span><span class="va">d</span><span class="op">,</span> <span class="va">ell</span>)<span class="op">,</span> <span class="va">lt1</span><span class="op">,</span> <span class="va">ln1</span><span class="op">,</span> <span class="va">lt2</span><span class="op">,</span> <span class="va">ln2</span>)<span class="op">;</span></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> <span class="va">ii</span> <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="va">length</span>(<span class="va">fld</span>)</span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>    <span class="va">mask</span> <span class="op">=</span> <span class="va">isnan</span>(<span class="va">Rg</span>.(<span class="va">fld</span>{<span class="va">ii</span>}).<span class="va">tob</span>)<span class="op">;</span></span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>    <span class="va">rgarea</span>{<span class="va">ii</span>}(<span class="va">mask</span><span class="op">'</span>) <span class="op">=</span> <span class="va">NaN</span><span class="op">;</span></span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a><span class="co">% Plot</span></span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a><span class="va">latlim</span> <span class="op">=</span> [<span class="fl">5</span> <span class="fl">81</span>]<span class="op">;</span></span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a><span class="va">lonlim</span> <span class="op">=</span> [<span class="fl">156</span> <span class="fl">324</span>]<span class="op">;</span></span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a><span class="va">hf</span> <span class="op">=</span> <span class="va">figure</span><span class="op">;</span></span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a><span class="va">ax</span>(<span class="fl">1</span>) <span class="op">=</span> <span class="va">worldmap</span>(<span class="va">latlim</span><span class="op">,</span> <span class="va">lonlim</span>)<span class="op">;</span></span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> <span class="va">ii</span> <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="va">length</span>(<span class="va">fld</span>)</span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>    <span class="va">atmp</span> <span class="op">=</span> <span class="va">Rw</span>.(<span class="va">fld</span>{<span class="va">ii</span>}).<span class="va">areacello</span><span class="op">*</span><span class="fl">1e-6</span><span class="op">;</span> <span class="co">% m^2 -&gt; km^2</span></span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>    <span class="va">atmp</span>(<span class="va">Rw</span>.(<span class="va">fld</span>{<span class="va">ii</span>}).<span class="va">wet</span> <span class="op">==</span> <span class="fl">0</span>) <span class="op">=</span> <span class="va">NaN</span><span class="op">;</span></span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>    <span class="va">pcolorm</span>(<span class="va">Rw</span>.(<span class="va">fld</span>{<span class="va">ii</span>}).<span class="va">geolat_c</span><span class="op">,</span> <span class="va">Rw</span>.(<span class="va">fld</span>{<span class="va">ii</span>}).<span class="va">geolon_c</span><span class="op">,</span> <span class="va">sqrt</span>(<span class="va">padarray</span>(<span class="va">atmp</span><span class="op">,</span> [<span class="fl">1</span> <span class="fl">1</span>]<span class="op">,</span> <span class="ss">'post'</span>)))<span class="op">;</span></span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a><span class="va">hf</span>(<span class="fl">2</span>) <span class="op">=</span> <span class="va">figure</span><span class="op">;</span></span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a><span class="va">ax</span>(<span class="fl">2</span>) <span class="op">=</span> <span class="va">worldmap</span>(<span class="va">latlim</span><span class="op">,</span> <span class="va">lonlim</span>)<span class="op">;</span></span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> <span class="va">ii</span> <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="va">length</span>(<span class="va">fld</span>)</span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a>    <span class="va">pcolorm</span>(<span class="va">Rg</span>.(<span class="va">fld</span>{<span class="va">ii</span>}).<span class="va">lat</span><span class="op">,</span> <span class="va">Rg</span>.(<span class="va">fld</span>{<span class="va">ii</span>}).<span class="va">lon</span><span class="op">,</span> <span class="va">sqrt</span>(<span class="va">rgarea</span>{<span class="va">ii</span>}))<span class="op">;</span></span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a><span class="va">set</span>(<span class="va">ax</span><span class="op">,</span> <span class="ss">'clim'</span><span class="op">,</span> [<span class="fl">5</span> <span class="fl">18</span>]<span class="op">,</span> <span class="ss">'position'</span><span class="op">,</span> [<span class="fl">0</span> <span class="fl">0</span> <span class="fl">1</span> <span class="fl">1</span>]<span class="op">,</span> <span class="ss">'xlim'</span><span class="op">,</span> [<span class="op">-</span><span class="fl">5e6</span> <span class="va">ax</span>(<span class="fl">1</span>).<span class="va">XLim</span>(<span class="fl">2</span>)])<span class="op">;</span></span>
+<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a><span class="va">arrayfun</span>(<span class="op">@</span>(<span class="va">x</span>) <span class="va">setm</span>(<span class="va">x</span><span class="op">,</span> <span class="ss">'frame'</span><span class="op">,</span> <span class="ss">'off'</span><span class="op">,</span> <span class="ss">'fontsize'</span><span class="op">,</span> <span class="fl">8</span>)<span class="op">,</span> <span class="va">ax</span>)<span class="op">;</span></span>
+<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a><span class="va">cb</span> <span class="op">=</span> <span class="va">colorbar</span>(<span class="ss">'north'</span>)<span class="op">;</span></span>
+<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a><span class="va">cb</span>.<span class="va">Position</span> <span class="op">=</span> [<span class="fl">0.7</span> <span class="va">cb</span>.<span class="va">Position</span>(<span class="fl">2</span>)<span class="op">-</span><span class="fl">0.04</span> <span class="fl">0.2</span> <span class="va">cb</span>.<span class="va">Position</span>(<span class="fl">4</span>)]<span class="op">;</span></span>
+<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a><span class="va">set</span>(<span class="va">cb</span><span class="op">,</span> <span class="ss">'AxisLocation'</span><span class="op">,</span> <span class="ss">'out'</span><span class="op">,</span> <span class="ss">'fontsize'</span><span class="op">,</span> <span class="fl">8</span><span class="op">,</span> <span class="ss">'tickdir'</span><span class="op">,</span> <span class="ss">'out'</span>)<span class="op">;</span></span>
+<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a><span class="va">xlabel</span>(<span class="va">cb</span><span class="op">,</span> <span class="ss">'Resolution (km)'</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div id="fig-rawregrid" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="3">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-rawregrid-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output cell-output-display" data-execution_count="3">
+<div id="fig-rawregrid-1" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-rawregrid-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="cefi_dataset_files/figure-html/fig-rawregrid-output-1.png" class="lightbox" data-gallery="fig-rawregrid" title="Figure&nbsp;1.4&nbsp;(a): Raw"><img src="cefi_dataset_files/figure-html/fig-rawregrid-output-1.png" class="img-fluid figure-img" data-ref-parent="fig-rawregrid"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-rawregrid-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(a) Raw
+</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="3">
+<div id="fig-rawregrid-2" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-rawregrid-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="cefi_dataset_files/figure-html/fig-rawregrid-output-2.png" class="lightbox" data-gallery="fig-rawregrid" title="Figure&nbsp;1.4&nbsp;(b): Regridded"><img src="cefi_dataset_files/figure-html/fig-rawregrid-output-2.png" class="img-fluid figure-img" data-ref-parent="fig-rawregrid"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-rawregrid-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(b) Regridded
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-rawregrid-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1.4: Grid scale resolution (square root of grid cell area) in the a) raw versus b) regridded datasets for the NWA and NEP regions.
+</figcaption>
+</figure>
+</div>
+</div>
+<p>Even without loss of resolution, the interpolation process leads to small changes in values relative to the “true” values in the model that may be important if your use case relies on precise conservation of mass, momentum, etc. While it makes analysis a bit more complex, this author recommends working with the raw datasets whenever possible.</p>
+<p>Only h-point variables are available in the regridded datasets, so any analysis of velocities will require the raw data.</p>
+</section>
+<section id="the-vertical-grid" class="level3" data-number="1.3.3">
+<h3 data-number="1.3.3" class="anchored" data-anchor-id="the-vertical-grid"><span class="header-section-number">1.3.3</span> The vertical grid</h3>
+<section id="internal-scheme-z" class="level4">
+<h4 class="anchored" data-anchor-id="internal-scheme-z">Internal scheme (z*)</h4>
+<p>Internally, the MOM6 model uses a vertical remapping scheme, known as the Arbitrary Lagrangian Eulerian (ALE) algorithm, that allows MOM6 simulations to be configured with one of many different vertical coordinate schemes, including geopotential (z or z*), isopycnal, terrain-following, and hybrid schemes.</p>
+<p>Currently, the CEFI regional model configurations use a z* vertical coordinate. This means the vertical levels are at fixed depths, except the layer interfaces move a little in response to changes in sea surface height.</p>
+<p>Depth is measured relative to sea level, positive up and negative down, so most ocean depth coordinate values will be negative.</p>
+</section>
+<section id="vertical-remapping-for-output-diagnostics" class="level4">
+<h4 class="anchored" data-anchor-id="vertical-remapping-for-output-diagnostics">Vertical remapping for output diagnostics</h4>
+<p>While the vertical layers are time-varying internally to the model, the output diagnostics found in the CEFI portal have all been vertically remapped to constant depth levels, with layer thickness ranging from 5 to 250 m as follows:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: right;">Upper depth (m)</th>
+<th style="text-align: right;">Lower depth (m)</th>
+<th style="text-align: right;">Resolution (m)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">50</td>
+<td style="text-align: right;">5</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">50</td>
+<td style="text-align: right;">150</td>
+<td style="text-align: right;">10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">150</td>
+<td style="text-align: right;">300</td>
+<td style="text-align: right;">25</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">300</td>
+<td style="text-align: right;">500</td>
+<td style="text-align: right;">50</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">500</td>
+<td style="text-align: right;">1500</td>
+<td style="text-align: right;">100</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1500</td>
+<td style="text-align: right;">6500</td>
+<td style="text-align: right;">250</td>
+</tr>
+</tbody>
+</table>
+<p>The remapping process is conservative, meaning that these values can be used to calculate mass and momentum budgets without needing access to the native vertical grid.</p>
+<p>Depth layer interface depth (<code>z_i</code>) and mid-layer depth (<code>z_l</code>) variables can be found in each of the 3D variable files.</p>
+</section>
+</section>
+</section>
+<section id="experiment-types" class="level2" data-number="1.4">
+<h2 data-number="1.4" class="anchored" data-anchor-id="experiment-types"><span class="header-section-number">1.4</span> Experiment types</h2>
+<p>Regional model configurations can be used to run a wide variety of different types of simulations. This is accomplished by using different datasets as the input forcing for the models.</p>
+<p>A regional ocean model always requires external input to prescribe what is happening at the surface and lateral boundaries. That input usually comes from the output of a larger- and coarser-scale global model or a reanalysis that combines a model with observations. These boundary conditions play a strong driving role in any simulation, and a regional model will inherit some of both the skill and biases of its parent model/reanalysis.</p>
+<p>A regional model is more than just a high-resolution filter for the parent model, though; it can resolve dynamics not possible at a coarser scale, and also can add new processes not present in the parent (for example, extra biological complexity). This can alleviate biases from the parent model. But at the same time, some biases can be amplified in the regional model output. The resulting features in a regional model will always be a combination of the parent model’s dynamics and its own internal dynamics.</p>
+<p>The CEFI model configurations have been (or will be) used to run simulations across different time scales, including hindcasts, forecasts, and long-term outlooks. Here, we describe each of these.</p>
+<section id="hindcasts" class="level3" data-number="1.4.1">
+<h3 data-number="1.4.1" class="anchored" data-anchor-id="hindcasts"><span class="header-section-number">1.4.1</span> Hindcasts</h3>
+<p>Hindcast simulations are intended to represent historical periods with as much accuracy as possible, and with direct year-to-year correspondence to real-world events. They are primarily forced by reanalyses or other observation-based datasets.</p>
+<p>Hindcasts can be used to measure the skill of the model compared to observations. They also play many roles in research and ecosystem management: to fill in spatiotemporal gaps in observations, to provide a physical basis to drive fisheries and other ecosystem models, to initialize forecasts, and many more.</p>
+<p>Note that the CEFI hindcast simulations do not themselves assimilate observations; they are simply forced by a data-assimilative parent model.</p>
+<p>More info:</p>
+<ul>
+<li><span class="citation" data-cites="ross_high-resolution_2023">Andrew C. Ross et al. (<a href="references.html#ref-ross_high-resolution_2023" role="doc-biblioref">2023</a>)</span>: NWA domain configuration and hindcast simulation documentation paper</li>
+<li><span class="citation" data-cites="drenkard_regional_2025">Drenkard et al. (<a href="references.html#ref-drenkard_regional_2025" role="doc-biblioref">2025</a>)</span>: NEP domain configuration and hindcast simulation documentation paper</li>
+</ul>
+</section>
+<section id="forecasts" class="level3" data-number="1.4.2">
+<h3 data-number="1.4.2" class="anchored" data-anchor-id="forecasts"><span class="header-section-number">1.4.2</span> Forecasts</h3>
+<p>Forecast simulations simulate future periods. The CEFI project includes both seasonal and decadal forecasts, with a few associated simulation types each.</p>
+<section id="seasonal-forecasts" class="level4">
+<h4 class="anchored" data-anchor-id="seasonal-forecasts">Seasonal forecasts</h4>
+<p>CEFI seasonal forecasts predict conditions 0-12 months into the future. They are released 4 times per year (initialized on January 1, April 1, July 1, and September 1 of each year).</p>
+<p>The CEFI seasonal forecasts are driven by GFDL’s SPEAR (<strong>S</strong>eamless System for <strong>P</strong>rediction and <strong>EA</strong>rth System <strong>R</strong>esearch) model, a global configuration of the MOM6 ocean model, LM4 land model, and SIS2 sea ice model designed with seasonal to decadal time scales in mind. CEFI seasonal forecast forcings use the SPEAR_MED configuration, which has 0.5-deg atmospheric resolution and 1-deg ocean resolution.</p>
+<p>While initial conditions strive to match real-world conditions at the forecast starting time, the remainder of the simulation is free-running.</p>
+<p>Due to the chaotic nature of the Earth system, very small differences in conditions at one time can lead to large differences in future values. The SPEAR simulations account for this by running multiple forecast simulations with slight differences in their initial conditions, producing an ensemble of forecasts that can be used to quantify the uncertainty of predictions. The CEFI regional seasonal forecasts downscale 10 of these ensemble members for each seasonal forecast initialization date.</p>
+</section>
+<section id="seasonal-retrospective-forecasts-reforecasts" class="level4">
+<h4 class="anchored" data-anchor-id="seasonal-retrospective-forecasts-reforecasts">Seasonal retrospective forecasts (reforecasts)</h4>
+<p>Retropective forecasts are simply forecasts initialized at a past date. They use the same model framework and SPEAR-based forcing as the seasonal forecasts.</p>
+<p>Retrospective forecasts are primarily used to skill test a forecast model. By comparing the suite of reforecasts to observations (or to a hindcast), one can quantify the model’s ability to forecast features of interest.</p>
+<p>More info:</p>
+<ul>
+<li><span class="citation" data-cites="Ross2024-pf">Andrew C. Ross et al. (<a href="references.html#ref-Ross2024-pf" role="doc-biblioref">2024</a>)</span>: NWA seasonal forecast skill assessment</li>
+</ul>
+</section>
+<section id="seasonal-forecast-initializations-partial-year-hindcast" class="level4">
+<h4 class="anchored" data-anchor-id="seasonal-forecast-initializations-partial-year-hindcast">Seasonal forecast initializations (partial year hindcast)</h4>
+<p>The CEFI seasonal forecasts are initialized from a hindcast simulation, rather than directly from observations. This allows the starting conditions to be as close to real-world as possible while avoiding spinup artifacts that would arise from starting from a reanalysis product directly.</p>
+<p>The CEFI hindcast simulations are updated once per year, while forecasts are produced four times per year. The seasonal forecast initializations extend the hindcasts from the end of the last annual hindcast release to the starting date of the forecast. These updates require the use of some interim data products, departing from the published hindcast forcing configurations.</p>
+<p>In addition to their use as forecast initialization, data from these simulations may be used to get more recent estimates of ocean and biogeochemical conditions. However, users should keep in mind the interim nature of the forcing used for these simulations, and it is recommended that they replace use of seasonal forecast initialization data with hindcast data once it becomes available.</p>
+</section>
+</section>
+<section id="decadal-forecasts" class="level3" data-number="1.4.3">
+<h3 data-number="1.4.3" class="anchored" data-anchor-id="decadal-forecasts"><span class="header-section-number">1.4.3</span> Decadal forecasts</h3>
+<p>CEFI decadal forecasts predict conditions 0-10 years into the future. They are released once per year.</p>
+<p>Like the seasonal forecasts, the CEFI decadal forecast input forcing comes from the SPEAR model, but using the slightly lower-atmospheric-resolution SPEAR_L0 configuration that is optimized for longer simulations.</p>
+<p>Like the seasonal forecasts, each decadal forecast includes a 10-member ensemble to account for uncertainty.</p>
+<p>More info:</p>
+<ul>
+<li><span class="citation" data-cites="Koul2024-ko">Koul et al. (<a href="references.html#ref-Koul2024-ko" role="doc-biblioref">2024</a>)</span>: NWA decadal forecast paper</li>
+</ul>
+<section id="decadal-forecast-initializations" class="level4">
+<h4 class="anchored" data-anchor-id="decadal-forecast-initializations">Decadal forecast initializations</h4>
+<p>The CEFI decadal forecasts are initialized from a downscaled version of the SPEAR_L0 historical climate simulations. These simulations run the SPEAR_L0 configuration with light restoring to observations. This initialization techniqe allows the model forecasts to gain “memory” of real-world phenomena (like the specific timing of El Nino events and heat waves) that contribute to skillful prediction while still maintaining it’s own internally-derived dynamics.</p>
+<p>In addition to serving as an initialization dataset for decadal forecast, these decadal forecast initialization simulations can supplement the hindcast simulations. While the input forcing is not as tightly tied to observations as the reanalysis-forced hindcasts, the simulations cover a longer period (1965–2022) and can sometimes suffice as a hindcast extension when simulation data from earlier years are needed.</p>
+</section>
+</section>
+<section id="multi-decadal-outlooks" class="level3" data-number="1.4.4">
+<h3 data-number="1.4.4" class="anchored" data-anchor-id="multi-decadal-outlooks"><span class="header-section-number">1.4.4</span> Multi-decadal outlooks</h3>
+<p>Multi-decadal outlooks focus on predicting the change in the Earth system over multidecadal to century time scales. On these time scales, the conditions at the start of the simulation are much less important than in short-term forecasts. Instead, changes in long-term drivers, especially the concentrations of CO2 and other greenhouse gasses in the atmosphere, control the outcomes.</p>
+<p>The CEFI multi-decadal outlooks are driven by selected simulations from the 6th Coupled Model Intercomparison Project (CMIP6).</p>
+<section id="historical" class="level4">
+<h4 class="anchored" data-anchor-id="historical">Historical</h4>
+<p>The CMIP6 historical simulations cover the period of 1850–2014, and are forced by historical emissions and radiative forcing. Apart from these upper atmosphere forcings, the models are free running and not influenced by observations. This means that the models in the suite should skillfully reproduce mean conditions and the frequency of events like climate oscillations (ENSO, PDO) and extremes (heat waves, storms, etc), but there is not a 1:1 correspondance with real world events.</p>
+<p>The CEFI simulations downscale the latter portion (1950–2014) of the historical runs from five parent models: GFDL-ESM4, IPSL-CM6A, UKESM1, CMCC-ESM2, and CNRM-ESM2-1. These models include the necessary physical and biogeochemical forcing/initial variables required by the CEFI regional model configurations and sample the span of climate sensitivities within the larger suite of models.</p>
+<p>The historical simulations are used to initialize the various SSPs and to provide a baseline against which future change is measured. They can also be used to assess bias relative to hindcasts or to observations.</p>
+</section>
+<section id="ssps" class="level4">
+<h4 class="anchored" data-anchor-id="ssps">SSPs</h4>
+<p>The Shared Socioeconomic Pathways (SSP) in CMIP6 reflect potential storylines for how the earth might change under different assumptions population growth, development, and mitgation strategies. These simulations run from 2015–2100.</p>
+<p>For each of parent model, the CEFI suite downscales four different SSPs: SSP1-2.6, SSP2-4.5, SSP3-7.0, and SSP5-8.5.</p>
+<p>More info:</p>
+<ul>
+<li></li>
+</ul>
+</section>
+</section>
+</section>
+<section id="output-frequency" class="level2" data-number="1.5">
+<h2 data-number="1.5" class="anchored" data-anchor-id="output-frequency"><span class="header-section-number">1.5</span> Output frequency</h2>
+</section>
+<section id="releases" class="level2" data-number="1.6">
+<h2 data-number="1.6" class="anchored" data-anchor-id="releases"><span class="header-section-number">1.6</span> Releases</h2>
+</section>
+<section id="variables" class="level2" data-number="1.7">
+<h2 data-number="1.7" class="anchored" data-anchor-id="variables"><span class="header-section-number">1.7</span> Variables</h2>
+<!-- Notes -->
+<!-- "10.5194/egusphere-2024-394" - preprint of Ross et al, 2024 -->
+<!-- "10.5194/gmd-2024-195" - discussions version of Drenkard et al., 2025 -->
+
+
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
+<div id="ref-drenkard_regional_2025" class="csl-entry" role="listitem">
+Drenkard, Elizabeth J., Charles A. Stock, Andrew C. Ross, Yi-Cheng Teng, Theresa Cordero, Wei Cheng, Alistair Adcroft, et al. 2025. <span>“A Regional Physical–Biogeochemical Ocean Model for Marine Resource Applications in the <span>Northeast</span> <span>Pacific</span> (<span>MOM6</span>-<span>COBALT</span>-<span>NEP10k</span> V1.0).”</span> <em>Geoscientific Model Development</em> 18 (16): 5245–90. <a href="https://doi.org/10.5194/gmd-18-5245-2025">https://doi.org/10.5194/gmd-18-5245-2025</a>.
+</div>
+<div id="ref-Koul2024-ko" class="csl-entry" role="listitem">
+Koul, Vimal, Andrew C Ross, Charles Stock, Liping Zhang, Thomas Delworth, and Andrew Wittenberg. 2024. <span>“A Predicted Pause in the Rapid Warming of the Northwest Atlantic Shelf in the Coming Decade.”</span> <em>Geophys. Res. Lett.</em> 51 (17). <a href="https://doi.org/10.1029/2024GL110946">https://doi.org/10.1029/2024GL110946</a>.
+</div>
+<div id="ref-ross_high-resolution_2023" class="csl-entry" role="listitem">
+Ross, Andrew C., Charles A. Stock, Alistair Adcroft, Enrique Curchitser, Robert Hallberg, Matthew J. Harrison, Katherine Hedstrom, et al. 2023. <span>“A High-Resolution Physical–Biogeochemical Model for Marine Resource Applications in the Northwest <span>Atlantic</span> (<span>MOM6</span>-<span>COBALT</span>-<span>NWA12</span> V1.0).”</span> <em>Geoscientific Model Development</em> 16 (23): 6943–85. <a href="https://doi.org/10.5194/gmd-16-6943-2023">https://doi.org/10.5194/gmd-16-6943-2023</a>.
+</div>
+<div id="ref-Ross2024-pf" class="csl-entry" role="listitem">
+Ross, Andrew C, Charles A Stock, Vimal Koul, Thomas L Delworth, Feiyu Lu, Andrew Wittenberg, and Michael A Alexander. 2024. <span>“Dynamically Downscaled Seasonal Ocean Forecasts for North American East Coast Ecosystems.”</span> <em>Ocean Sci.</em> 20 (6): 1631–56. <a href="https://doi.org/10.5194/os-20-1631-2024">https://doi.org/10.5194/os-20-1631-2024</a>.
+</div>
+</div>
+</section>
+
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./index.html" class="pagination-link" aria-label="Preface">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Preface</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./ak_regions.html" class="pagination-link" aria-label="Alaska customization">
+        <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Alaska customization</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
+
+
+
+
+</body></html>

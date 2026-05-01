@@ -1,0 +1,1392 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.31">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>5&nbsp; ESR 2025: Analysis – Alaska MOM6 regional workflows and skill assessment</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./references.html" rel="next">
+<link href="./esr2025_data.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-e1a5c8363afafaef2c763b6775fbf3ca.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-485d01fc63b59abcd3ee1bf1e8e2748d.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./hindcasts_intro.html">Hindcast extension workflows</a></li><li class="breadcrumb-item"><a href="./esr2025_analysis.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">ESR 2025: Analysis</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Alaska MOM6 regional workflows and skill assessment</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Regional model output</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./cefi_dataset.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">The CEFI Dataset</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ak_regions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Alaska customization</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./hindcasts_intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Hindcast extension workflows</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./peec2025_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Spring PEEC 2025</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./esr2025_data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">ESR 2025: Methods</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./esr2025_analysis.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">ESR 2025: Analysis</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Skill assessment</span></span>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#summary-for-esrs-simulated-temperature" id="toc-summary-for-esrs-simulated-temperature" class="nav-link active" data-scroll-target="#summary-for-esrs-simulated-temperature"><span class="header-section-number">5.1</span> Summary for ESRs: simulated temperature</a>
+  <ul class="collapse">
+  <li><a href="#bering-sea" id="toc-bering-sea" class="nav-link" data-scroll-target="#bering-sea"><span class="header-section-number">5.1.1</span> Bering Sea</a></li>
+  <li><a href="#aleutian-islands" id="toc-aleutian-islands" class="nav-link" data-scroll-target="#aleutian-islands"><span class="header-section-number">5.1.2</span> Aleutian Islands</a></li>
+  <li><a href="#gulf-of-alaska" id="toc-gulf-of-alaska" class="nav-link" data-scroll-target="#gulf-of-alaska"><span class="header-section-number">5.1.3</span> Gulf of Alaska</a></li>
+  <li><a href="#all-regions" id="toc-all-regions" class="nav-link" data-scroll-target="#all-regions"><span class="header-section-number">5.1.4</span> All regions</a></li>
+  </ul></li>
+  <li><a href="#additional-plots" id="toc-additional-plots" class="nav-link" data-scroll-target="#additional-plots"><span class="header-section-number">5.2</span> Additional plots</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./hindcasts_intro.html">Hindcast extension workflows</a></li><li class="breadcrumb-item"><a href="./esr2025_analysis.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">ESR 2025: Analysis</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">ESR 2025: Analysis</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>This is not an Ecosystem Status Report (ESR). This is simply an analysis of regional model output intended to inform Alaska ESRs.</p>
+</div>
+</div>
+<section id="summary-for-esrs-simulated-temperature" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="summary-for-esrs-simulated-temperature"><span class="header-section-number">5.1</span> Summary for ESRs: simulated temperature</h2>
+<section id="bering-sea" class="level3" data-number="5.1.1">
+<h3 data-number="5.1.1" class="anchored" data-anchor-id="bering-sea"><span class="header-section-number">5.1.1</span> Bering Sea</h3>
+<p>Winter 2025 conditions in the Bering Sea began warmer than average, with the sea ice edge further north than average and warm anomalies in both surface and bottom temperature across the majority of the eastern Bering Sea shelf. Through March and into April, the leading edge of sea ice extended further south, but open water areas appeared in northwestern regions (southwest of St.&nbsp;Lawrence and in the Gulf of Anadyr). The southern portions of the shelf continued to experience warm anomalies in surface and bottom temperature, but the NBS region was cooler than average. Beginning in late May, cold bottom temperature anomalies appeared in the inner shelf in the vicinity of Nunivak Island, while warm bottom temperature anomalies persisted across the rest of the shelf into late August. In contrast, surface temperatures in the early June through July were cooler than average. This cool surface anomaly persisted across most of the shelf (and extended into the basin) through late July, at which point the southern portions shifted to a warm anomaly while the north remained cool. Cluster analysis applied to mean June through August surface and bottom temperature suggests a few other years with this warm bottom, cool surface pattern, including 2023, 1996, and 1998 (<a href="#fig-esr25-cluster-bering" class="quarto-xref">Figure&nbsp;<span>5.4</span></a>).</p>
+<div id="cell-fig-esr25-btemp5x4" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode matlab code-with-copy"><code class="sourceCode matlab"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">% Local "CEFI Portal" options</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="va">addpath</span>(<span class="ss">'../code'</span>)<span class="op">;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="va">C</span> <span class="op">=</span> <span class="va">cefiportalopts</span>(<span class="ss">'portalpath'</span><span class="op">,</span> <span class="ss">'~/Documents/Data/CEFI/ak_cefiportal'</span><span class="op">,</span> <span class="op">...</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>                   <span class="ss">'release'</span><span class="op">,</span> <span class="ss">'e202507'</span><span class="op">,</span> <span class="op">...</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>                   <span class="ss">'subdomain'</span><span class="op">,</span> [<span class="fl">0</span> <span class="fl">342</span> <span class="fl">446</span> <span class="fl">743</span>]<span class="op">,</span> <span class="op">...</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>                   <span class="ss">'yyyymmdd'</span><span class="op">,</span> <span class="ss">'20240101'</span>)<span class="op">;</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="va">yr</span> <span class="op">=</span> <span class="fl">2025</span><span class="op">;</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="va">esrfol</span> <span class="op">=</span> <span class="ss">'~/Documents/Manuscripts/2025_ESR/'</span><span class="op">;</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co">% Map of bottom temperature, past 20 years</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="va">fname</span> <span class="op">=</span> <span class="va">fullfile</span>(<span class="va">esrfol</span><span class="op">,</span> <span class="va">sprintf</span>(<span class="ss">'btemp_map_%d-%d'</span><span class="op">,</span> [<span class="va">yr</span><span class="op">-</span><span class="fl">20</span><span class="op">+</span><span class="fl">1</span> <span class="va">yr</span>]))<span class="op">;</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="va">h</span> <span class="op">=</span> <span class="va">plot_bering_bottom_temp_map_5x4</span>(<span class="va">yr</span><span class="op">,</span> <span class="va">C</span>)<span class="op">;</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> <span class="op">~</span><span class="va">exist</span>([<span class="va">fname</span> <span class="ss">'.png'</span>]<span class="op">,</span> <span class="ss">'file'</span>)</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    <span class="va">export_fig</span>(<span class="va">fname</span><span class="op">,</span> <span class="va">h</span>.<span class="va">fig</span><span class="op">,</span> <span class="ss">'-png'</span><span class="op">,</span> <span class="ss">'-r150'</span><span class="op">,</span> <span class="ss">'-nocrop'</span>)<span class="op">;</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div id="fig-esr25-btemp5x4" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-esr25-btemp5x4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="esr2025_analysis_files/figure-html/fig-esr25-btemp5x4-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Figure&nbsp;5.1: Bering Sea bottom temperature for the past 20 years, extracted on July 1 of each year."><img src="esr2025_analysis_files/figure-html/fig-esr25-btemp5x4-output-1.png" class="img-fluid figure-img"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-esr25-btemp5x4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5.1: Bering Sea bottom temperature for the past 20 years, extracted on July 1 of each year.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode matlab code-with-copy"><code class="sourceCode matlab"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="va">regnum</span> <span class="op">=</span> [<span class="fl">98</span> <span class="fl">143</span> <span class="fl">52</span> <span class="fl">47</span>]<span class="op">;</span> <span class="co">% EBS, NBS, AI, GOA</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="va">regname</span> <span class="op">=</span> [<span class="st">"EBS"</span><span class="op">,</span> <span class="st">"NBS"</span><span class="op">,</span> <span class="st">"AI"</span><span class="op">,</span> <span class="st">"GOA"</span>]<span class="op">;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co">% Variable setup: which ones do we plot?</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="va">vplt</span> <span class="op">=</span> [<span class="st">"tob"</span><span class="op">,</span> <span class="st">"tos"</span><span class="op">,</span> <span class="st">"cpool2p0"</span><span class="op">,</span> <span class="st">"cpool0p0"</span>]<span class="op">;</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co">% Read surveyavg indices from file</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="va">Tbl</span> <span class="op">=</span> <span class="va">readindexdata</span>(<span class="va">C</span>.<span class="va">setopts</span>(<span class="ss">'subdomain'</span><span class="op">,</span> <span class="ss">'aksvyreg'</span>)<span class="op">,</span> <span class="op">...</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'regnum'</span><span class="op">,</span> <span class="va">regnum</span><span class="op">,</span> <span class="op">...</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'vars'</span><span class="op">,</span> <span class="va">vplt</span>)<span class="op">;</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co">% Remove leap days from climatology</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="va">isleap</span> <span class="op">=</span> <span class="va">month</span>(<span class="va">Tbl</span>.<span class="va">Clim</span>.<span class="va">t</span>) <span class="op">==</span> <span class="fl">2</span> <span class="op">&amp;</span> <span class="va">day</span>(<span class="va">Tbl</span>.<span class="va">Clim</span>.<span class="va">t</span>) <span class="op">==</span> <span class="fl">29</span><span class="op">;</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="va">Tbl</span>.<span class="va">Clim</span> <span class="op">=</span> <span class="va">Tbl</span>.<span class="va">Clim</span>(<span class="op">~</span><span class="va">isleap</span><span class="op">,:</span>)<span class="op">;</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="co">% Extract July 1 values from each year</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="va">Jul1</span> <span class="op">=</span> <span class="va">structfun</span>(<span class="op">@</span>(<span class="va">x</span>) <span class="va">retime</span>(<span class="va">x</span><span class="op">,</span> <span class="va">datetime</span>(<span class="fl">1993</span><span class="op">:</span><span class="va">yr</span><span class="op">,</span><span class="fl">7</span><span class="op">,</span><span class="fl">1</span>)<span class="op">,</span> <span class="ss">'nearest'</span><span class="op">,</span> <span class="ss">'endvalues'</span><span class="op">,</span> <span class="va">NaN</span>)<span class="op">,</span> <span class="va">Tbl</span><span class="op">,</span> <span class="ss">'uni'</span><span class="op">,</span> <span class="fl">0</span>)<span class="op">;</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="co">% Plot timeseries: ebs</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="va">V</span> <span class="op">=</span> <span class="va">ak_variable_info</span><span class="op">;</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="va">ii</span> <span class="op">=</span> <span class="fl">1</span><span class="op">;</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> <span class="va">iv</span> <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="va">length</span>(<span class="va">vplt</span>)</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>    <span class="va">h</span> <span class="op">=</span> <span class="va">plotgrid</span>(<span class="ss">'size'</span><span class="op">,</span> [<span class="fl">1</span> <span class="fl">1</span>]<span class="op">,</span> <span class="ss">'mar'</span><span class="op">,</span> <span class="fl">0.08</span><span class="op">,</span> <span class="ss">'mr'</span><span class="op">,</span> <span class="fl">0.01</span>)<span class="op">;</span></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>    <span class="va">h</span>.<span class="va">fig</span>.<span class="va">Position</span>(<span class="fl">3</span><span class="op">:</span><span class="fl">4</span>) <span class="op">=</span> [<span class="fl">6</span> <span class="fl">4</span>]<span class="op">*</span><span class="fl">72</span><span class="op">;</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>    <span class="va">h</span>.<span class="va">fig</span>.<span class="va">Color</span> <span class="op">=</span> <span class="ss">'w'</span><span class="op">;</span></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>    <span class="va">h</span>.<span class="va">gobj</span> <span class="op">=</span> <span class="va">plotsurveyregionindex</span>(<span class="va">Tbl</span><span class="op">,</span> <span class="va">vplt</span>{<span class="va">iv</span>}<span class="op">,</span> <span class="ss">'col'</span><span class="op">,</span> <span class="va">ii</span><span class="op">,</span> <span class="ss">'year'</span><span class="op">,</span> <span class="va">yr</span>)<span class="op">;</span></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>    <span class="va">title</span>(<span class="va">h</span>.<span class="va">ax</span><span class="op">,</span> <span class="va">sprintf</span>(<span class="ss">'%s: %s'</span><span class="op">,</span> <span class="va">regname</span>(<span class="va">ii</span>)<span class="op">,</span> <span class="va">V</span>{<span class="va">vplt</span>{<span class="va">iv</span>}<span class="op">,</span><span class="ss">'labelname'</span>}))<span class="op">;</span></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>    <span class="va">fname</span> <span class="op">=</span> <span class="va">fullfile</span>(<span class="va">esrfol</span><span class="op">,</span> <span class="va">sprintf</span>(<span class="ss">'timeseries_%s_%s'</span><span class="op">,</span><span class="va">regname</span>{<span class="va">ii</span>}<span class="op">,</span> <span class="va">vplt</span>{<span class="va">iv</span>}))<span class="op">;</span></span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> <span class="op">~</span><span class="va">exist</span>([<span class="va">fname</span> <span class="ss">'.png'</span>]<span class="op">,</span> <span class="ss">'file'</span>)</span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>        <span class="va">export_fig</span>(<span class="va">fname</span><span class="op">,</span> <span class="va">h</span>.<span class="va">fig</span><span class="op">,</span> <span class="ss">'-png'</span><span class="op">,</span> <span class="ss">'-r150'</span><span class="op">,</span> <span class="ss">'-nocrop'</span>)<span class="op">;</span></span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>    <span class="kw">end</span></span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div id="fig-esr25-tsindex-ebs" class="quarto-layout-panel">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-esr25-tsindex-ebs-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-layout-row">
+<div class="cell-output cell-output-display quarto-layout-cell-subref quarto-layout-cell" data-execution_count="2" data-ref-parent="fig-esr25-tsindex-ebs" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-esr25-tsindex-ebs-1" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-esr25-tsindex-ebs-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="esr2025_analysis_files/figure-html/fig-esr25-tsindex-ebs-output-1.png" class="lightbox" data-gallery="fig-esr25-tsindex-ebs" title="Figure&nbsp;5.2&nbsp;(a): Bottom temperature"><img src="esr2025_analysis_files/figure-html/fig-esr25-tsindex-ebs-output-1.png" class="img-fluid figure-img" data-ref-parent="fig-esr25-tsindex-ebs"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-esr25-tsindex-ebs-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(a) Bottom temperature
+</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display quarto-layout-cell-subref quarto-layout-cell" data-execution_count="2" data-ref-parent="fig-esr25-tsindex-ebs" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-esr25-tsindex-ebs-2" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-esr25-tsindex-ebs-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="esr2025_analysis_files/figure-html/fig-esr25-tsindex-ebs-output-2.png" class="lightbox" data-gallery="fig-esr25-tsindex-ebs" title="Figure&nbsp;5.2&nbsp;(b): Surface temperature"><img src="esr2025_analysis_files/figure-html/fig-esr25-tsindex-ebs-output-2.png" class="img-fluid figure-img" data-ref-parent="fig-esr25-tsindex-ebs"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-esr25-tsindex-ebs-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(b) Surface temperature
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="quarto-layout-row">
+<div class="cell-output cell-output-display quarto-layout-cell-subref quarto-layout-cell" data-execution_count="2" data-ref-parent="fig-esr25-tsindex-ebs" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-esr25-tsindex-ebs-3" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-esr25-tsindex-ebs-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="esr2025_analysis_files/figure-html/fig-esr25-tsindex-ebs-output-3.png" class="lightbox" data-gallery="fig-esr25-tsindex-ebs" title="Figure&nbsp;5.2&nbsp;(c): 2C cold pool index"><img src="esr2025_analysis_files/figure-html/fig-esr25-tsindex-ebs-output-3.png" class="img-fluid figure-img" data-ref-parent="fig-esr25-tsindex-ebs"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-esr25-tsindex-ebs-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(c) 2C cold pool index
+</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display quarto-layout-cell-subref quarto-layout-cell" data-execution_count="2" data-ref-parent="fig-esr25-tsindex-ebs" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-esr25-tsindex-ebs-4" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-esr25-tsindex-ebs-4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="esr2025_analysis_files/figure-html/fig-esr25-tsindex-ebs-output-4.png" class="lightbox" data-gallery="fig-esr25-tsindex-ebs" title="Figure&nbsp;5.2&nbsp;(d): 0C cold pool index"><img src="esr2025_analysis_files/figure-html/fig-esr25-tsindex-ebs-output-4.png" class="img-fluid figure-img" data-ref-parent="fig-esr25-tsindex-ebs"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-esr25-tsindex-ebs-4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(d) 0C cold pool index
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-esr25-tsindex-ebs-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5.2: Time series calculated across the EBS survey area. Red line = 2025, red dotted line = spring-initiated persistence forecast, black solid line = median across 1993–2025, black dashed line = climatological (1993–2022) mean, shaded gray = 1993–2025 percentiles (lightest = 0-10% and 90-100%, darkest = 40-60%). Numbers indicate the values on the first of the month in the climatological mean (bottom, black) and in 2025 (red, top).
+</figcaption>
+</figure>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode matlab code-with-copy"><code class="sourceCode matlab"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="va">ii</span> <span class="op">=</span> <span class="fl">2</span><span class="op">;</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> <span class="va">iv</span> <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="va">length</span>(<span class="va">vplt</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="va">h</span> <span class="op">=</span> <span class="va">plotgrid</span>(<span class="ss">'size'</span><span class="op">,</span> [<span class="fl">1</span> <span class="fl">1</span>]<span class="op">,</span> <span class="ss">'mar'</span><span class="op">,</span> <span class="fl">0.08</span><span class="op">,</span> <span class="ss">'mr'</span><span class="op">,</span> <span class="fl">0.01</span>)<span class="op">;</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="va">h</span>.<span class="va">fig</span>.<span class="va">Position</span>(<span class="fl">3</span><span class="op">:</span><span class="fl">4</span>) <span class="op">=</span> [<span class="fl">6</span> <span class="fl">4</span>]<span class="op">*</span><span class="fl">72</span><span class="op">;</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="va">h</span>.<span class="va">fig</span>.<span class="va">Color</span> <span class="op">=</span> <span class="ss">'w'</span><span class="op">;</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="va">h</span>.<span class="va">gobj</span> <span class="op">=</span> <span class="va">plotsurveyregionindex</span>(<span class="va">Tbl</span><span class="op">,</span> <span class="va">vplt</span>{<span class="va">iv</span>}<span class="op">,</span> <span class="ss">'col'</span><span class="op">,</span> <span class="va">ii</span><span class="op">,</span> <span class="ss">'year'</span><span class="op">,</span> <span class="va">yr</span>)<span class="op">;</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="va">title</span>(<span class="va">h</span>.<span class="va">ax</span><span class="op">,</span> <span class="va">sprintf</span>(<span class="ss">'%s: %s'</span><span class="op">,</span> <span class="va">regname</span>(<span class="va">ii</span>)<span class="op">,</span> <span class="va">V</span>{<span class="va">vplt</span>{<span class="va">iv</span>}<span class="op">,</span><span class="ss">'labelname'</span>}))<span class="op">;</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="va">fname</span> <span class="op">=</span> <span class="va">fullfile</span>(<span class="va">esrfol</span><span class="op">,</span> <span class="va">sprintf</span>(<span class="ss">'timeseries_%s_%s'</span><span class="op">,</span><span class="va">regname</span>{<span class="va">ii</span>}<span class="op">,</span> <span class="va">vplt</span>{<span class="va">iv</span>}))<span class="op">;</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> <span class="op">~</span><span class="va">exist</span>([<span class="va">fname</span> <span class="ss">'.png'</span>]<span class="op">,</span> <span class="ss">'file'</span>)</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>        <span class="va">export_fig</span>(<span class="va">fname</span><span class="op">,</span> <span class="va">h</span>.<span class="va">fig</span><span class="op">,</span> <span class="ss">'-png'</span><span class="op">,</span> <span class="ss">'-r150'</span><span class="op">,</span> <span class="ss">'-nocrop'</span>)<span class="op">;</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="kw">end</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div id="fig-esr25-tsindex-nbs" class="quarto-layout-panel">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-esr25-tsindex-nbs-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-layout-row">
+<div class="cell-output cell-output-display quarto-layout-cell-subref quarto-layout-cell" data-execution_count="3" data-ref-parent="fig-esr25-tsindex-nbs" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-esr25-tsindex-nbs-1" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-esr25-tsindex-nbs-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="esr2025_analysis_files/figure-html/fig-esr25-tsindex-nbs-output-1.png" class="lightbox" data-gallery="fig-esr25-tsindex-nbs" title="Figure&nbsp;5.3&nbsp;(a): Bottom temperature"><img src="esr2025_analysis_files/figure-html/fig-esr25-tsindex-nbs-output-1.png" class="img-fluid figure-img" data-ref-parent="fig-esr25-tsindex-nbs"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-esr25-tsindex-nbs-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(a) Bottom temperature
+</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display quarto-layout-cell-subref quarto-layout-cell" data-execution_count="3" data-ref-parent="fig-esr25-tsindex-nbs" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-esr25-tsindex-nbs-2" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-esr25-tsindex-nbs-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="esr2025_analysis_files/figure-html/fig-esr25-tsindex-nbs-output-2.png" class="lightbox" data-gallery="fig-esr25-tsindex-nbs" title="Figure&nbsp;5.3&nbsp;(b): Surface temperature"><img src="esr2025_analysis_files/figure-html/fig-esr25-tsindex-nbs-output-2.png" class="img-fluid figure-img" data-ref-parent="fig-esr25-tsindex-nbs"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-esr25-tsindex-nbs-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(b) Surface temperature
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="quarto-layout-row">
+<div class="cell-output cell-output-display quarto-layout-cell-subref quarto-layout-cell" data-execution_count="3" data-ref-parent="fig-esr25-tsindex-nbs" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-esr25-tsindex-nbs-3" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-esr25-tsindex-nbs-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="esr2025_analysis_files/figure-html/fig-esr25-tsindex-nbs-output-3.png" class="lightbox" data-gallery="fig-esr25-tsindex-nbs" title="Figure&nbsp;5.3&nbsp;(c): 2C cold pool index"><img src="esr2025_analysis_files/figure-html/fig-esr25-tsindex-nbs-output-3.png" class="img-fluid figure-img" data-ref-parent="fig-esr25-tsindex-nbs"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-esr25-tsindex-nbs-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(c) 2C cold pool index
+</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display quarto-layout-cell-subref quarto-layout-cell" data-execution_count="3" data-ref-parent="fig-esr25-tsindex-nbs" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-esr25-tsindex-nbs-4" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-esr25-tsindex-nbs-4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="esr2025_analysis_files/figure-html/fig-esr25-tsindex-nbs-output-4.png" class="lightbox" data-gallery="fig-esr25-tsindex-nbs" title="Figure&nbsp;5.3&nbsp;(d): 0C cold pool index"><img src="esr2025_analysis_files/figure-html/fig-esr25-tsindex-nbs-output-4.png" class="img-fluid figure-img" data-ref-parent="fig-esr25-tsindex-nbs"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-esr25-tsindex-nbs-4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(d) 0C cold pool index
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-esr25-tsindex-nbs-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5.3: Time series calculated across the NBS survey area. See <a href="#fig-esr25-tsindex-ebs" class="quarto-xref">Figure&nbsp;<span>5.2</span></a> for details
+</figcaption>
+</figure>
+</div>
+<div id="fig-esr25-cluster-bering" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="4">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-esr25-cluster-bering-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode matlab code-with-copy"><code class="sourceCode matlab"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>[<span class="va">hclus</span>(<span class="fl">1</span>)<span class="op">,</span> <span class="va">Cdata</span>] <span class="op">=</span> <span class="va">cluster_on_anomalies</span>(<span class="op">...</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    [<span class="fl">6</span> <span class="fl">1</span>]<span class="op">,</span> <span class="op">...</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'cpopts'</span><span class="op">,</span> <span class="va">C</span><span class="op">,</span> <span class="op">...</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'yr'</span><span class="op">,</span> <span class="fl">1993</span><span class="op">:</span><span class="va">yr</span><span class="op">,</span> <span class="op">...</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'maskval'</span><span class="op">,</span> <span class="fl">3</span><span class="op">,</span> <span class="op">...</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'ndays'</span><span class="op">,</span> <span class="fl">82</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-esr25-cluster-bering-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5.4
+</figcaption>
+</figure>
+</div>
+</section>
+<section id="aleutian-islands" class="level3" data-number="5.1.2">
+<h3 data-number="5.1.2" class="anchored" data-anchor-id="aleutian-islands"><span class="header-section-number">5.1.2</span> Aleutian Islands</h3>
+<p>Aleutian Island bottom temperatures have low variability over the simulation period. 2025 conditions were near the upper end of the observed range, with anomalies of ~0.3°C in the winter and increasing to 0.4°C above the climatological (1993 – 2022) mean by mid summer. Surface temperatures were also above average for most of the winter and early spring, but approached mean conditions in spring. Stronger warm anomalies reappeared in late July through August, extending across the Aleutian Islands, western Gulf of Alaska, and southern Bering Sea. Cluster analysis suggested these conditions were similar to 2007, 2021, and 2023 (<a href="#fig-esr25-cluster-ai" class="quarto-xref">Figure&nbsp;<span>5.6</span></a>).</p>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode matlab code-with-copy"><code class="sourceCode matlab"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="va">ii</span> <span class="op">=</span> <span class="fl">3</span><span class="op">;</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> <span class="va">iv</span> <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span> <span class="co">%length(vplt)</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="va">h</span> <span class="op">=</span> <span class="va">plotgrid</span>(<span class="ss">'size'</span><span class="op">,</span> [<span class="fl">1</span> <span class="fl">1</span>]<span class="op">,</span> <span class="ss">'mar'</span><span class="op">,</span> <span class="fl">0.08</span><span class="op">,</span> <span class="ss">'mr'</span><span class="op">,</span> <span class="fl">0.01</span>)<span class="op">;</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="va">h</span>.<span class="va">fig</span>.<span class="va">Position</span>(<span class="fl">3</span><span class="op">:</span><span class="fl">4</span>) <span class="op">=</span> [<span class="fl">6</span> <span class="fl">4</span>]<span class="op">*</span><span class="fl">72</span><span class="op">;</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="va">h</span>.<span class="va">fig</span>.<span class="va">Color</span> <span class="op">=</span> <span class="ss">'w'</span><span class="op">;</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="va">h</span>.<span class="va">gobj</span> <span class="op">=</span> <span class="va">plotsurveyregionindex</span>(<span class="va">Tbl</span><span class="op">,</span> <span class="va">vplt</span>{<span class="va">iv</span>}<span class="op">,</span> <span class="ss">'col'</span><span class="op">,</span> <span class="va">ii</span><span class="op">,</span> <span class="ss">'year'</span><span class="op">,</span> <span class="va">yr</span>)<span class="op">;</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="va">title</span>(<span class="va">h</span>.<span class="va">ax</span><span class="op">,</span> <span class="va">sprintf</span>(<span class="ss">'%s: %s'</span><span class="op">,</span> <span class="va">regname</span>(<span class="va">ii</span>)<span class="op">,</span> <span class="va">V</span>{<span class="va">vplt</span>{<span class="va">iv</span>}<span class="op">,</span><span class="ss">'labelname'</span>}))<span class="op">;</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="va">fname</span> <span class="op">=</span> <span class="va">fullfile</span>(<span class="va">esrfol</span><span class="op">,</span> <span class="va">sprintf</span>(<span class="ss">'timeseries_%s_%s'</span><span class="op">,</span><span class="va">regname</span>{<span class="va">ii</span>}<span class="op">,</span> <span class="va">vplt</span>{<span class="va">iv</span>}))<span class="op">;</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> <span class="op">~</span><span class="va">exist</span>([<span class="va">fname</span> <span class="ss">'.png'</span>]<span class="op">,</span> <span class="ss">'file'</span>)</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>        <span class="va">export_fig</span>(<span class="va">fname</span><span class="op">,</span> <span class="va">h</span>.<span class="va">fig</span><span class="op">,</span> <span class="ss">'-png'</span><span class="op">,</span> <span class="ss">'-r150'</span><span class="op">,</span> <span class="ss">'-nocrop'</span>)<span class="op">;</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    <span class="kw">end</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div id="fig-esr25-tsindex-ai" class="quarto-layout-panel">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-esr25-tsindex-ai-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-layout-row">
+<div class="cell-output cell-output-display quarto-layout-cell-subref quarto-layout-cell" data-execution_count="5" data-ref-parent="fig-esr25-tsindex-ai" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-esr25-tsindex-ai-1" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-esr25-tsindex-ai-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="esr2025_analysis_files/figure-html/fig-esr25-tsindex-ai-output-1.png" class="lightbox" data-gallery="fig-esr25-tsindex-ai" title="Figure&nbsp;5.5&nbsp;(a): Bottom temperature"><img src="esr2025_analysis_files/figure-html/fig-esr25-tsindex-ai-output-1.png" class="img-fluid figure-img" data-ref-parent="fig-esr25-tsindex-ai"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-esr25-tsindex-ai-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(a) Bottom temperature
+</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display quarto-layout-cell-subref quarto-layout-cell" data-execution_count="5" data-ref-parent="fig-esr25-tsindex-ai" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-esr25-tsindex-ai-2" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-esr25-tsindex-ai-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="esr2025_analysis_files/figure-html/fig-esr25-tsindex-ai-output-2.png" class="lightbox" data-gallery="fig-esr25-tsindex-ai" title="Figure&nbsp;5.5&nbsp;(b): Surface temperature"><img src="esr2025_analysis_files/figure-html/fig-esr25-tsindex-ai-output-2.png" class="img-fluid figure-img" data-ref-parent="fig-esr25-tsindex-ai"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-esr25-tsindex-ai-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(b) Surface temperature
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-esr25-tsindex-ai-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5.5: Time series calculated across the NBS survey area. See <a href="#fig-esr25-tsindex-ebs" class="quarto-xref">Figure&nbsp;<span>5.2</span></a> for details
+</figcaption>
+</figure>
+</div>
+<div id="cell-fig-esr25-cluster-ai" class="cell" data-execution_count="6">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode matlab code-with-copy"><code class="sourceCode matlab"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="va">hclus</span>(<span class="fl">2</span>) <span class="op">=</span> <span class="va">cluster_on_anomalies</span>(<span class="op">...</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    [<span class="fl">6</span> <span class="fl">1</span>]<span class="op">,</span> <span class="op">...</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'cpopts'</span><span class="op">,</span> <span class="va">C</span><span class="op">,</span> <span class="op">...</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'yr'</span><span class="op">,</span> <span class="fl">1993</span><span class="op">:</span><span class="va">yr</span><span class="op">,</span> <span class="op">...</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'maskval'</span><span class="op">,</span> <span class="fl">1</span><span class="op">,</span> <span class="op">...</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'Cdata'</span><span class="op">,</span> <span class="va">Cdata</span><span class="op">,</span> <span class="op">...</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'ndays'</span><span class="op">,</span> <span class="fl">82</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="6">
+<div id="fig-esr25-cluster-ai" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-esr25-cluster-ai-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="esr2025_analysis_files/figure-html/fig-esr25-cluster-ai-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-12" title="Figure&nbsp;5.6: Hierarchical cluster analysis of surface and bottom temperature anomalies (relative to the 1993–2022 climatology), temporally-averaged across the period of 2025/06/11–2025/08/22, within the Aleutian Islands ecosystem status report area"><img src="esr2025_analysis_files/figure-html/fig-esr25-cluster-ai-output-1.png" class="img-fluid figure-img"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-esr25-cluster-ai-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5.6: Hierarchical cluster analysis of surface and bottom temperature anomalies (relative to the 1993–2022 climatology), temporally-averaged across the period of 2025/06/11–2025/08/22, within the Aleutian Islands ecosystem status report area
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="gulf-of-alaska" class="level3" data-number="5.1.3">
+<h3 data-number="5.1.3" class="anchored" data-anchor-id="gulf-of-alaska"><span class="header-section-number">5.1.3</span> Gulf of Alaska</h3>
+<p>Like the AI region, Gulf of Alaska bottom temperatures were in the upper 10-20th percentile for most of the year, approximately 0.5 – 0.6°C above the climatological mean. Surface temperatures began the year slightly above average, though there were some cool anomalies inshore in the eastern Gulf region. In June and July, the cooler anomalies expanded their footprint, with the far western regions also cooling. However, in late July through earlier Aug, temperatures rose above mean both inshore and off the shelf, with a 1.36°C anomaly (spatially averaged over the survey region) on Aug 1. This pattern of warm bottom temperatures with warm western, cool eastern surface temperature clusters most closely with 2017, followed by 2001 (<a href="#fig-esr25-cluster-goa" class="quarto-xref">Figure&nbsp;<span>5.8</span></a>).</p>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode matlab code-with-copy"><code class="sourceCode matlab"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="va">ii</span> <span class="op">=</span> <span class="fl">4</span><span class="op">;</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> <span class="va">iv</span> <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span> <span class="co">%length(vplt)</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="va">h</span> <span class="op">=</span> <span class="va">plotgrid</span>(<span class="ss">'size'</span><span class="op">,</span> [<span class="fl">1</span> <span class="fl">1</span>]<span class="op">,</span> <span class="ss">'mar'</span><span class="op">,</span> <span class="fl">0.08</span><span class="op">,</span> <span class="ss">'mr'</span><span class="op">,</span> <span class="fl">0.01</span>)<span class="op">;</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="va">h</span>.<span class="va">fig</span>.<span class="va">Position</span>(<span class="fl">3</span><span class="op">:</span><span class="fl">4</span>) <span class="op">=</span> [<span class="fl">6</span> <span class="fl">4</span>]<span class="op">*</span><span class="fl">72</span><span class="op">;</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="va">h</span>.<span class="va">fig</span>.<span class="va">Color</span> <span class="op">=</span> <span class="ss">'w'</span><span class="op">;</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="va">h</span>.<span class="va">gobj</span> <span class="op">=</span> <span class="va">plotsurveyregionindex</span>(<span class="va">Tbl</span><span class="op">,</span> <span class="va">vplt</span>{<span class="va">iv</span>}<span class="op">,</span> <span class="ss">'col'</span><span class="op">,</span> <span class="va">ii</span><span class="op">,</span> <span class="ss">'year'</span><span class="op">,</span> <span class="va">yr</span>)<span class="op">;</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="va">title</span>(<span class="va">h</span>.<span class="va">ax</span><span class="op">,</span> <span class="va">sprintf</span>(<span class="ss">'%s: %s'</span><span class="op">,</span> <span class="va">regname</span>(<span class="va">ii</span>)<span class="op">,</span> <span class="va">V</span>{<span class="va">vplt</span>{<span class="va">iv</span>}<span class="op">,</span><span class="ss">'labelname'</span>}))<span class="op">;</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    <span class="va">fname</span> <span class="op">=</span> <span class="va">fullfile</span>(<span class="va">esrfol</span><span class="op">,</span> <span class="va">sprintf</span>(<span class="ss">'timeseries_%s_%s'</span><span class="op">,</span><span class="va">regname</span>{<span class="va">ii</span>}<span class="op">,</span> <span class="va">vplt</span>{<span class="va">iv</span>}))<span class="op">;</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> <span class="op">~</span><span class="va">exist</span>([<span class="va">fname</span> <span class="ss">'.png'</span>]<span class="op">,</span> <span class="ss">'file'</span>)</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>        <span class="va">export_fig</span>(<span class="va">fname</span><span class="op">,</span> <span class="va">h</span>.<span class="va">fig</span><span class="op">,</span> <span class="ss">'-png'</span><span class="op">,</span> <span class="ss">'-r150'</span><span class="op">,</span> <span class="ss">'-nocrop'</span>)<span class="op">;</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    <span class="kw">end</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div id="fig-esr25-tsindex-goa" class="quarto-layout-panel">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-esr25-tsindex-goa-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-layout-row">
+<div class="cell-output cell-output-display quarto-layout-cell-subref quarto-layout-cell" data-execution_count="7" data-ref-parent="fig-esr25-tsindex-goa" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-esr25-tsindex-goa-1" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-esr25-tsindex-goa-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="esr2025_analysis_files/figure-html/fig-esr25-tsindex-goa-output-1.png" class="lightbox" data-gallery="fig-esr25-tsindex-goa" title="Figure&nbsp;5.7&nbsp;(a): Bottom temperature"><img src="esr2025_analysis_files/figure-html/fig-esr25-tsindex-goa-output-1.png" class="img-fluid figure-img" data-ref-parent="fig-esr25-tsindex-goa"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-esr25-tsindex-goa-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(a) Bottom temperature
+</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display quarto-layout-cell-subref quarto-layout-cell" data-execution_count="7" data-ref-parent="fig-esr25-tsindex-goa" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-esr25-tsindex-goa-2" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-esr25-tsindex-goa-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="esr2025_analysis_files/figure-html/fig-esr25-tsindex-goa-output-2.png" class="lightbox" data-gallery="fig-esr25-tsindex-goa" title="Figure&nbsp;5.7&nbsp;(b): Surface temperature"><img src="esr2025_analysis_files/figure-html/fig-esr25-tsindex-goa-output-2.png" class="img-fluid figure-img" data-ref-parent="fig-esr25-tsindex-goa"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-esr25-tsindex-goa-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(b) Surface temperature
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-esr25-tsindex-goa-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5.7: Time series calculated across the NBS survey area. See <a href="#fig-esr25-tsindex-ebs" class="quarto-xref">Figure&nbsp;<span>5.2</span></a> for details
+</figcaption>
+</figure>
+</div>
+<div id="cell-fig-esr25-cluster-goa" class="cell" data-execution_count="8">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode matlab code-with-copy"><code class="sourceCode matlab"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="va">hclus</span>(<span class="fl">3</span>) <span class="op">=</span> <span class="va">cluster_on_anomalies</span>(<span class="op">...</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    [<span class="fl">6</span> <span class="fl">1</span>]<span class="op">,</span> <span class="op">...</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'cpopts'</span><span class="op">,</span> <span class="va">C</span><span class="op">,</span> <span class="op">...</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'yr'</span><span class="op">,</span> <span class="fl">1993</span><span class="op">:</span><span class="va">yr</span><span class="op">,</span> <span class="op">...</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'maskval'</span><span class="op">,</span> <span class="fl">4</span><span class="op">,</span> <span class="op">...</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'Cdata'</span><span class="op">,</span> <span class="va">Cdata</span><span class="op">,</span> <span class="op">...</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'ndays'</span><span class="op">,</span> <span class="fl">82</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="8">
+<div id="fig-esr25-cluster-goa" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-esr25-cluster-goa-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="esr2025_analysis_files/figure-html/fig-esr25-cluster-goa-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-15" title="Figure&nbsp;5.8: Hierarchical cluster analysis of surface and bottom temperature anomalies (relative to the 1993–2022 climatology), temporally-averaged across the period of 2025/06/11–2025/08/22, within the Gulf of Alaska ecosystem status report area"><img src="esr2025_analysis_files/figure-html/fig-esr25-cluster-goa-output-1.png" class="img-fluid figure-img"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-esr25-cluster-goa-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5.8: Hierarchical cluster analysis of surface and bottom temperature anomalies (relative to the 1993–2022 climatology), temporally-averaged across the period of 2025/06/11–2025/08/22, within the Gulf of Alaska ecosystem status report area
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="all-regions" class="level3" data-number="5.1.4">
+<h3 data-number="5.1.4" class="anchored" data-anchor-id="all-regions"><span class="header-section-number">5.1.4</span> All regions</h3>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode matlab code-with-copy"><code class="sourceCode matlab"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="va">ttarget</span> <span class="op">=</span> <span class="va">datetime</span>(<span class="fl">2025</span><span class="op">,</span><span class="fl">1</span><span class="op">:</span><span class="fl">8</span><span class="op">,</span><span class="fl">1</span>)<span class="op">;</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="va">tidx</span> <span class="op">=</span> <span class="va">interp1</span>(<span class="va">t</span><span class="op">,</span> <span class="fl">1</span><span class="op">:</span><span class="va">length</span>(<span class="va">t</span>)<span class="op">,</span> <span class="va">ttarget</span><span class="op">,</span> <span class="ss">'nearest'</span><span class="op">,</span> <span class="ss">'extrap'</span>)<span class="op">;</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="va">nt</span> <span class="op">=</span> <span class="va">length</span>(<span class="va">ttarget</span>)<span class="op">;</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="va">plt</span> <span class="op">=</span> {<span class="va">Hc</span>.<span class="va">siconc</span> <span class="va">Hc</span>.<span class="va">tob</span> <span class="va">Hc</span>.<span class="va">tos</span> <span class="va">An</span>.<span class="va">siconc</span> <span class="va">An</span>.<span class="va">tob</span> <span class="va">An</span>.<span class="va">tos</span>}<span class="op">;</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="va">lbl</span> <span class="op">=</span> [<span class="st">"Sea ice"</span><span class="op">,</span> <span class="st">"Bottom temp. (\circC)"</span><span class="op">,</span> <span class="st">"SST (\circC)"</span><span class="op">,</span> <span class="op">...</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>       <span class="st">"Anomaly: Sea ice"</span><span class="op">,</span> <span class="st">"Anomaly: Bottom temp. (\circC)"</span><span class="op">,</span> <span class="st">"Anomaly: SST (\circC)"</span>]<span class="op">;</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="va">np</span> <span class="op">=</span> <span class="va">length</span>(<span class="va">plt</span>)<span class="op">;</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="va">padend</span> <span class="op">=</span> <span class="op">@</span>(<span class="va">x</span>) [<span class="va">x</span> <span class="va">nan</span>(<span class="va">size</span>(<span class="va">x</span><span class="op">,</span><span class="fl">1</span>)<span class="op">,</span><span class="fl">1</span>)<span class="op">;</span> <span class="va">nan</span>(<span class="fl">1</span><span class="op">,</span><span class="va">size</span>(<span class="va">x</span><span class="op">,</span><span class="fl">2</span>)<span class="op">+</span><span class="fl">1</span>)]<span class="op">;</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="va">h</span> <span class="op">=</span> <span class="va">plotgrid</span>(<span class="ss">'size'</span><span class="op">,</span> [<span class="va">nt</span> <span class="va">np</span>]<span class="op">,</span> <span class="ss">'sp'</span><span class="op">,</span> <span class="fl">0</span><span class="op">,</span> <span class="ss">'mar'</span><span class="op">,</span> <span class="fl">0</span><span class="op">,</span> <span class="ss">'mt'</span><span class="op">,</span> <span class="fl">0.08</span>)<span class="op">;</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="va">h</span>.<span class="va">fig</span>.<span class="va">Position</span>(<span class="fl">3</span><span class="op">:</span><span class="fl">4</span>) <span class="op">=</span> [<span class="fl">800</span> <span class="fl">600</span>]<span class="op">*</span><span class="fl">1.5</span><span class="op">;</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="va">h</span>.<span class="va">fig</span>.<span class="va">Color</span> <span class="op">=</span> <span class="ss">'w'</span><span class="op">;</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> <span class="va">ii</span> <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="va">nt</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>    <span class="kw">for</span> <span class="va">jj</span> <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="va">np</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>        <span class="va">axes</span>(<span class="va">h</span>.<span class="va">ax</span>(<span class="va">ii</span><span class="op">,</span><span class="va">jj</span>))<span class="op">;</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>        <span class="va">h</span>.<span class="va">bx</span> <span class="op">=</span> <span class="va">A</span>.<span class="va">addboxmap</span>()<span class="op">;</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>        <span class="va">pcolorpad</span>(<span class="va">A</span>.<span class="va">xc</span><span class="op">,</span> <span class="va">A</span>.<span class="va">yc</span><span class="op">,</span> <span class="va">plt</span>{<span class="va">jj</span>}(<span class="op">:,:,</span><span class="va">tidx</span>(<span class="va">ii</span>)))<span class="op">;</span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>        <span class="va">shading</span> <span class="va">flat</span><span class="op">;</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>        <span class="va">set</span>([<span class="va">h</span>.<span class="va">bx</span>.<span class="va">lblmer</span><span class="op">;</span> <span class="va">h</span>.<span class="va">bx</span>.<span class="va">lblpar</span>]<span class="op">,</span> <span class="ss">'visible'</span><span class="op">,</span> <span class="ss">'off'</span>)<span class="op">;</span></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>    <span class="kw">end</span></span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a><span class="va">set</span>(<span class="va">h</span>.<span class="va">ax</span>(<span class="op">:,</span><span class="fl">1</span>)<span class="op">,</span> <span class="ss">'colormap'</span><span class="op">,</span> <span class="va">cmocean</span>(<span class="ss">'ice'</span>)<span class="op">,</span> <span class="ss">'clim'</span><span class="op">,</span> [<span class="fl">0</span> <span class="fl">1</span>])<span class="op">;</span></span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a><span class="va">set</span>(<span class="va">h</span>.<span class="va">ax</span>(<span class="op">:,</span><span class="fl">2</span><span class="op">:</span><span class="fl">3</span>)<span class="op">,</span> <span class="ss">'colormap'</span><span class="op">,</span> <span class="va">cmocean</span>(<span class="ss">'thermal'</span>)<span class="op">,</span> <span class="ss">'clim'</span><span class="op">,</span> [<span class="op">-</span><span class="fl">2</span> <span class="fl">15</span>])<span class="op">;</span></span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a><span class="va">set</span>(<span class="va">h</span>.<span class="va">ax</span>(<span class="op">:,</span><span class="fl">4</span>)<span class="op">,</span> <span class="ss">'colormap'</span><span class="op">,</span> <span class="va">cmocean</span>(<span class="ss">'balance'</span>)<span class="op">,</span> <span class="ss">'clim'</span><span class="op">,</span> [<span class="op">-</span><span class="fl">1</span> <span class="fl">1</span>])<span class="op">;</span></span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a><span class="va">set</span>(<span class="va">h</span>.<span class="va">ax</span>(<span class="op">:,</span><span class="fl">5</span><span class="op">:</span><span class="fl">6</span>)<span class="op">,</span> <span class="ss">'colormap'</span><span class="op">,</span> <span class="va">cmocean</span>(<span class="ss">'balance'</span>)<span class="op">,</span> <span class="ss">'clim'</span><span class="op">,</span> [<span class="op">-</span><span class="fl">3</span> <span class="fl">3</span>])<span class="op">;</span></span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> <span class="va">ip</span> <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="va">np</span></span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>    <span class="va">h</span>.<span class="va">cb</span>(<span class="va">ip</span>) <span class="op">=</span> <span class="va">colorbar</span>(<span class="va">h</span>.<span class="va">ax</span>(<span class="fl">1</span><span class="op">,</span><span class="va">ip</span>)<span class="op">,</span> <span class="ss">'north'</span>)<span class="op">;</span></span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>    <span class="va">h</span>.<span class="va">cb</span>(<span class="va">ip</span>).<span class="va">Position</span>(<span class="fl">2</span>) <span class="op">=</span> <span class="fl">0.93</span><span class="op">;</span></span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>    <span class="va">xlabel</span>(<span class="va">h</span>.<span class="va">cb</span>(<span class="va">ip</span>)<span class="op">,</span> <span class="va">lbl</span>{<span class="va">ip</span>})<span class="op">;</span></span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a><span class="va">set</span>(<span class="va">h</span>.<span class="va">cb</span><span class="op">,</span> <span class="ss">'axisloc'</span><span class="op">,</span> <span class="ss">'out'</span><span class="op">,</span> <span class="ss">'tickdir'</span><span class="op">,</span> <span class="ss">'out'</span>)<span class="op">;</span></span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a><span class="va">labelaxes</span>(<span class="va">h</span>.<span class="va">ax</span>(<span class="op">:,</span><span class="fl">1</span>)<span class="op">,</span> <span class="va">string</span>(<span class="va">ttarget</span>)<span class="op">,</span> <span class="ss">'northwest'</span>)<span class="op">;</span></span>
+<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a><span class="va">fname</span> <span class="op">=</span> <span class="va">fullfile</span>(<span class="va">esrfol</span><span class="op">,</span> <span class="ss">'val_anom_2025'</span>)<span class="op">;</span></span>
+<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> <span class="op">~</span><span class="va">exist</span>([<span class="va">fname</span> <span class="ss">'.png'</span>]<span class="op">,</span> <span class="ss">'file'</span>)</span>
+<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a>    <span class="va">export_fig</span>(<span class="va">fname</span><span class="op">,</span> <span class="va">h</span>.<span class="va">fig</span><span class="op">,</span> <span class="ss">'-png'</span><span class="op">,</span> <span class="ss">'-r150'</span><span class="op">,</span> <span class="ss">'-nocrop'</span>)<span class="op">;</span></span>
+<span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div id="fig-esr25-valanommap" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-code-eval="false" data-execution_count="9">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-esr25-valanommap-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output cell-output-stderr">
+<pre><code>Unrecognized function or variable 't'.</code></pre>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-esr25-valanommap-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5.9
+</figcaption>
+</figure>
+</div>
+</section>
+</section>
+<section id="additional-plots" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="additional-plots"><span class="header-section-number">5.2</span> Additional plots</h2>
+<div class="cell" data-code-eval="false" data-execution_count="10">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode matlab code-with-copy"><code class="sourceCode matlab"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="va">hclus</span>(<span class="fl">4</span>) <span class="op">=</span> <span class="va">cluster_on_anomalies</span>(<span class="op">...</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    [<span class="fl">6</span> <span class="fl">1</span>]<span class="op">,</span> <span class="op">...</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'cpopts'</span><span class="op">,</span> <span class="va">C</span><span class="op">,</span> <span class="op">...</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'yr'</span><span class="op">,</span> <span class="fl">1993</span><span class="op">:</span><span class="va">yr</span><span class="op">,</span> <span class="op">...</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'Cdata'</span><span class="op">,</span> <span class="va">Cdata</span><span class="op">,</span> <span class="op">...</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'ndays'</span><span class="op">,</span> <span class="fl">82</span>)<span class="op">;</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="co">% NBS vs SEBS</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="va">hclus</span>(<span class="fl">5</span>) <span class="op">=</span> <span class="va">cluster_on_anomalies</span>( <span class="op">...</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    [<span class="fl">6</span> <span class="fl">1</span>]<span class="op">,</span> <span class="op">...</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'cpopts'</span><span class="op">,</span> <span class="va">C</span><span class="op">,</span> <span class="op">...</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'yr'</span><span class="op">,</span> <span class="fl">1993</span><span class="op">:</span><span class="va">yr</span><span class="op">,</span> <span class="op">...</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'ndays'</span><span class="op">,</span> <span class="fl">82</span><span class="op">,</span> <span class="op">...</span></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'vars'</span><span class="op">,</span> [<span class="st">"tob"</span><span class="op">,</span> <span class="st">"tos"</span>]<span class="op">,</span> <span class="op">...</span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'maskvar'</span><span class="op">,</span> <span class="st">"mask_esr_subarea"</span><span class="op">,</span> <span class="op">...</span></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'maskval'</span><span class="op">,</span> <span class="fl">3</span><span class="op">,</span> <span class="op">...</span></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'Cdata'</span><span class="op">,</span> <span class="va">Cdata</span>)<span class="op">;</span></span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a><span class="va">hclus</span>(<span class="fl">6</span>) <span class="op">=</span> <span class="va">cluster_on_anomalies</span>( <span class="op">...</span></span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>    [<span class="fl">6</span> <span class="fl">1</span>]<span class="op">,</span> <span class="op">...</span></span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'cpopts'</span><span class="op">,</span> <span class="va">C</span><span class="op">,</span> <span class="op">...</span></span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'yr'</span><span class="op">,</span> <span class="fl">1993</span><span class="op">:</span><span class="va">yr</span><span class="op">,</span> <span class="op">...</span></span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'ndays'</span><span class="op">,</span> <span class="fl">82</span><span class="op">,</span> <span class="op">...</span></span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'vars'</span><span class="op">,</span> [<span class="st">"tob"</span><span class="op">,</span> <span class="st">"tos"</span>]<span class="op">,</span> <span class="op">...</span></span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'maskvar'</span><span class="op">,</span> <span class="st">"mask_esr_subarea"</span><span class="op">,</span> <span class="op">...</span></span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'maskval'</span><span class="op">,</span> <span class="fl">4</span><span class="op">,</span> <span class="op">...</span></span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'Cdata'</span><span class="op">,</span> <span class="va">Cdata</span>)<span class="op">;</span></span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a><span class="co">% AI, bottom vs surface and survey (nearshore) vs ESR (larger) region</span></span>
+<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a><span class="va">hclus</span>(<span class="fl">7</span>) <span class="op">=</span> <span class="va">cluster_on_anomalies</span>( <span class="op">...</span></span>
+<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a>    [<span class="fl">6</span> <span class="fl">1</span>]<span class="op">,</span> <span class="op">...</span></span>
+<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'cpopts'</span><span class="op">,</span> <span class="va">C</span><span class="op">,</span> <span class="op">...</span></span>
+<span id="cb11-35"><a href="#cb11-35" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'yr'</span><span class="op">,</span> <span class="fl">1993</span><span class="op">:</span><span class="va">yr</span><span class="op">,</span> <span class="op">...</span></span>
+<span id="cb11-36"><a href="#cb11-36" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'ndays'</span><span class="op">,</span> <span class="fl">82</span><span class="op">,</span> <span class="op">...</span></span>
+<span id="cb11-37"><a href="#cb11-37" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'vars'</span><span class="op">,</span> <span class="st">"tob"</span><span class="op">,</span> <span class="op">...</span></span>
+<span id="cb11-38"><a href="#cb11-38" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'maskvar'</span><span class="op">,</span> <span class="st">"mask_esr_subarea"</span><span class="op">,</span> <span class="op">...</span></span>
+<span id="cb11-39"><a href="#cb11-39" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'maskval'</span><span class="op">,</span> [<span class="fl">1</span> <span class="fl">2</span> <span class="fl">7</span>]<span class="op">,</span> <span class="op">...</span></span>
+<span id="cb11-40"><a href="#cb11-40" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'Cdata'</span><span class="op">,</span> <span class="va">Cdata</span>)<span class="op">;</span></span>
+<span id="cb11-41"><a href="#cb11-41" aria-hidden="true" tabindex="-1"></a><span class="va">set</span>(<span class="va">hclus</span>(<span class="fl">7</span>).<span class="va">ax</span><span class="op">,</span> <span class="ss">'clim'</span><span class="op">,</span> [<span class="op">-</span><span class="fl">1</span> <span class="fl">1</span>]<span class="op">*</span><span class="fl">0.5</span>)</span>
+<span id="cb11-42"><a href="#cb11-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-43"><a href="#cb11-43" aria-hidden="true" tabindex="-1"></a><span class="va">hclus</span>(<span class="fl">8</span>) <span class="op">=</span> <span class="va">cluster_on_anomalies</span>( <span class="op">...</span></span>
+<span id="cb11-44"><a href="#cb11-44" aria-hidden="true" tabindex="-1"></a>    [<span class="fl">6</span> <span class="fl">1</span>]<span class="op">,</span> <span class="op">...</span></span>
+<span id="cb11-45"><a href="#cb11-45" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'cpopts'</span><span class="op">,</span> <span class="va">C</span><span class="op">,</span> <span class="op">...</span></span>
+<span id="cb11-46"><a href="#cb11-46" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'yr'</span><span class="op">,</span> <span class="fl">1993</span><span class="op">:</span><span class="va">yr</span><span class="op">,</span> <span class="op">...</span></span>
+<span id="cb11-47"><a href="#cb11-47" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'ndays'</span><span class="op">,</span> <span class="fl">82</span><span class="op">,</span> <span class="op">...</span></span>
+<span id="cb11-48"><a href="#cb11-48" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'vars'</span><span class="op">,</span> <span class="st">"tob"</span><span class="op">,</span> <span class="op">...</span></span>
+<span id="cb11-49"><a href="#cb11-49" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'maskvar'</span><span class="op">,</span> <span class="st">"mask_survey_area"</span><span class="op">,</span> <span class="op">...</span></span>
+<span id="cb11-50"><a href="#cb11-50" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'maskval'</span><span class="op">,</span> <span class="fl">52</span><span class="op">,</span> <span class="op">...</span></span>
+<span id="cb11-51"><a href="#cb11-51" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'Cdata'</span><span class="op">,</span> <span class="va">Cdata</span>)<span class="op">;</span></span>
+<span id="cb11-52"><a href="#cb11-52" aria-hidden="true" tabindex="-1"></a><span class="va">set</span>(<span class="va">hclus</span>(<span class="fl">8</span>).<span class="va">ax</span><span class="op">,</span> <span class="ss">'clim'</span><span class="op">,</span> [<span class="op">-</span><span class="fl">1</span> <span class="fl">1</span>]<span class="op">*</span><span class="fl">0.5</span>)</span>
+<span id="cb11-53"><a href="#cb11-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-54"><a href="#cb11-54" aria-hidden="true" tabindex="-1"></a><span class="va">Grd</span> <span class="op">=</span> <span class="va">readcefigridvars</span>(<span class="va">C</span><span class="op">,</span> [<span class="st">"wet"</span><span class="op">,</span> <span class="st">"mask_esr_area"</span><span class="op">,</span> <span class="st">"mask_survey_area"</span>])<span class="op">;</span></span>
+<span id="cb11-55"><a href="#cb11-55" aria-hidden="true" tabindex="-1"></a><span class="va">mask</span> <span class="op">=</span> <span class="va">Grd</span>.<span class="va">wet</span> <span class="op">==</span> <span class="fl">1</span> <span class="op">&amp;</span> <span class="va">Grd</span>.<span class="va">mask_esr_area</span> <span class="op">==</span> <span class="fl">1</span> <span class="op">&amp;</span> <span class="va">isnan</span>(<span class="va">Grd</span>.<span class="va">mask_survey_area</span>)<span class="op">;</span></span>
+<span id="cb11-56"><a href="#cb11-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-57"><a href="#cb11-57" aria-hidden="true" tabindex="-1"></a><span class="va">hclus</span>(<span class="fl">9</span>) <span class="op">=</span> <span class="va">cluster_on_anomalies</span>( <span class="op">...</span></span>
+<span id="cb11-58"><a href="#cb11-58" aria-hidden="true" tabindex="-1"></a>    [<span class="fl">6</span> <span class="fl">1</span>]<span class="op">,</span> <span class="op">...</span></span>
+<span id="cb11-59"><a href="#cb11-59" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'cpopts'</span><span class="op">,</span> <span class="va">C</span><span class="op">,</span> <span class="op">...</span></span>
+<span id="cb11-60"><a href="#cb11-60" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'yr'</span><span class="op">,</span> <span class="fl">1993</span><span class="op">:</span><span class="va">yr</span><span class="op">,</span> <span class="op">...</span></span>
+<span id="cb11-61"><a href="#cb11-61" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'ndays'</span><span class="op">,</span> <span class="fl">82</span><span class="op">,</span> <span class="op">...</span></span>
+<span id="cb11-62"><a href="#cb11-62" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'vars'</span><span class="op">,</span> <span class="st">"tob"</span><span class="op">,</span> <span class="op">...</span></span>
+<span id="cb11-63"><a href="#cb11-63" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'maskvar'</span><span class="op">,</span> <span class="va">mask</span><span class="op">,</span> <span class="op">...</span></span>
+<span id="cb11-64"><a href="#cb11-64" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'Cdata'</span><span class="op">,</span> <span class="va">Cdata</span>)<span class="op">;</span></span>
+<span id="cb11-65"><a href="#cb11-65" aria-hidden="true" tabindex="-1"></a><span class="va">set</span>(<span class="va">hclus</span>(<span class="fl">9</span>).<span class="va">ax</span><span class="op">,</span> <span class="ss">'clim'</span><span class="op">,</span> [<span class="op">-</span><span class="fl">1</span> <span class="fl">1</span>]<span class="op">*</span><span class="fl">0.5</span>)</span>
+<span id="cb11-66"><a href="#cb11-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-67"><a href="#cb11-67" aria-hidden="true" tabindex="-1"></a><span class="va">hclus</span>(<span class="fl">10</span>) <span class="op">=</span> <span class="va">cluster_on_anomalies</span>(<span class="op">...</span></span>
+<span id="cb11-68"><a href="#cb11-68" aria-hidden="true" tabindex="-1"></a>    [<span class="fl">6</span> <span class="fl">1</span>]<span class="op">,</span> <span class="op">...</span></span>
+<span id="cb11-69"><a href="#cb11-69" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'cpopts'</span><span class="op">,</span> <span class="va">C</span><span class="op">,</span> <span class="op">...</span></span>
+<span id="cb11-70"><a href="#cb11-70" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'yr'</span><span class="op">,</span> <span class="fl">1993</span><span class="op">:</span><span class="va">yr</span><span class="op">,</span> <span class="op">...</span></span>
+<span id="cb11-71"><a href="#cb11-71" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'ndays'</span><span class="op">,</span> <span class="fl">82</span><span class="op">,</span> <span class="op">...</span></span>
+<span id="cb11-72"><a href="#cb11-72" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'vars'</span><span class="op">,</span> <span class="st">"tos"</span><span class="op">,</span> <span class="op">...</span></span>
+<span id="cb11-73"><a href="#cb11-73" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'maskvar'</span><span class="op">,</span> <span class="st">"mask_esr_subarea"</span><span class="op">,</span> <span class="op">...</span></span>
+<span id="cb11-74"><a href="#cb11-74" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'maskval'</span><span class="op">,</span> [<span class="fl">1</span> <span class="fl">2</span> <span class="fl">7</span>]<span class="op">,</span> <span class="op">...</span></span>
+<span id="cb11-75"><a href="#cb11-75" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'Cdata'</span><span class="op">,</span> <span class="va">Cdata</span>)<span class="op">;</span></span>
+<span id="cb11-76"><a href="#cb11-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-77"><a href="#cb11-77" aria-hidden="true" tabindex="-1"></a><span class="co">% Save to file</span></span>
+<span id="cb11-78"><a href="#cb11-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-79"><a href="#cb11-79" aria-hidden="true" tabindex="-1"></a><span class="va">masklbls</span> <span class="op">=</span> [<span class="st">"BS"</span><span class="op">,</span> <span class="st">"AI"</span><span class="op">,</span> <span class="st">"GOA"</span><span class="op">,</span> <span class="st">"allESR"</span><span class="op">,</span> <span class="st">"NBS"</span><span class="op">,</span> <span class="st">"SEBS"</span><span class="op">,</span> <span class="st">"AItob"</span><span class="op">,</span> <span class="st">"AItobsvy"</span><span class="op">,</span> <span class="st">"AItobdeep"</span><span class="op">,</span> <span class="st">"AItos"</span>]<span class="op">;</span></span>
+<span id="cb11-80"><a href="#cb11-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-81"><a href="#cb11-81" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> <span class="va">ii</span> <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span></span>
+<span id="cb11-82"><a href="#cb11-82" aria-hidden="true" tabindex="-1"></a>    <span class="va">fname</span> <span class="op">=</span> <span class="va">fullfile</span>(<span class="va">esrfol</span><span class="op">,</span> <span class="va">sprintf</span>(<span class="ss">'clustering_0701-0822_%s'</span><span class="op">,</span><span class="va">masklbls</span>{<span class="va">ii</span>}))<span class="op">;</span></span>
+<span id="cb11-83"><a href="#cb11-83" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> <span class="op">~</span><span class="va">exist</span>([<span class="va">fname</span> <span class="ss">'.png'</span>]<span class="op">,</span> <span class="ss">'file'</span>)</span>
+<span id="cb11-84"><a href="#cb11-84" aria-hidden="true" tabindex="-1"></a>        <span class="va">export_fig</span>(<span class="va">fname</span><span class="op">,</span> <span class="va">h</span>(<span class="va">ii</span>).<span class="va">fig</span><span class="op">,</span> <span class="ss">'-png'</span><span class="op">,</span> <span class="ss">'-r150'</span>)<span class="op">;</span></span>
+<span id="cb11-85"><a href="#cb11-85" aria-hidden="true" tabindex="-1"></a>    <span class="kw">end</span></span>
+<span id="cb11-86"><a href="#cb11-86" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div id="fig-esr25-cluster-allesr" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-code-eval="false" data-execution_count="10">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-esr25-cluster-allesr-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output cell-output-display" data-execution_count="10">
+<div id="fig-esr25-cluster-allesr-1" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-esr25-cluster-allesr-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="esr2025_analysis_files/figure-html/fig-esr25-cluster-allesr-output-1.png" class="lightbox" data-gallery="fig-esr25-cluster-allesr" title="Figure&nbsp;5.10&nbsp;(a): TODO"><img src="esr2025_analysis_files/figure-html/fig-esr25-cluster-allesr-output-1.png" class="img-fluid figure-img" data-ref-parent="fig-esr25-cluster-allesr"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-esr25-cluster-allesr-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(a) TODO
+</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="10">
+<div id="fig-esr25-cluster-allesr-2" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-esr25-cluster-allesr-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="esr2025_analysis_files/figure-html/fig-esr25-cluster-allesr-output-2.png" class="lightbox" data-gallery="fig-esr25-cluster-allesr" title="Figure&nbsp;5.10&nbsp;(b): "><img src="esr2025_analysis_files/figure-html/fig-esr25-cluster-allesr-output-2.png" id="fig-esr25-cluster-allesr-2" class="img-fluid figure-img" data-ref-parent="fig-esr25-cluster-allesr"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-esr25-cluster-allesr-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(b)
+</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="10">
+<div id="fig-esr25-cluster-allesr-3" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-esr25-cluster-allesr-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="esr2025_analysis_files/figure-html/fig-esr25-cluster-allesr-output-3.png" class="lightbox" data-gallery="fig-esr25-cluster-allesr" title="Figure&nbsp;5.10&nbsp;(c): "><img src="esr2025_analysis_files/figure-html/fig-esr25-cluster-allesr-output-3.png" id="fig-esr25-cluster-allesr-3" class="img-fluid figure-img" data-ref-parent="fig-esr25-cluster-allesr"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-esr25-cluster-allesr-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(c)
+</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="10">
+<div id="fig-esr25-cluster-allesr-4" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-esr25-cluster-allesr-4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="esr2025_analysis_files/figure-html/fig-esr25-cluster-allesr-output-4.png" class="lightbox" data-gallery="fig-esr25-cluster-allesr" title="Figure&nbsp;5.10&nbsp;(d): "><img src="esr2025_analysis_files/figure-html/fig-esr25-cluster-allesr-output-4.png" id="fig-esr25-cluster-allesr-4" class="img-fluid figure-img" data-ref-parent="fig-esr25-cluster-allesr"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-esr25-cluster-allesr-4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(d)
+</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="10">
+<div id="fig-esr25-cluster-allesr-5" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-esr25-cluster-allesr-5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="esr2025_analysis_files/figure-html/fig-esr25-cluster-allesr-output-5.png" class="lightbox" data-gallery="fig-esr25-cluster-allesr" title="Figure&nbsp;5.10&nbsp;(e): "><img src="esr2025_analysis_files/figure-html/fig-esr25-cluster-allesr-output-5.png" id="fig-esr25-cluster-allesr-5" class="img-fluid figure-img" data-ref-parent="fig-esr25-cluster-allesr"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-esr25-cluster-allesr-5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(e)
+</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="10">
+<div id="fig-esr25-cluster-allesr-6" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-esr25-cluster-allesr-6-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="esr2025_analysis_files/figure-html/fig-esr25-cluster-allesr-output-6.png" class="lightbox" data-gallery="fig-esr25-cluster-allesr" title="Figure&nbsp;5.10&nbsp;(f): "><img src="esr2025_analysis_files/figure-html/fig-esr25-cluster-allesr-output-6.png" id="fig-esr25-cluster-allesr-6" class="img-fluid figure-img" data-ref-parent="fig-esr25-cluster-allesr"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-esr25-cluster-allesr-6-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(f)
+</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="10">
+<div id="fig-esr25-cluster-allesr-7" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-esr25-cluster-allesr-7-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="esr2025_analysis_files/figure-html/fig-esr25-cluster-allesr-output-7.png" class="lightbox" data-gallery="fig-esr25-cluster-allesr" title="Figure&nbsp;5.10&nbsp;(g): "><img src="esr2025_analysis_files/figure-html/fig-esr25-cluster-allesr-output-7.png" id="fig-esr25-cluster-allesr-7" class="img-fluid figure-img" data-ref-parent="fig-esr25-cluster-allesr"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-esr25-cluster-allesr-7-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(g)
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-esr25-cluster-allesr-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5.10
+</figcaption>
+</figure>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./esr2025_data.html" class="pagination-link" aria-label="ESR 2025: Methods">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">ESR 2025: Methods</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./references.html" class="pagination-link" aria-label="References">
+        <span class="nav-page-text">References</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
+
+
+
+
+</body></html>
