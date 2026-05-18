@@ -47,7 +47,7 @@ We extracted data variables currently discussed in the ESRs or used to contruct 
 
 
 ```{bash}
-#| file: ./esr2025_scripts/esr2025_data_extract.sh
+#| file: ./scripts/esr2025_data_extract.sh
 #| eval: false
 #| code-fold: true
 ```

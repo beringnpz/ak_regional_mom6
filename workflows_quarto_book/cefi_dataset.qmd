@@ -219,7 +219,7 @@ set(h.ax, 'colormap', cmocean('gray'), 'clim', [0 1.1], 'layer', 'top');
 
 #### Static variables in the CEFI data {#sec-static}
 
-Static variables refer to variables that do not vary over time.  You'll find these variables grouped together in files named "ocean_static" or "ice_static" that are duplicated throughout the CEFI file tree (with usually one copy under each simulations monthly and daily data folders).
+Static variables refer to variables that do not vary over time.  You'll find these variables grouped together in files named "ocean_static" or "ice_static" that are duplicated throughout the CEFI file tree (with usually one copy under each simulation's monthly and daily data folders).
 
 The static collections include the following variables:
 

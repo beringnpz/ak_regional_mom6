@@ -59,6 +59,9 @@ function [h, Cdata] = cluster_on_anomalies(mmdd, opt)
 %               data matches what would be returned by the specified input
 %               variables; please use with caution!    
 %
+%   verbose:    logical scalar, true to print progress of the data read
+%               step to screen, false otherwise [true]
+%
 % Output variables:
 %
 %   h:          structure of handle graphics objects corresponding to the
@@ -82,6 +85,7 @@ arguments
     opt.maskval =[1 3 4];
     opt.cutoff (1,1) {mustBeNumeric} =0.28;
     opt.Cdata =[]
+    opt.verbose (1,1) {mustBeNumericOrLogical} =true
 end
 
 if ischar(opt.vars)
@@ -108,7 +112,9 @@ if isempty(opt.Cdata)
 
     for iv = 1:nv
         for iy = nyr:-1:1
-            fprintf('Reading data: %s, %d\n', opt.vars{iv}, opt.yr(iy));
+            if opt.verbose
+                fprintf('Reading data: %s, %d\n', opt.vars{iv}, opt.yr(iy));
+            end
     
             % Check for files for this year
                     
