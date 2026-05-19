@@ -65,7 +65,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./references.html" rel="next">
+<link href="./peec2026_data.html" rel="next">
 <link href="./esr2025_data.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -201,6 +201,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">ESR 2025: Analysis</span></span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./peec2026_data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">PEEC 2026: Methods</span></span></a>
+  </div>
+</li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -256,6 +262,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
+<p><code>{css, echo=FALSE} code.sourceCode.r::before{content:'R'; float:right} code.sourceCode.python::before{content:'Python'; float:right} code.sourceCode.matlab::before{content:'MATLAB'; float:right} code.sourceCode.bash::before{content:'bash'; float:right}</code></p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -267,6 +274,7 @@ Note
 </div>
 <div class="callout-body-container callout-body">
 <p>This is not an Ecosystem Status Report (ESR). This is simply an analysis of regional model output intended to inform Alaska ESRs.</p>
+<p>Due to the lapse in appropriations in October 2025, the ESRs for Eastern Bering Sea and Aleutian Islands were not published, and the Gulf of Alaska ESR covered only elements directly relevent to Pacific cod and Cook Inlet coho salmon. The analysis below was prepared in advance of the lapse.</p>
 </div>
 </div>
 <section id="summary-for-esrs-simulated-temperature" class="level2" data-number="5.1">
@@ -502,9 +510,7 @@ Figure&nbsp;5.3: Time series calculated across the NBS survey area. See <a href=
 </figcaption>
 </figure>
 </div>
-<div id="fig-esr25-cluster-bering" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="4">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-esr25-cluster-bering-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div id="cell-fig-esr25-cluster-bering" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode matlab code-with-copy"><code class="sourceCode matlab"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>[<span class="va">hclus</span>(<span class="fl">1</span>)<span class="op">,</span> <span class="va">Cdata</span>] <span class="op">=</span> <span class="va">cluster_on_anomalies</span>(<span class="op">...</span></span>
@@ -512,13 +518,21 @@ Figure&nbsp;5.3: Time series calculated across the NBS survey area. See <a href=
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'cpopts'</span><span class="op">,</span> <span class="va">C</span><span class="op">,</span> <span class="op">...</span></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'yr'</span><span class="op">,</span> <span class="fl">1993</span><span class="op">:</span><span class="va">yr</span><span class="op">,</span> <span class="op">...</span></span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'maskval'</span><span class="op">,</span> <span class="fl">3</span><span class="op">,</span> <span class="op">...</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'ndays'</span><span class="op">,</span> <span class="fl">82</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'ndays'</span><span class="op">,</span> <span class="fl">82</span><span class="op">,</span> <span class="op">...</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="ss">'verbose'</span><span class="op">,</span> <span class="va">false</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<div id="fig-esr25-cluster-bering" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-esr25-cluster-bering-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="esr2025_analysis_files/figure-html/fig-esr25-cluster-bering-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-10" title="Figure&nbsp;5.4: Hierarchical cluster analysis of surface and bottom temperature anomalies (relative to the 1993–2022 climatology), temporally-averaged across the period of 2025/06/11–2025/08/22, within the Bering Sea ecosystem status report area"><img src="esr2025_analysis_files/figure-html/fig-esr25-cluster-bering-output-1.png" class="img-fluid figure-img"></a>
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-esr25-cluster-bering-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;5.4
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-esr25-cluster-bering-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5.4: Hierarchical cluster analysis of surface and bottom temperature anomalies (relative to the 1993–2022 climatology), temporally-averaged across the period of 2025/06/11–2025/08/22, within the Bering Sea ecosystem status report area
 </figcaption>
 </figure>
+</div>
+</div>
 </div>
 </section>
 <section id="aleutian-islands" class="level3" data-number="5.1.2">
@@ -595,7 +609,7 @@ Figure&nbsp;5.5: Time series calculated across the NBS survey area. See <a href=
 <div id="fig-esr25-cluster-ai" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-esr25-cluster-ai-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="esr2025_analysis_files/figure-html/fig-esr25-cluster-ai-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-12" title="Figure&nbsp;5.6: Hierarchical cluster analysis of surface and bottom temperature anomalies (relative to the 1993–2022 climatology), temporally-averaged across the period of 2025/06/11–2025/08/22, within the Aleutian Islands ecosystem status report area"><img src="esr2025_analysis_files/figure-html/fig-esr25-cluster-ai-output-1.png" class="img-fluid figure-img"></a>
+<a href="esr2025_analysis_files/figure-html/fig-esr25-cluster-ai-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-13" title="Figure&nbsp;5.6: Hierarchical cluster analysis of surface and bottom temperature anomalies (relative to the 1993–2022 climatology), temporally-averaged across the period of 2025/06/11–2025/08/22, within the Aleutian Islands ecosystem status report area"><img src="esr2025_analysis_files/figure-html/fig-esr25-cluster-ai-output-1.png" class="img-fluid figure-img"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-esr25-cluster-ai-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;5.6: Hierarchical cluster analysis of surface and bottom temperature anomalies (relative to the 1993–2022 climatology), temporally-averaged across the period of 2025/06/11–2025/08/22, within the Aleutian Islands ecosystem status report area
@@ -679,7 +693,7 @@ Figure&nbsp;5.7: Time series calculated across the NBS survey area. See <a href=
 <div id="fig-esr25-cluster-goa" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-esr25-cluster-goa-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="esr2025_analysis_files/figure-html/fig-esr25-cluster-goa-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-15" title="Figure&nbsp;5.8: Hierarchical cluster analysis of surface and bottom temperature anomalies (relative to the 1993–2022 climatology), temporally-averaged across the period of 2025/06/11–2025/08/22, within the Gulf of Alaska ecosystem status report area"><img src="esr2025_analysis_files/figure-html/fig-esr25-cluster-goa-output-1.png" class="img-fluid figure-img"></a>
+<a href="esr2025_analysis_files/figure-html/fig-esr25-cluster-goa-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-16" title="Figure&nbsp;5.8: Hierarchical cluster analysis of surface and bottom temperature anomalies (relative to the 1993–2022 climatology), temporally-averaged across the period of 2025/06/11–2025/08/22, within the Gulf of Alaska ecosystem status report area"><img src="esr2025_analysis_files/figure-html/fig-esr25-cluster-goa-output-1.png" class="img-fluid figure-img"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-esr25-cluster-goa-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;5.8: Hierarchical cluster analysis of surface and bottom temperature anomalies (relative to the 1993–2022 climatology), temporally-averaged across the period of 2025/06/11–2025/08/22, within the Gulf of Alaska ecosystem status report area
@@ -1347,8 +1361,8 @@ Figure&nbsp;5.10
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./references.html" class="pagination-link" aria-label="References">
-        <span class="nav-page-text">References</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./peec2026_data.html" class="pagination-link" aria-label="PEEC 2026: Methods">
+        <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">PEEC 2026: Methods</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
