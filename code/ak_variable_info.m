@@ -38,6 +38,7 @@ V = {...
     "btm_co3_ion"      [NaN NaN]          [NaN NaN]       parula()                [NaN NaN]  "Bottom [CO3-]"
     "btm_co3_sol_arag" [NaN NaN]          [NaN NaN]       parula()                [NaN NaN]  "Aragonite solubility"
     "btm_htotal"       [NaN NaN]          [NaN NaN]       parula()                [NaN NaN]  "Bottom [H+]"
+    "siconc"           [-1 1]             [0 1]           cmocean('ice')          [0 1]      "Sea ice fraction"
 };
 
 V = cell2table(V(:,2:end), ...
