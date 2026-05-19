@@ -5,10 +5,19 @@ reference-location: margin
 engine: jupyter-matlab
 ---
 
+```{css, echo=FALSE}
+code.sourceCode.r::before{content:'R'; float:right}
+code.sourceCode.python::before{content:'Python'; float:right}
+code.sourceCode.matlab::before{content:'MATLAB'; float:right}
+code.sourceCode.bash::before{content:'bash'; float:right}
+```
+
 # ESR 2025: Analysis
 
 :::{.callout-note}
 This is not an Ecosystem Status Report (ESR).  This is simply an analysis of regional model output intended to inform Alaska ESRs.
+
+Due to the lapse in appropriations in October 2025, the ESRs for Eastern Bering Sea and Aleutian Islands were not published, and the Gulf of Alaska ESR covered only elements directly relevent to Pacific cod and Cook Inlet coho salmon.  The analysis below was prepared in advance of the lapse.
 :::
 
 ## Summary for ESRs: simulated temperature

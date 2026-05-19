@@ -16,6 +16,7 @@ book:
         - peec2025_analysis.qmd
         - esr2025_data.qmd
         - esr2025_analysis.qmd
+        - peec2026_data.qmd
       # - peec2026.qmd
     - part: "Skill assessment"
         # - groundfish_survey.qmd

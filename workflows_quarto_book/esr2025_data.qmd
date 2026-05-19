@@ -5,6 +5,13 @@ reference-location: margin
 engine: knitr
 ---
 
+```{css, echo=FALSE}
+code.sourceCode.r::before{content:'R'; float:right}
+code.sourceCode.python::before{content:'Python'; float:right}
+code.sourceCode.matlab::before{content:'MATLAB'; float:right}
+code.sourceCode.bash::before{content:'bash'; float:right}
+```
+
 # ESR 2025: Methods
 
 :::{.callout-note}
@@ -63,6 +70,14 @@ For this summer update, we re-calculated an April-initiated persistence forecast
 ```{bash}
 #| eval: false
 #| code-fold: true
+
+calculate_clim_anom.sh --region nep \
+                       --subdomain iq0-342jq446-743 \
+                       --release e202507 \
+                       --exptype hcast \
+                       --ppdir /work/Kelly.Kearney/ak_cefiportal \
+                       --vars tos,tob,btm_o2,btm_co3_sol_arag,btm_htotal,btm_co3_ion,pco2surf,siconc
+
 calculate_persis_forecast.sh --region nep \
                        --subdomain iq0-342jq446-743 \
                        --release e202507 \

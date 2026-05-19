@@ -8,13 +8,13 @@ engine: knitr
 
 ## Simulation details
 
-For the 2026 Spring PEEC, an updated version of the MOM6-NEP hindcast was run, extending through May 1, 2026.  This version differs slightly from the previous release of MOM6-NEP (used for the 2025 pre-ESR analysis).  The primary changes to the configuration were as follows:
+For the 2026 Spring PEEC, an updated version of the MOM6-NEP hindcast was run, extending through Apr 30, 2026.  This version differs slightly from the previous release of MOM6-NEP (used for the 2025 pre-ESR analysis).  The primary changes to the configuration were as follows:
 
  - The executable was recompiled to use the new ifort compiler and to use the most recent CEFI-stable version of the MOM6 code base
  - The output diagnostics table (i.e., `diag_table`) that describes which variables should be saved and at which spatial and temporal resolution was updated to use the CEFI default configuration.
  - input parameters for SIS and MOM (i.e., `SIS_input` and `MOM_input`) were updated to be consistent with the NWA configuration when there was not a specific justification for a difference
  - open boundary conditions and initial conditions now use the 2023 release of the World Ocean Atlas (WOA23) rather than the previous 2018 release.
- - Atmospheric CO_2 forcing was updated to the version 2 file, with latitudinal variation rather than a global mean, that is now the CEFI standard.
+ - Atmospheric CO~2~ forcing was updated to the version 2 file, with latitudinal variation rather than a global mean, that is now the CEFI standard.
  - sea ice is now initialized from the GLORYS dataset
  - u/v sponges (i.e., light nudging of velocities) were added near the grid boundaries to eliminate some numerical articfacts that were appearing along the western and southern boundaries.
 
