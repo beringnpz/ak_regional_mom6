@@ -144,15 +144,14 @@ end
 
 function A = readandconcat(A, fname, vv, tflag)
 
-    if tflag
-        Tmp = arrayfun(@(x) ncstruct(x, vv, 'time'), fname);
-    else
-        Tmp = arrayfun(@(x) ncstruct(x, vv), fname);
-    end
+
+    Tmp = arrayfun(@(x) ncstruct(x, vv), fname);
 
     if tflag
-        A.time = cat(1, Tmp.time);
-        A.t = ncdateread(fname{1}, 'time', A.time);
+        % Note: reading each file separately allows for shifting reference
+        % dates across the simulation
+        A.t = arrayfun(@(x) ncdateread(x, 'time'), fname, 'uni', 0);
+        A.t = cat(1, A.t{:});
     end
 
     A.(vv) = cat(1, Tmp.(vv));
@@ -163,7 +162,7 @@ end
 
 function B = idxstruct2table(A, loc, vplt)
     B = table2timetable(struct2table(A));
-    B = removevars(B, 'time');
+    % B = removevars(B, 'time');
     B = B(:,vplt);
     B = varfun(@(x) x(:,loc), B);
     B.Properties.VariableNames = strrep(B.Properties.VariableNames, 'Fun_', '');

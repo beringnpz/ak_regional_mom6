@@ -100,7 +100,7 @@ regionavg () {
   
     # Add cold pool variables
    
-    if [ ${cpflag} == 1 ]; then
+    if [ "${cpflag}" -eq 1 ]; then
       cdo -expr,'cpool2p0=tob<2.0; cpool1p0=tob<1.0; cpool0p0=tob<0.0' $1 tmpcp.nc
       ncks -A -v cpool2p0,cpool1p0,cpool0.0 tmpcp.nc tmpo.nc
       rm tmpcp.nc
@@ -180,21 +180,3 @@ for fname in "${files[@]}"; do
 
   fi
 done
-
-# mv ${simfol}/Level3/*.svyreg.nc 
-
-# # Apply to forecast files
-# # TODO: revisit after updates to calculate_persis_forecast
-
-# fcfiles=( ${simfol}/Level3/${simname}_forecast_*.nc )
-
-# # svyavgfilefc=${simfol}/Level3/${simname}__*.nc)
-
-# if ! test -f $svyavgfilefc; then
-#   echo "Calculating regional averages for forecast: ${fcyear}" 
-   
-#   # Regional averages for all variables in file
-
-#   regionavg $fcfile $svyavgfilefc $maskfile
-    
-# fi
