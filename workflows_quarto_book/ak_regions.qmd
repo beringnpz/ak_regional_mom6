@@ -9,7 +9,7 @@ reference-location: margin
 For our Alaska-centric analysis, we've introduced some not-officially-CEFI-endorsed additions and tweaks to the CEFI Dataset described in the previous section.
 
 - horizontal subset subdomain: `iqX-XjqX-X`, where X's indicate the iq/jq values that bound the subdomain 
-- horizontal average subdomain: `ak_surveyregion_avg` for metrics where the horizontal dimensions were collapsed to regional averages based on Alaska survey area polygons [@fig-ak-masks4].
+- horizontal average subdomain: `ak_surveyregion_avg` for metrics where the horizontal dimensions were collapsed to regional averages based on Alaska survey area polygons [@fig-ak-masks-4].
 - grid type: `extra` for variables that fall on the native grid but are not part of the "raw" dataset, e.g. variables added in postprocessing, and also for variables that do not fall on either the native or regridded grids (e.g., regional averages).  I will probably revisit this naming scheme as workflows mature... but it works for now.
 
 ## The Alaska subregion of the MOM6-NEP grid

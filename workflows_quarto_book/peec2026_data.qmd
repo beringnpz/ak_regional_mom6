@@ -4,6 +4,13 @@ reference-location: margin
 engine: knitr
 ---
 
+```{css, echo=FALSE}
+code.sourceCode.r::before{content:'R'; float:right}
+code.sourceCode.python::before{content:'Python'; float:right}
+code.sourceCode.matlab::before{content:'MATLAB'; float:right}
+code.sourceCode.bash::before{content:'bash'; float:right}
+```
+
 # PEEC 2026: Methods
 
 ## Simulation details

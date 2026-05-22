@@ -36,3 +36,6 @@ format:
 
 number-depth: 3
 
+execute:
+  freeze: auto
+
