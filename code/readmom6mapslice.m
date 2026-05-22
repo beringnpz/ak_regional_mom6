@@ -14,6 +14,7 @@ function X = readmom6mapslice(C, ttarget, opt)
 %               'value':    hindcast value
 %               'anomaly':  anomaly from climatology
 %               'fcpersis': persistence forecast value
+%               'clim':     climatology value (uses day of year of ttarget)
 
 % Copyright 2026 Kelly Kearney
 
@@ -46,12 +47,19 @@ for iv = 1:length(varsread)
             fname = C.setopts('freq','daily','grid','raw').cefifilelist(varsread{iv}, year(ttarget)+"*");
         case 'fcpersist'
             fname = C.setopts('freq','daily','grid','extra').cefifilelist("fcpersist_"+varsread{iv}, year(ttarget)+"*");
+        case 'clim'
+            fname = C.setopts('freq', 'daily', 'grid', 'extra').cefifilelist("clim_"+varsread{iv}, "*");
         otherwise
             error('Unrecognized variable type (%s); should be value or anomaly', opt.vartype)
     end
 
     t = ncdateread(fname, 'time');
-    [dt,imin] = min(abs(ttarget - t));
+    if strcmp(opt.vartype, 'clim')
+        [dt,imin] = min(abs(doy(ttarget) - doy(t)));
+        dt = days(dt);
+    else
+        [dt,imin] = min(abs(ttarget - t));
+    end
     if dt > days(5)
         warning('Possible gap: %s is closest time found', t(imin));
     end
