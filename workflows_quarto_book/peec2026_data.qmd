@@ -25,3 +25,20 @@ See @tbl-esr25force for details regarding the datasets mentioned in this section
 
 ![Schematic of external forcing used for the MOM6-COBALT-NEP10k near-real-time hindcast extension. (Figure courtesy of Liz Drenkard).](./images/peec2026_hindcast_forcing.png){#fig-peec26force}
 
+## Dataset extraction
+
+Building on the methodology from the 2025 pre-ESR analysis, we extracted selected variables from the hindcast within the Alaska management bounding box [@fig-mom6gridmap].  We then calculated an updated baseline climatology (1993-2023), anomalies from climatology, and peristence forecast values for all extracted variables.  Finally, we calculated spatially-averaged indices for all of these using the Alaska survey region masks (the masking variables were simply copied from the previous e202507 simulation rather than recalculating, since neither the akgfmaps polygons nor the MOM6-NEP grid variables have changed.)
+
+:::{.callout-note}
+The 2026 partial year extension was run as an entirely separate simulation from the 1993-2025 hindcast, and was saved as such on the GFDL archives.  For the PEEC, I extracted and named the 2026 data files as though they were part of the primary hindcast, for ease of analysis during this quick turnaround time.  This may change in the future as we develop workflows and naming schemes for these simulations.
+
+Please note that the 2026 simulation data files use a different reference date (2026-01-01) than the rest of the hindcast (1993-01-01).
+:::
+
+```{bash filename="peec2026_data_extract.sh"}
+#| file: ./scripts/peec2026_data_extract.sh
+#| eval: false
+#| code-fold: true
+#| code-summary: "PEEC 2026 data extraction script"
+```
+

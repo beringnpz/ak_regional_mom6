@@ -264,7 +264,7 @@ hclus(3) = cluster_on_anomalies(...
 %| code-eval: false
 
 ttarget = datetime(2025,1:8,1);
-tidx = interp1(t, 1:length(t), ttarget, 'nearest', 'extrap');
+tidx = interp1(Hc.t, 1:length(Hc.t), ttarget, 'nearest', 'extrap');
 nt = length(ttarget);
 
 plt = {Hc.siconc Hc.tob Hc.tos An.siconc An.tob An.tos};
@@ -312,7 +312,15 @@ end
 
 ```{matlab}
 %| label: fig-esr25-cluster-allESR
-%| fig-cap: TODO
+%| fig-cap: Additional cluster analysis based on various subregions, used to support discussions with ESR authors but not intended for publication
+%| fig-subcap:
+%| - All ESR regions
+%| - NBS
+%| - SEBS
+%| - AI ESR, bottom
+%| - AI survey, bottom
+%| - AI ESR less survey, bottom
+%| - AI ESR, surface
 %| code-fold: true
 %| code-eval: false
 
@@ -323,7 +331,7 @@ hclus(4) = cluster_on_anomalies(...
     'Cdata', Cdata, ...
     'ndays', 82);
 
-% NBS vs SEBS
+% NBS only
 
 hclus(5) = cluster_on_anomalies( ...
     [6 1], ...
@@ -334,6 +342,8 @@ hclus(5) = cluster_on_anomalies( ...
     'maskvar', "mask_esr_subarea", ...
     'maskval', 3, ...
     'Cdata', Cdata);
+
+% SEBS only
 
 hclus(6) = cluster_on_anomalies( ...
     [6 1], ...
@@ -347,6 +357,8 @@ hclus(6) = cluster_on_anomalies( ...
 
 % AI, bottom vs surface and survey (nearshore) vs ESR (larger) region
 
+% AI ESR, bottom
+
 hclus(7) = cluster_on_anomalies( ...
     [6 1], ...
     'cpopts', C, ...
@@ -358,6 +370,8 @@ hclus(7) = cluster_on_anomalies( ...
     'Cdata', Cdata);
 set(hclus(7).ax, 'clim', [-1 1]*0.5)
 
+% AI survey, bottom
+
 hclus(8) = cluster_on_anomalies( ...
     [6 1], ...
     'cpopts', C, ...
@@ -368,6 +382,8 @@ hclus(8) = cluster_on_anomalies( ...
     'maskval', 52, ...
     'Cdata', Cdata);
 set(hclus(8).ax, 'clim', [-1 1]*0.5)
+
+% AI ESR less survey, bottom
 
 Grd = readcefigridvars(C, ["wet", "mask_esr_area", "mask_survey_area"]);
 mask = Grd.wet == 1 & Grd.mask_esr_area == 1 & isnan(Grd.mask_survey_area);
@@ -381,6 +397,8 @@ hclus(9) = cluster_on_anomalies( ...
     'maskvar', mask, ...
     'Cdata', Cdata);
 set(hclus(9).ax, 'clim', [-1 1]*0.5)
+
+% AI ESR, surface
 
 hclus(10) = cluster_on_anomalies(...
     [6 1], ...

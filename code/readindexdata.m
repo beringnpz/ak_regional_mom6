@@ -144,7 +144,6 @@ end
 
 function A = readandconcat(A, fname, vv, tflag)
 
-
     Tmp = arrayfun(@(x) ncstruct(x, vv), fname);
 
     if tflag

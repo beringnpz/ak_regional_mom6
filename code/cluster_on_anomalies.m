@@ -150,10 +150,6 @@ else
     error('Incorrect format for maskvar input')
 end
 
-
-% latlim = minmax(Grd.geolat);
-% lonlim = minmax(Grd.geolon);
-
 %--------------------
 % Cluster
 %--------------------
