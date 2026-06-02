@@ -5,12 +5,12 @@ reference-location: margin
 engine: knitr
 ---
 
-<!-- ```{css, echo=FALSE}
+```{css, echo=FALSE}
 code.sourceCode.r::before{content:'R'; float:right}
 code.sourceCode.python::before{content:'Python'; float:right}
 code.sourceCode.matlab::before{content:'MATLAB'; float:right}
 code.sourceCode.bash::before{content:'bash'; float:right}
-``` -->
+```
 
 # ESR 2025: Methods
 
