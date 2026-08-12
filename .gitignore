@@ -42,3 +42,4 @@ Thumbs.db
 simulation_data/data_folder.txt
 .vscode/
 examples_old/
+__pycache__/
