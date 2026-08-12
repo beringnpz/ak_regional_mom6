@@ -1,4 +1,4 @@
-function Grd = readcefigridvars(gdata, vars, opt)
+function [Grd, gfiles] = readcefigridvars(gdata, vars, opt)
 %READCEFIGRIDVARS Read grid (other) variables from one or more static files
 %
 % Grd = readcefigrdivars(cptopts, vars)

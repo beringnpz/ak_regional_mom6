@@ -7,6 +7,8 @@ function X = readmom6mapslice(C, ttarget, opt)
 %
 %   ttarget:    scalar datetime, date to extract from output
 %
+% Optional input variables:
+%
 %   vars:       string array of variable names to extract from the dataset.
 %               Currently, these must be 2D variables.
 %
