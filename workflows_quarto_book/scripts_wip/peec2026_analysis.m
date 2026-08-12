@@ -148,7 +148,9 @@ end
 
 
 %% Animated version
-%
+%| label: fig-peec25-animations
+%| code-fold: true
+
 % Maps of surface and bottom temperature (anomaly and value/prediction)
 % with sea ice fraction contours.  Day-of-year index plots of
 % surface/bottom provides historical context.
@@ -510,6 +512,56 @@ end
         'ndays', 30, ...
         'verbose', false, ...
         'Cdata', Cdata);
+
+%% Clusters based on change from Apr to Jul?
+
+yr = 1993:2025;
+nyr = length(yr);
+Grd = readcefigridvars(C, {'geolat_c', 'geolon_c', 'geolat', 'geolon', 'mask_esr_area'});
+[ni,nj] = size(Grd.geolat);
+
+anom = zeros(ni,nj,12,nyr);
+for im = 1:12
+    tmp = arrayfun(@(x) readmom6mapslice(C, x, 'vars', 'tob', 'vartype', 'anomaly'), datetime(yr, im, 1));
+    anom(:,:,im,:) = cat(3, tmp.tob);
+end
+
+danom = reshape(cat(3, nan(ni,nj), diff(reshape(anom,ni,nj,[]),1,3)), [ni nj 12 nyr]);
+
+
+%%
+
+h = plotgrid('size', [12 nyr], 'sp', 0, 'mar', 0, 'ml', 0.02, 'mt', 0.02);
+for iy = 1:nyr
+    for im = 1:12
+        pcolor(h.ax(im,iy), Grd.geolon_c, Grd.geolat_c, padarray(danom(:,:,im,iy), [1 1], NaN, 'post'));
+        shading(h.ax(im,iy), 'flat');
+    end
+end
+
+mask = ismember(Grd.mask_esr_area, [1 3 4]);
+latlim = minmax(Grd.geolat(mask));
+lonlim = minmax(Grd.geolon(mask));
+
+set(h.ax, 'clim', [-1 1]*5, 'colormap', cmocean('balance'), 'xlim', lonlim', 'ylim', latlim);
+set(h.ax, 'visible', 'off'); h.fig.Color = 'w';
+mon = datetime(1993,1:12,1); mon.Format = 'MMM';
+labelaxes(h.ax(:,1), string(mon), 'southwest');
+labelaxes(h.ax(1,:), string(yr), 'northoutside');
+
+
+
+
+%%
+
+h = plotgrid('size', [6 6], 'sp', 0, 'mar', 0.01);
+for ii = 1:length(yr)
+    pcolor(h.ax(ii), Grd.geolon_c, Grd.geolat_c, padarray(danom(:,:,ii), [1 1], NaN, 'post'));
+    shading(h.ax(ii), 'flat');
+end
+set(h.ax, 'clim', [-1 1]*5, 'colormap', cmocean('balance'));
+labelaxes(h.ax(1:length(yr)), string(yr), 'northwest');
+
 
 
 

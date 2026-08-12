@@ -25,8 +25,7 @@ For the 2026 Spring PEEC, an updated version of the MOM6-NEP hindcast was run, e
  - sea ice is now initialized from the GLORYS dataset
  - u/v sponges (i.e., light nudging of velocities) were added near the grid boundaries to eliminate some numerical articfacts that were appearing along the western and southern boundaries.
 
-The general NEP10k hindcast extension builds on the methodology detailed in @drenkard_regional_2025. For atmospheric forcing, we used ERA5 surface winds, temperature, precipitation, sea level pressure and downwelling solar and thermal radiation. Open boundary conditions and boundary sponges for temperature, salinity, velocities, seasurface height were generated from GLORYS. At the time of simulation, the GLORYS Reanalysis only extended to April 28, 2026. Therefore, for subsequent days for the open boundary conditions, we used output from the GLORYS Analysis and Forecast product. Diminishing persistence weighting, specifically weighting to the last day of the Reanalysis, was applied to the GLOAF hindcast to mitigate any localized discontinuities between the GLORYS Reanalysis and GLOAF hindcast products. The 2026 date ranges for each product used for daily boundary conditions for days beyond the extent of the GLORYS reanalysis were: April 29-May 1 (weighted GLORYS hindcast). The sponge for April was generated from only the GLORY (i.e., the monthly mean was generated from the first 28 days in April) while the May sponge was a persistence of the April sponge. Freshwater runoff was prescribed using the consolidated GloFAS product up until February 28, 2026; after this date, we used the GloFAS intermediate product.
-Biogeochemistry boundary conditions were prescribed as climatologies with the exception of total alkalinity and dissolved inorganic carbon. These boundary terms were defined as annual mean values, generated using ESPER and monthly temperature and salinity fields from GLORYS. Unique annual means were calculated through 2025; boundary conditions for 2026 were prescribed as a persistence of the 2025 annual mean values. 
+The general NEP10k hindcast extension builds on the methodology detailed in @drenkard_regional_2025. For atmospheric forcing, we used ERA5 surface winds, temperature, precipitation, sea level pressure and downwelling solar and thermal radiation. Open boundary conditions and boundary sponges for temperature, salinity, velocities, seasurface height were generated from GLORYS. At the time of simulation, the GLORYS Reanalysis only extended to April 28, 2026. Therefore, for subsequent days for the open boundary conditions, we used output from the GLORYS Analysis and Forecast product. Diminishing persistence weighting, specifically weighting to the last day of the Reanalysis, was applied to the GLOAF hindcast to mitigate any localized discontinuities between the GLORYS Reanalysis and GLOAF hindcast products. The 2026 date ranges for each product used for daily boundary conditions for days beyond the extent of the GLORYS reanalysis were: April 29-May 1 (weighted GLORYS hindcast). The sponge for April was generated from only the GLORY (i.e., the monthly mean was generated from the first 28 days in April) while the May sponge was a persistence of the April sponge. Freshwater runoff was prescribed using the consolidated GloFAS product up until February 28, 2026; after this date, we used the GloFAS intermediate product.  Biogeochemistry boundary conditions were prescribed as climatologies with the exception of total alkalinity and dissolved inorganic carbon. These boundary terms were defined as annual mean values, generated using ESPER and monthly temperature and salinity fields from GLORYS. Unique annual means were calculated through 2025; boundary conditions for 2026 were prescribed as a persistence of the 2025 annual mean values. 
 
 See @tbl-esr25force for details regarding the datasets mentioned in this section.
 
@@ -49,3 +48,32 @@ Please note that the 2026 simulation data files use a different reference date (
 #| code-summary: "PEEC 2026 data extraction script"
 ```
 
+Monthly and daily velocity variables from this simulation were also extracted by request (in July 2026).
+
+```{bash}
+#| eval: false
+#| code-fold: true
+subset_from_archive.sh \
+    --region nep \
+    --subdomain 0 342 446 743 \
+    --years 1993 2025 \
+    --mmdd 0101 \
+    --archdir /archive/e1n/fre/cefi/NEP/2026_04/NEP10k_202604_physics_bgc_uv_sponge/gfdl.ncrc6-intel25-repro/history/ \
+    --release e202604 \
+    --ppdir /work/Kelly.Kearney/ak_cefiportal \
+    --namescheme portalv1 \
+    --coordfile /work/Kelly.Kearney/ak_cefiportal/northeast_pacific/iq0-342jq446-743/hindcast/static/raw/e202604/ocean_static.nep.iq0-342jq446-743.hcast.static.e202604.20240101.nc \
+    --split \
+    ocean_month tob \
+    ocean_month_z uo,vo \
+    ocean_daily_z uo,vo
+```
+
+Due to file size, the daily velocity files were reduced to only surface and bottom values (as needed by the end user) for upload to the intermediate data server.  Because this was a one-off request, the file modification was simply run manually as follows, XXXX were all years from 1993 to 2025:
+
+```{bash}
+#| eval: false
+#| code-fold: true
+cdo topvalue    vo.nep.iq0-342jq446-743.hcast.daily.e202604.XXXX0101.nc vos.nep.iq0-342jq446-743.hcast.daily.e202604.XXXX0101.nc
+cdo bottomvalue vo.nep.iq0-342jq446-743.hcast.daily.e202604.XXXX0101.nc vob.nep.iq0-342jq446-743.hcast.daily.e202604.XXXX0101.nc
+```

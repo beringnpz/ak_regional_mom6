@@ -1,4 +1,4 @@
-set% peec2025.m
+% peec2025.m
 
 %%
 %| label: fig-peec25-mom6gridmap

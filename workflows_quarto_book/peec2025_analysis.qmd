@@ -4,7 +4,7 @@ reference-location: margin
 engine: jupyter-matlab
 ---
 
-# Spring PEEC 2025
+# Spring PEEC 2025 {#sec-peecanalysis2025}
 
 ## The simulation
 
