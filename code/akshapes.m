@@ -86,21 +86,29 @@ if opt.reloaddata
     
     % get_base_layers
     
-    S.base_layers_survey_strata = readgeotable(fullfile(suppfol, 'afsc_bts_strata_survey_strata.shp'));
-    S.base_layers_survey_area   = readgeotable(fullfile(suppfol, 'afsc_bts_strata_survey_area.shp'));
-    S.base_layers_inpfc_strata  = readgeotable(fullfile(suppfol, 'afsc_bts_strata_inpfc_strata.shp'));
+    S.base_layers_survey_strata = readgeotable(fullfile(akgffol, 'afsc_bts_strata.gpkg'), 'layer', 'survey_strata');
+    S.base_layers_survey_area   = readgeotable(fullfile(akgffol, 'afsc_bts_strata.gpkg'), 'layer', 'survey_area');
+    S.base_layers_inpfc_strata  = readgeotable(fullfile(akgffol, 'afsc_bts_strata.gpkg'), 'layer', 'inpfc_strata');
+    % 
+    % S.base_layers_survey_strata = readgeotable(fullfile(suppfol, 'afsc_bts_strata_survey_strata.shp'));
+    % S.base_layers_survey_area   = readgeotable(fullfile(suppfol, 'afsc_bts_strata_survey_area.shp'));
+    % S.base_layers_inpfc_strata  = readgeotable(fullfile(suppfol, 'afsc_bts_strata_inpfc_strata.shp'));
     
     S.base_layers_longline      = readgeotable(fullfile(akgffol, 'longline_survey', 'LL_survey_Slope_and_Gullies.shp'));
     S.base_layers_ll_stations   = readgeotable(fullfile(akgffol, 'longline_survey', 'LonglineStationsActive.shp'));
     
+    S.base_layers_survey_grid   = readgeotable(fullfile(akgffol, 'afsc_bts_stations.gpkg'));
+
     % get_bsierp_regions
     
     S.bsierp_regions = akmanage(startsWith(akmanage.Area_Type, 'BSIERP'),:);
     
     % get_crab_strata
     
-    crab_strata = readgeotable(fullfile(suppfol,'all_crab_from_akgfmaps_grid_all_crab_from_akgfmaps_grid.shp'));
-    
+    % crab_strata = readgeotable(fullfile(suppfol,'all_crab_from_akgfmaps_grid_all_crab_from_akgfmaps_grid.shp'));
+    crab_strata = readgeotable(fullfile(akgffol,'all_crab_from_akgfmaps_grid.gpkg'));
+
+
     S.crab_strata_RKC = crab_strata(endsWith(crab_strata.STOCK, 'RKC'),:);
     S.crab_strata_BKC = crab_strata(endsWith(crab_strata.STOCK, 'BKC'),:);
     S.crab_strata_tanner = crab_strata(startsWith(crab_strata.STOCK, 'Tanner'),:);
@@ -112,8 +120,8 @@ if opt.reloaddata
     
     % INPFC areas
     
-    S.inpfc_goa_strata = readgeotable(fullfile(akgffol, 'goa_strata.shp'));
-    S.inpfc_ai_strata = readgeotable(fullfile(akgffol, 'ai_strata.shp'));
+    % S.inpfc_goa_strata = readgeotable(fullfile(akgffol, 'goa_strata.shp'));
+    % S.inpfc_ai_strata = readgeotable(fullfile(akgffol, 'ai_strata.shp'));
     
     % NMFS areas
     
@@ -122,6 +130,13 @@ if opt.reloaddata
     % Save to file
 
     save(akdatafile, '-struct', 'S');
+
+    dstr = datetime('today', 'format', 'uuuuMMdd');
+    akbackup = fullfile(suppfol, sprintf('akshapes_%s.mat', dstr));
+
+    % akdatafile_backup = strrep(akdatafile, '.mat', sprintf('_%s.mat', dstr));
+
+    copyfile(akdatafile, akbackup)
 end
 
 if isempty(opt.dataset)
