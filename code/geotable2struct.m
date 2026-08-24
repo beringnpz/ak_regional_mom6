@@ -22,7 +22,11 @@ function a = geotable2struct(b, opt)
 %           0:   leave as is
 %           [0]
 %
-%   poly:   if true, create a polyshape object [false]
+%   poly:   if true, create a polyshape object using Lon/Lat coordinates as
+%           vertices [false] 
+%
+%   polyxy: if true, create a polyshape object using X/Y coordinates as
+%           vertices (projected data only) [false] 
 %
 % Output variables:
 %
@@ -36,6 +40,7 @@ arguments
     opt.simp (1,1) =NaN
     opt.wrap (1,1) {mustBeNumeric, mustBeMember(opt.wrap, [0 180 360])} =0
     opt.poly (1,1) {mustBeNumericOrLogical} =false
+    opt.polyxy (1,1) {mustBeNumericOrLogical} =false
 end
 
 if ~isgeotable(b)
@@ -58,6 +63,12 @@ for ii = 1:length(a)
     x = cat(2, x{:});
     y = cat(2, y{:});
 
+    if ~isnan(opt.simp)
+        xysimp = dpsimplify([x; y]', opt.simp);
+        x = [xysimp(:,1); NaN]';
+        y = [xysimp(:,2); NaN]';
+    end
+
     if isa(a(ii).Shape, 'geopolyshape')
         a(ii).Geometry = 'Polygon';
         a(ii).Lat = x;
@@ -65,17 +76,17 @@ for ii = 1:length(a)
     elseif isa(a(ii).Shape, 'mappolyshape')
         a(ii).Geometry = 'Polygon';
         
-        if ~isnan(opt.simp)
-            xysimp = dpsimplify([x; y]', opt.simp);
-            a(ii).Y = [xysimp(:,2); NaN]';
-            a(ii).X = [xysimp(:,1); NaN]';
-        else
+        % if ~isnan(opt.simp)
+        %     xysimp = dpsimplify([x; y]', opt.simp);
+        %     a(ii).Y = [xysimp(:,2); NaN]';
+        %     a(ii).X = [xysimp(:,1); NaN]';
+        % else
             a(ii).Y = y;
             a(ii).X = x;
-        end
+        % end
 
         if opt.proj
-            [a(ii).Lat, a(ii).Lon] = projinv(a(ii).Shape.ProjectedCRS, x, y);
+            [a(ii).Lat, a(ii).Lon] = projinv(a(ii).Shape.ProjectedCRS, a(ii).X, a(ii).Y);
         end
     end
     if opt.wrap == 360
@@ -85,6 +96,9 @@ for ii = 1:length(a)
     end
     if opt.poly
         a(ii).poly = polyshape(a(ii).Lon, a(ii).Lat);
+    end
+    if opt.polyxy
+        a(ii).polyxy = polyshape(a(ii).X, a(ii).Y);
     end
 end
 
