@@ -40,7 +40,7 @@ if [ ! -f $fmain ]; then
                         ice_daily siconc
 fi
 
-# Partial year/Near-real-time (2026) 
+# Partial year/Near-real-time (2026/01/01 - 2026/05/01) 
 
 if [ ! -f $fpart ]; then
 subset_from_archive.sh --region nep \
