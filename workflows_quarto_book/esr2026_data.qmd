@@ -12,7 +12,11 @@ code.sourceCode.matlab::before{content:'MATLAB'; float:right}
 code.sourceCode.bash::before{content:'bash'; float:right}
 ```
 
-# ESR 2025: Methods
+# ESR 2026: Methods
+
+:::{.callout-warning}
+DRAFT -- SUBJECT TO CHANGE
+:::
 
 :::{.callout-note}
 This is not an Ecosystem Status Report (ESR).  This is simply an analysis of regional model output intended to inform Alaska ESRs.

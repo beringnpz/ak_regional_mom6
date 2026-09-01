@@ -7,6 +7,10 @@ engine: jupyter-matlab
 
 # ESR 2026: Analysis
 
+:::{.callout-warning}
+DRAFT -- SUBJECT TO CHANGE
+:::
+
 :::{.callout-note}
 This is not an Ecosystem Status Report (ESR).  This is simply an analysis of regional model output intended to inform Alaska ESRs.
 :::
