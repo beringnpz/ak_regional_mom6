@@ -186,7 +186,7 @@ set(h.an, 'color', rgb('light gray'), 'fontsize', 8, 'edgecolor', 'none')
 %% ... default polygon setup
 
 [Geo, Sgrd, Tri] = ak_polygons;
-reg = fieldnames(Geo);
+reg = setdiff(fieldnames(Geo), 'bss'); % Removing slope survey for this
 nreg = length(reg);
 
 svyid = cellfun(@(x) unique([Geo.(x).SURVEY_DEFINITION_ID]), reg);
@@ -198,7 +198,7 @@ lonlim = minmax(wrapTo360(tmp(:,1)));
 %% ... default map
 
 worldmap(latlim, lonlim);
-for ir = 1:nr
+for ir = 1:nreg
     plotpolyfv(Tri.(reg{ir}));
 end
 
@@ -207,11 +207,12 @@ bordersm('counties', 'facecolor', ones(1,3)*0.8, 'edgecolor', 'none');
 %% ... how does the area of each polygon compare?
 
 worldmap(latlim, lonlim);
-for ir = 1:nr
-    plotpolyfv(Tri.(reg{ir}), 'val', [Geo.(reg{ir}).AREA_M2]/1e6);
+for ir = 1:nreg
+    plotpolyfv(Tri.(reg{ir}), 'val', log10([Geo.(reg{ir}).AREA_M2]/1e6));
 end
 
 bordersm('counties', 'facecolor', ones(1,3)*0.8, 'edgecolor', 'none');
+colorbar;
 
 %%  Survey and survey-replicated data
 
@@ -224,7 +225,8 @@ Tmp = Tmp(~(Tmp.STATION == ""),:);
 
 % Split by region
 
-for ii = 1:nr
+Svy = struct;
+for ii = 1:nreg
     Svy.(reg{ii}) = Tmp(Tmp.SURVEY_DEFINITION_ID == svyid(ii),:);
 end
 
@@ -246,36 +248,57 @@ nd = size(dataname,1);
 
 %% ... Collect survey[rep] data into polygon x year x dataset x variable arrays
 
-for ii = 1:nr
+for ii = 1:nreg
     x = reginfo.name{ii};
 
     % Indetify points by polygon and year
-    [yr, ~,iyr] = unique(Svy.(x).YEAR);
-    if ismember(x, {'ebs','nbs'})
-        [tf,ip] = ismember(Svy.(x).STATION, [Geo.(x).STATION]);
-        if ~all(tf)
-            error('Mismatch in ebs/nbs?');
-        end
-    else
-        [tf,ip] = ismember(Svy.(x).STRATUM, [Geo.(x).AREA_ID]);
+    
+    switch x
+        case {'ebs', 'nbs'}
 
-        if ~all(tf)
-            [xtmp,ytmp] = projfwd(Geo.(x)(1).Shape.ProjectedCRS, Svy.(x).LATITUDE(~tf), Svy.(x).LONGITUDE(~tf));
-            
-            [unq,~,iunq] = unique(Svy.(x).STRATUM(~tf));
-            pidx = nan(nnz(~tf),1);
-            for iu = 1:length(unq)
-                ispolysub = floor([Geo.(x).AREA_ID]) == unq(iu);
-                ind = find(ispolysub);
-                [in,index] = inpolygons(xtmp(iunq==iu), ytmp(iunq==iu), [Geo.(x)(ispolysub).X], [Geo.(x)(ispolysub).Y]);
-                pidx(iunq==iu) = ind(cell2mat(index));
+            [tf,ip] = ismember(Svy.(x).STATION, [Geo.(x).STATION]);
+            if ~all(tf)
+                error('Mismatch in ebs/nbs?');
+            end
+        case {'ai', 'goa'}
+        
+            [tf,loc] = ismember(Svy.(x).STATION, [Sgrd.(x).STATION]);
+            if ~all(tf)
+                warning('stations in Svy.%s not in Sgrd.%s: %s', x, x, join(unique(string(Svy.(x).STATION(~tf))), ", "));
+                Svy.(x) = Svy.(x)(tf,:);
+                loc = loc(tf);
             end
 
-            ip(~tf) = pidx;
+            Svy.(x).AREA_ID = [Sgrd.(x)(loc).AREA_ID]';
+                
+            [tf,ip] = ismember(Svy.(x).AREA_ID, [Geo.(x).AREA_ID]);
 
-        end
+
+
+        %     [iunq, unqid] = findgroups(Svy.(rr).AREA_ID);
+        %         nper = splitapply(@length, iunq, iunq);
+        % 
+        %         [tf,loc] = ismember(unqid, [Geo.(rr).AREA_ID]);
+        % 
+        % 
+        % [tf,ip] = ismember(Svy.(x).STRATUM, [Geo.(x).AREA_ID]);
+        % 
+        % if ~all(tf)
+        %     [xtmp,ytmp] = projfwd(Geo.(x)(1).Shape.ProjectedCRS, Svy.(x).LATITUDE(~tf), Svy.(x).LONGITUDE(~tf));
+        % 
+        %     [unq,~,iunq] = unique(Svy.(x).STRATUM(~tf));
+        %     pidx = nan(nnz(~tf),1);
+        %     for iu = 1:length(unq)
+        %         ispolysub = floor([Geo.(x).AREA_ID]) == unq(iu);
+        %         ind = find(ispolysub);
+        %         [in,index] = inpolygons(xtmp(iunq==iu), ytmp(iunq==iu), [Geo.(x)(ispolysub).X], [Geo.(x)(ispolysub).Y]);
+        %         pidx(iunq==iu) = ind(cell2mat(index));
+        %     end
+        % 
+        %     ip(~tf) = pidx;
 
     end
+    [yr, ~,iyr] = unique(Svy.(x).YEAR);
 
     np = length(Geo.(x));
     ny = length(yr);

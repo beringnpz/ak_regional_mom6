@@ -1,0 +1,416 @@
+---
+toc: true
+reference-location: margin
+# citation-location: margin
+engine: jupyter-matlab
+---
+
+# ESR 2026: Analysis
+
+:::{.callout-note}
+This is not an Ecosystem Status Report (ESR).  This is simply an analysis of regional model output intended to inform Alaska ESRs.
+:::
+
+## Simulated temperature summary
+
+We used the most recent MOM6-NEP near-real-time hindcast extension, which runs through Aug 14, 2026, to analyze the seasonal evolution of surface and bottom temperature throughout the three management regions: Bering Sea, Aleutian Islands, and Gulf of Alaska.
+
+### Bering Sea
+
+Winter 2026 conditions in the Bering Sea began very close to the long-term mean across the entire shelf.  Then in March 2026, the southeastern shelf region cooled due to rapid ice advance, with surface and bottom temperatures dropping approximately 0.4 deg and 1.16 deg, respectively, below average (@fig-esr26-tsindex-ebs-1, @fig-esr26-tsindex-ebs-2).  As ice retreated in spring, surface temperatures in the southeastern region moved toward average values, but bottom temperatures remained below average, closely tracking the persistence signal from late April/early May.  The EBS 2 deg cold pool index peaked at a near-average value of 0.78 in April, but decreased more slowly than the average, staying 0.08-0.11 above the mean through August (@fig-esr26-tsindex-ebs-3).  The EBS 0 deg cold pool index peaked well above the median, reaching nearly 0.5 in mid-April.  However, this less than 0 deg water rapidly diminished in May, reaching value about 0.01 below the mean by mid June (@fig-esr26-tsindex-ebs-4).  In the northern Bering Sea, bottom temperatures remained near average throughout the year, while surface temperatures were warmer than average (and warmer than the conditions predicted by persistence alone).
+
+This footprint of a smaller than average summer 0 deg cold pool but larger than average 2 deg cold pool can be seen in the July bottom temperature maps (@fig-esr26-btemp5x4).  The closest analog year from the hindcast suite (1993-2025) with this summer pattern of cold conditions in the southeastern region but neutral to warm conditions in the northern Bering Sea in the summer months is 2007 (@fig-esr26-cluster-bering-1).  However, the similarity decreases when looking at the full seasonal evolution of these anomalies (@fig-esr26-cluster-bering-2.
+
+```{matlab}
+%| label: fig-esr26-btemp5x4
+%| fig-cap: Bering Sea bottom temperature for the past 20 years, extracted on July 1 of each year.
+%| code-fold: true
+
+% Local "CEFI Portal" options
+
+addpath('../code');
+
+C = cefiportalopts('portalpath', '~/Documents/Data/CEFI/ak_cefiportal', ...
+                   'release', 'e202604', ...
+                   'subdomain', [0 342 446 743], ...
+                   'yyyymmdd', '20240101');
+
+yr = 2026;
+esrfol = '~/Documents/Manuscripts/202608_ESR/';
+
+% Map of bottom temperature, past 20 years
+
+h = plot_bering_bottom_temp_map_5x4(yr, C);
+
+archivepng(h.fig, esrfol, sprintf('btemp_map_%d-%d', [yr-20+1 yr]), ...
+    '-r150', '-nocrop');
+
+```
+
+```{matlab}
+%| label: fig-esr26-tsindex-ebs
+%| fig-cap: Time series calculated across the EBS survey area.  Red line = 2026, red dotted line = spring-initiated persistence forecast, black solid line = median across 1993–2026, black dashed line = climatological (1993–2022) mean, shaded gray = 1993–2026 percentiles (lightest = 0-10% and 90-100%, darkest = 40-60%).  Numbers indicate the values on the first of the month in the climatological mean (bottom, black) and in 2026 (red, top).
+%| fig-subcap: 
+%|   - "Bottom temperature"
+%|   - "Surface temperature"
+%|   - "2C cold pool index"
+%|   - "0C cold pool index"
+%| code-fold: true
+%| layout-ncol: 2
+
+%% Region-based analysis setup
+
+regnum = [98 143 52 47]; % EBS, NBS, AI, GOA
+regname = ["EBS", "NBS", "AI", "GOA"];
+
+% Variable setup: which ones do we plot?
+
+vplt = ["tob", "tos", "cpool2p0", "cpool0p0"];
+
+% Read surveyavg indices from file
+
+Tbl = readindexdata(C.setopts('subdomain', 'aksvyreg'), ...
+    'regnum', regnum, ...
+    'vars', vplt);
+
+% Remove leap days from climatology
+
+isleap = month(Tbl.Clim.t) == 2 & day(Tbl.Clim.t) == 29;
+Tbl.Clim = Tbl.Clim(~isleap,:);
+
+% Extract July 1 values from each year
+
+Jul1 = structfun(@(x) retime(x, datetime(1993:yr,7,1), 'nearest', 'endvalues', NaN), Tbl, 'uni', 0);
+
+% Plot timeseries: ebs
+
+V = ak_variable_info;
+
+%% EBS timeseries
+
+ii = 1;
+for iv = 1:length(vplt)
+        
+    h = plotgrid('size', [1 1], 'mar', 0.08, 'mr', 0.01);
+    h.fig.Position(3:4) = [6 4]*72;
+    h.fig.Color = 'w';
+
+    h.gobj = plotsurveyregionindex(Tbl, vplt{iv}, 'col', ii, 'year', yr);
+
+    title(h.ax, sprintf('%s: %s', regname(ii), V{vplt{iv},'labelname'}));
+
+    archivepng(h.fig, esrfol, sprintf('timeseries_%s_%s',regname{ii}, vplt{iv}), ...
+        '-r150', '-nocrop')
+
+end
+
+```
+
+```{matlab}
+%| label: fig-esr26-tsindex-nbs
+%| fig-cap: Time series calculated across the NBS survey area.  See @fig-esr26-tsindex-ebs for details
+%| fig-subcap: 
+%|   - "Bottom temperature"
+%|   - "Surface temperature"
+%|   - "2C cold pool index"
+%|   - "0C cold pool index"
+%| code-fold: true
+%| layout-ncol: 2
+
+ii = 2;
+for iv = 1:length(vplt)
+        
+    h = plotgrid('size', [1 1], 'mar', 0.08, 'mr', 0.01);
+    h.fig.Position(3:4) = [6 4]*72;
+    h.fig.Color = 'w';
+
+    h.gobj = plotsurveyregionindex(Tbl, vplt{iv}, 'col', ii, 'year', yr);
+
+    title(h.ax, sprintf('%s: %s', regname(ii), V{vplt{iv},'labelname'}));
+
+    archivepng(h.fig, esrfol, sprintf('timeseries_%s_%s',regname{ii}, vplt{iv}), ...
+        '-r150', '-nocrop')
+
+end
+
+```
+
+```{matlab}
+%| label: fig-esr26-cluster-bering
+%| fig-cap: Hierarchical cluster analysis of surface and bottom temperature anomalies (relative to the 1993–2022 climatology) a) temporally-averaged across the period of 06/01–08/13 of each year, within the Bering Sea ecosystem status report area, and b) temporally-averaged over the first week of each month between Feb and July of each year, within the Bering Sea ecosystem status report area (maps depict anomaly in the July 1-7 week)
+%| fig-subcap:
+%|   - Summer clustering
+%|   - Winter-to-summer clustering
+%| code-fold: true
+
+% Summer (mean, Jun1-Aug13)
+
+ndays = days(datetime(2026,8,13)-datetime(2026,6,1));
+
+[hclus(1,1), Cdata] = cluster_on_anomalies(...
+    [6 1], ...
+    'cpopts', C, ...
+    'yr', 1993:yr, ...
+    'maskval', 3, ...
+    'ndays', ndays, ...
+    'verbose', false);
+
+archivepng(hclus(1,1).fig, esrfol, 'cluster_EBS_summer', '-r300');
+
+% winter-to-summer evolution (mean first week of every month, feb-jul)
+
+[hclus(1,2), Cdata2] = cluster_on_anomalies(...
+    [2:7; ones(1,6)]', ...
+    'cpopts', C, ...
+    'yr', 1993:yr, ...
+    'maskval', 3, ...
+    'ndays', 7, ...
+    'verbose', false);
+
+archivepng(hclus(1,2).fig, esrfol, 'cluster_EBS_feb-jul', '-r300');
+
+```
+
+### Aleutian Islands
+
+TODO: text analysis
+
+```{matlab}
+%| label: fig-esr26-tsindex-ai
+%| fig-cap: Time series calculated across the AI survey area.  Red line = 2026, red dotted line = spring-initiated persistence forecast, black solid line = median across 1993–2026, black dashed line = climatological (1993–2022) mean, shaded gray = 1993–2026 percentiles (lightest = 0-10% and 90-100%, darkest = 40-60%).  Numbers indicate the values on the first of the month in the climatological mean (bottom, black) and in 2026 (red, top).
+%| fig-subcap: 
+%|   - "Bottom temperature"
+%|   - "Surface temperature"
+%| code-fold: true
+%| layout-ncol: 2
+
+ii = 3;
+for iv = 1:2 %length(vplt)
+        
+    h = plotgrid('size', [1 1], 'mar', 0.08, 'mr', 0.01);
+    h.fig.Position(3:4) = [6 4]*72;
+    h.fig.Color = 'w';
+
+    h.gobj = plotsurveyregionindex(Tbl, vplt{iv}, 'col', ii, 'year', yr);
+
+    title(h.ax, sprintf('%s: %s', regname(ii), V{vplt{iv},'labelname'}));
+
+    archivepng(h.fig, esrfol, sprintf('timeseries_%s_%s',regname{ii}, vplt{iv}), ...
+        '-r150', '-nocrop');
+
+end
+
+```
+
+```{matlab}
+%| label: fig-esr26-cluster-ai
+%| fig-cap: Hierarchical cluster analysis of surface and bottom temperature anomalies (relative to the 1993–2022 climatology) a) temporally-averaged across the period of 06/01–08/13 of each year, within the Aleutian Islands ecosystem status report area, and b) temporally-averaged over the first week of each month between Feb and July of each year, within the Aleutian Islands ecosystem status report area (maps depict anomaly in the July 1-7 week)
+%| fig-subcap:
+%|   - Summer clustering
+%|   - Winter-to-summer clustering
+%| code-fold: true
+
+hclus(2,1) = cluster_on_anomalies(...
+    [6 1], ...
+    'cpopts', C, ...
+    'yr', 1993:yr, ...
+    'maskval', 1, ...
+    'ndays', ndays, ...
+    'verbose', false, ...
+    'Cdata', Cdata);
+
+archivepng(hclus(2,1).fig, esrfol, 'cluster_AI_summer', '-r300');
+
+% winter-to-summer evolution (mean first week of every month, feb-jul)
+
+hclus(2,2) = cluster_on_anomalies(...
+    [2:7; ones(1,6)]', ...
+    'cpopts', C, ...
+    'yr', 1993:yr, ...
+    'maskval', 1, ...
+    'ndays', 7, ...
+    'verbose', false, ...
+    'Cdata', Cdata2);
+
+archivepng(hclus(2,2).fig, esrfol, 'cluster_AI_feb-jul', '-r300');
+
+```
+
+### Gulf of Alaska
+
+TODO: text analysis
+
+```{matlab}
+%| label: fig-esr26-tsindex-goa
+%| fig-cap: Time series calculated across the GOA survey area.  Red line = 2026, red dotted line = spring-initiated persistence forecast, black solid line = median across 1993–2026, black dashed line = climatological (1993–2022) mean, shaded gray = 1993–2026 percentiles (lightest = 0-10% and 90-100%, darkest = 40-60%).  Numbers indicate the values on the first of the month in the climatological mean (bottom, black) and in 2026 (red, top).
+%| fig-subcap: 
+%|   - "Bottom temperature"
+%|   - "Surface temperature"
+%| code-fold: true
+%| layout-ncol: 2
+
+ii = 4;
+for iv = 1:2 %length(vplt)
+        
+    h = plotgrid('size', [1 1], 'mar', 0.08, 'mr', 0.01);
+    h.fig.Position(3:4) = [6 4]*72;
+    h.fig.Color = 'w';
+
+    h.gobj = plotsurveyregionindex(Tbl, vplt{iv}, 'col', ii, 'year', yr);
+
+    title(h.ax, sprintf('%s: %s', regname(ii), V{vplt{iv},'labelname'}));
+
+    archivepng(h.fig, esrfol, sprintf('timeseries_%s_%s',regname{ii}, vplt{iv}), ...
+        '-r150', '-nocrop');
+
+end
+
+```
+
+
+```{matlab}
+%| label: fig-esr26-cluster-goa
+%| fig-cap: Hierarchical cluster analysis of surface and bottom temperature anomalies (relative to the 1993–2022 climatology) a) temporally-averaged across the period of 06/01–08/13 of each year, within the Gulf of Alaska ecosystem status report area, and b) temporally-averaged over the first week of each month between Feb and July of each year, within the Gulf of Alaska ecosystem status report area (maps depict anomaly in the July 1-7 week)
+%| fig-subcap:
+%|   - Summer clustering
+%|   - Winter-to-summer clustering
+%| code-fold: true
+
+hclus(3,1) = cluster_on_anomalies(...
+    [6 1], ...
+    'cpopts', C, ...
+    'yr', 1993:yr, ...
+    'maskval', 4, ...
+    'ndays', ndays, ...
+    'verbose', false, ...
+    'Cdata', Cdata);
+
+archivepng(hclus(3,1).fig, esrfol, 'cluster_GOA_summer', '-r300');
+
+% winter-to-summer evolution (mean first week of every month, feb-jul)
+
+hclus(3,2) = cluster_on_anomalies(...
+    [2:7; ones(1,6)]', ...
+    'cpopts', C, ...
+    'yr', 1993:yr, ...
+    'maskval', 4, ...
+    'ndays', 7, ...
+    'verbose', false, ...
+    'Cdata', Cdata2);
+
+archivepng(hclus(3,2).fig, esrfol, 'cluster_GOA_feb-jul', '-r300');
+
+```
+
+## 2026 persistence forecast evaluation
+
+Our current MOM6-NEP forecast is a persistence-based forecast, meaning it simply overlays the anomaly from climatology from the end of the spring near-real-time hindcast extension (April 29, 2026) on climatological values.  Here, we analyze how well this forecast performed in this current year. 
+
+Bottom temperature in the eastern Bering Sea tends to be well-predicted by persistence; this year, the cold anomaly across the southeastern shelf and warm anomaly in the northwestern region was well-predicted by the forecast.  The northeastern shelf was still ice-covered at the time of the forecast snapshot; in this region, the realized hindcast showed warmer values in Norton Sound and a patch of much colder bottom water between Norton Sound and St. Lawrence relative to the neutral forecast conditions.  The shallow inner shelf region, which is well-mixed and therefore more influenced by surface warming than the rest of the shelf, moved toward warmer temperatures than predicted, particularly in July.  In the Gulf of Alaska and Aleutian Islands, the forecast captured the pattern of neutral to warm conditions in the southeast Gulf of Alaska and cool conditions in the western Gulf and eastern Aleutian Islands.
+
+The persistence signal tends to have less predictive power for surface temperature than bottom temperature.  The forecast predicted cold conditions in Bristol Bay and the Gulf of Alaska, neutral northern Bering Sea, and warm western Bering, with warmer conditions in the northeast Pacific Gyre.  With the exception of the NBS region, these patterns were maintained through the summer, with some strengthening of the band of cool anomalies through the off-shelf Gulf of Alaska and Bering Sea basin.  Conditions in the northern Bering Sea warmed considerably above the forecast, especially in July; this lower skill is expected due to the ice cover in that region at the time of forecast initialization.
+
+```{matlab}
+%| label: fig-esr26-fceval
+%| fig-cap: a) Persistence forecast value, b) hindcast value, c) hindcast anomaly, and d) difference between forecast anomaly and hindcast anomaly for (left) bottom and (right) surface temperature on the first June, July, and August, 2026.  Top two panels show the forecast anomaly for reference.
+%| code-fold: true
+
+
+[A, Grd] = akmapprep('cpopts', C, 'maskval', [1 3 4]);
+
+ttarget = datetime(2026,6:8,1, 'format', ', yyyy/MM/dd');
+nt = length(ttarget);
+pltvars = ["tob", "tos"];
+pltvname = ["Bottom temp. (\circC)", "SST (\circC)"];
+np = length(pltvars);
+
+vartype = ["value", "fcpersis", "anomaly"];
+nv = length(vartype);
+
+mapprops = {'mtick', '', 'pticks', ''};
+
+% Plot realized value, predicted value, realized anomaly, and anomaly
+% mismatch
+
+h = plotgrid('size', [nt+1, np], 'mar', 0.05, 'sv', 0.05, 'sh', 0.05);
+h.fig.Position(3:4) = [900 1062];
+h.ax = subgridaxes(h.ax, 2,2);
+
+cbloc = 'east';
+
+for it = 1:nt
+    for iv = 1:np
+
+        axes(h.ax(1,1,it+1,iv));
+        Tmp1 = readmom6mapslice(C, ttarget(it), 'vars', pltvars{iv}, 'vartype', 'value');
+        htmp = plotmom6akmap(A, Tmp1, ...
+            'var', pltvars{iv}, ...
+            'vartype', 'value', ...
+            'mapprops', mapprops, ...
+            'cbloc', cbloc);
+        reposition(htmp.cb, [0.5 0.8], [0 0], 'e');
+
+        axes(h.ax(1,2,it+1,iv));
+        Tmp2 = readmom6mapslice(C, ttarget(it), 'vars', pltvars{iv}, 'vartype', 'fcpersist');
+        htmp = plotmom6akmap(A, Tmp2, ...
+            'var', pltvars{iv}, ...
+            'vartype', 'value', ...
+            'mapprops', mapprops, ...
+            'cbloc', cbloc);
+        reposition(htmp.cb, [0.5 0.8], [0 0], 'e');
+
+        axes(h.ax(2,1,it+1,iv));
+        Tmp3 = readmom6mapslice(C, ttarget(it), 'vars', pltvars{iv}, 'vartype', 'anomaly');
+        htmp = plotmom6akmap(A, Tmp3, ...
+            'var', pltvars{iv}, ...
+            'vartype', 'anomaly', ...
+            'mapprops', mapprops, ...
+            'cbloc', cbloc);
+        reposition(htmp.cb, [0.5 0.8], [0 0], 'e');
+
+        axes(h.ax(2,2,it+1,iv));
+          
+        Tmp4.(pltvars{iv}) = Tmp1.(pltvars{iv}) - Tmp2.(pltvars{iv});
+        htmp = plotmom6akmap(A, Tmp4, ...
+                    'var', pltvars{iv}, ...
+                    'vartype', 'anomaly', ...
+                    'mapprops', mapprops, ...
+                    'cbloc', cbloc);
+        reposition(htmp.cb, [0.5 0.8], [0 0], 'e');
+
+        labelaxes(h.ax(:,:,it+1,iv), ["a)", "c)", "b)", "d)"], 'northwest');
+
+        % Add predicted anomaly
+
+        if it == 1
+            fcanom = Tmp2.(pltvars{iv}) - (Tmp1.(pltvars{iv}) - Tmp3.(pltvars{iv}));
+            axes(h.ax(2,1,1,iv));
+            htmp = plotmom6akmap(A, struct(pltvars{iv},fcanom), ...
+                    'var', pltvars{iv}, ...
+                    'vartype', 'anomaly', ...
+                    'mapprops', mapprops, ...
+                    'cbloc', cbloc);
+            reposition(htmp.cb, [0.5 0.8], [0 0], 'e');
+        end
+
+
+    end
+end
+
+lbls = pltvname + string(ttarget');
+labelaxes(h.ax(1,1,2:end,:), lbls, 'northwestoutsideabove');
+
+lblsfc = pltvname + ": forecast anomaly";
+labelaxes(h.ax(2,1,1,:), lblsfc, 'northwestoutsideabove')
+
+
+set(h.ax(2,2,:,:), 'colormap', cmocean('curl'));
+delete(h.ax(1,:,1,:));
+delete(h.ax(2,2,1,:));
+
+archivepng(h.fig, esrfol, sprintf('fcpersis_vs_hindcast_%d', yr), '-r150');
+
+```
+
+## 2026 hindcast evaluation
+

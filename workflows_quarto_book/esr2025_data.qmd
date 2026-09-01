@@ -34,7 +34,7 @@ Freshwater runoff was prescribed using the consolidated GloFAS product up until 
 
 Biogeochemistry boundary conditions were prescribed as climatologies with the exception of total alkalinity and dissolved inorganic carbon. These boundary terms were defined as annual mean values, generated using ESPER and monthly temperature and salinity fields from GLORYS. Unique annual means were calculated through 2024; boundary conditions for 2025 were prescribed as a persistence of the 2024 annual mean values.
 
-![Schematic of external forcing used for the MOM6-COBALT-NEP10k near-real-time hindcast extension. (Figure courtesy of Liz Drenkard).](./images/esr2025_hindcast_forcing.png){#fig-esr25force}
+![Schematic of external forcing used for the MOM6-COBALT-NEP10k near-real-time hindcast extension. (Figure courtesy of Liz Drenkard).](./images/hindcast_forcing_nrt2025b.png){#fig-esr25force}
 
 | Abbreviation | Full name | References |
 |:-|:-----|:---|

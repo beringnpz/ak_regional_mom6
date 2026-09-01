@@ -147,7 +147,7 @@ end
 
 ```{matlab}
 %| label: fig-esr25-cluster-bering
-%| fig-cap: Hierarchical cluster analysis of surface and bottom temperature anomalies (relative to the 1993–2022 climatology), temporally-averaged across the period of 2025/06/11–2025/08/22, within the Bering Sea ecosystem status report area
+%| fig-cap: Hierarchical cluster analysis of surface and bottom temperature anomalies (relative to the 1993–2022 climatology), temporally-averaged across the period of 2025/06/01–2025/08/22, within the Bering Sea ecosystem status report area
 %| code-fold: true
 
 [hclus(1), Cdata] = cluster_on_anomalies(...

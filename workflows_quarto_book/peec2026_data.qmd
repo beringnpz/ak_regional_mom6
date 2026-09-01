@@ -29,7 +29,7 @@ The general NEP10k hindcast extension builds on the methodology detailed in @dre
 
 See @tbl-esr25force for details regarding the datasets mentioned in this section.
 
-![Schematic of external forcing used for the MOM6-COBALT-NEP10k near-real-time hindcast extension. (Figure courtesy of Liz Drenkard).](./images/peec2026_hindcast_forcing.png){#fig-peec26force}
+![Schematic of external forcing used for the MOM6-COBALT-NEP10k near-real-time hindcast extension. (Figure courtesy of Liz Drenkard).](./images/hindcast_forcing_nrt2026a.png){#fig-peec26force}
 
 ## Dataset extraction
 
