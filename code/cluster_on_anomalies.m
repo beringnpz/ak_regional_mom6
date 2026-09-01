@@ -76,7 +76,7 @@ function [h, Cdata] = cluster_on_anomalies(mmdd, opt)
 % Copyright 2025 Kelly Kearney
 
 arguments
-    mmdd (1,2) {mustBeInteger}
+    mmdd (:,2) {mustBeInteger}
     opt.cpopts (1,1) {mustBeA(opt.cpopts, "cefiportalopts")} =cefiportalopts()
     opt.ndays =1
     opt.yr {mustBeInteger, mustBeVector} =(1993:year(datetime('today')))
@@ -100,6 +100,7 @@ end
 
 nyr = length(opt.yr);
 nv = length(opt.vars);
+nstart = size(mmdd,1);
 
 %--------------------
 % Read data for 
@@ -115,22 +116,24 @@ if isempty(opt.Cdata)
             if opt.verbose
                 fprintf('Reading data: %s, %d\n', opt.vars{iv}, opt.yr(iy));
             end
-    
+
             % Check for files for this year
-                    
+                        
             fanom = opt.cpopts.setopts('freq','daily','grid','extra').cefifilelist("anom_"+opt.vars{iv}, opt.yr(iy)+"*");
 
             % Find time index corresponding to clustering target date
         
             t = ncdateread(fanom, 'time');
     
-            tidx = interp1(t, 1:length(t), datetime(opt.yr(iy), mmdd(1), mmdd(2)), 'nearest');
-        
-            Tmp = ncstruct(fanom, struct('time', [tidx opt.ndays 1]), opt.vars{iv});
-            if opt.ndays>1
-                Cdata(iy).(opt.vars{iv}) = mean(Tmp.(opt.vars{iv}), 3, 'omitnan');
-            else
-                Cdata(iy).(opt.vars{iv}) = Tmp.(opt.vars{iv});
+            tidx = interp1(t, 1:length(t), datetime(opt.yr(iy), mmdd(:,1), mmdd(:,2)), 'nearest');
+            for is = 1:nstart
+                
+                Tmp = ncstruct(fanom, struct('time', [tidx(is) opt.ndays 1]), opt.vars{iv});
+                if opt.ndays>1
+                    Cdata(iy,is).(opt.vars{iv}) = mean(Tmp.(opt.vars{iv}), 3, 'omitnan');
+                else
+                    Cdata(iy,is).(opt.vars{iv}) = Tmp.(opt.vars{iv});
+                end
             end
         end
     end
@@ -157,7 +160,10 @@ end
 % Reformat cluster variable data into nyr x (nmaskedcell*nprop) array
 
 tmpdata = arrayfun(@(X) cell2mat(cellfun(@(x) x(mask), struct2cell(X), 'uni', 0)), Cdata, 'uni', 0);
-tmpdata = cat(2, tmpdata{:})';
+for iy = 1:nyr
+    tmpdata{iy,1} = cat(1, tmpdata{iy,:});
+end
+tmpdata = cat(2, tmpdata{:,1})';
 
 % Hierarchical clustering
     
@@ -311,7 +317,7 @@ for iy = 1:nyr
               'MapLonLimit', masklonlim);
         tightmap;
 
-        tmp = Cdata(iy).(opt.vars{iv});
+        tmp = Cdata(iy,end).(opt.vars{iv});
         tmp(~mask) = NaN;
         plotmap(Grd, tmp);
     end

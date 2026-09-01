@@ -52,7 +52,7 @@ for iv = 1:length(varsread)
         case 'clim'
             fname = C.setopts('freq', 'daily', 'grid', 'extra').cefifilelist("clim_"+varsread{iv}, "*");
         otherwise
-            error('Unrecognized variable type (%s); should be value or anomaly', opt.vartype)
+            error('Unrecognized variable type (%s); should be value, anomaly, fcpersist, or clim', opt.vartype)
     end
 
     t = ncdateread(fname, 'time');

@@ -44,3 +44,4 @@ simulation_data/data_folder.txt
 examples_old/
 __pycache__/
 akshapes*.mat
+ak_analysis_polygons.mat
